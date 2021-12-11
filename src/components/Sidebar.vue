@@ -4,39 +4,21 @@
     <nav class="navbar navbar-inverse" id="sidebar" role="navigation">
       <ul class="nav sidebar-nav">
         <div class="sidebar-header">
-          <div class="sidebar-brand">
-            <a href="#">CitizenV</a>
-          </div>
         </div>
         <li>
-          <a id="sidebar-user-info">
-            <h4>Hà Nội</h4>
-            <h5>01</h5>
-          </a>
+          <SidebarUserInfo username="Hà Nội" userid="01"/>
         </li>
         <li>
-          <a href="#">
-            <font-awesome-icon icon = "user-lock" size="lg" />
-            <span> Quản lý</span>
-          </a>
+          <SidebarButton address="/access" icon="user-lock" text="Quản lý"></SidebarButton>
         </li>
         <li>
-          <a href="#">
-            <font-awesome-icon icon = "list-alt" size="lg" />
-            <span> Danh sách</span>
-          </a>
+          <SidebarButton address="/view" icon="list-alt" text="Danh sách"></SidebarButton>
         </li>
         <li>
-          <a href="#">
-            <font-awesome-icon icon = "chart-bar" size="lg" />
-            <span>Phân tích</span>
-          </a>
+          <SidebarButton address="/access" icon="chart-bar" text="Phân tích"></SidebarButton>
         </li>
         <li>
-          <a href="#">
-            <font-awesome-icon icon = "search" size="lg" />
-            <span>Tra cứu</span>
-          </a>
+          <SidebarButton address="/search" icon="search" text="Tra cứu"></SidebarButton>
         </li>
       </ul>
     </nav>
@@ -59,9 +41,18 @@
   </div>
 </template>
 
+
 <script>
+
+import SidebarButton from "./sidebarbuttons/SidebarButton.vue"
+import SidebarUserInfo from "./sidebarbuttons/UserInfo.vue"
+
 export default {
   name: "Sidebar",
+  components: {
+    SidebarButton,
+    SidebarUserInfo
+  },
   data: function () {
     return {
       isClosed: true,
@@ -164,31 +155,6 @@ export default {
   -ms-transition: width 0.2s ease-in;
   transition: width 0.2s ease-in;
 }
-#sidebar .sidebar-nav li a {
-  display: block;
-  color: white;
-  text-decoration: none;
-  padding: 10px 15px 10px 30px;
-}
-#sidebar .sidebar-nav li a:hover {
-  text-decoration: none;
-  outline: none;
-  margin-left: 15px;
-}
-#sidebar .sidebar-nav li a:hover,
-#sidebar .sidebar-nav li a:active,
-#sidebar .sidebar-nav li a:focus,
-#sidebar .sidebar-nav li.open a:hover,
-#sidebar .sidebar-nav li.open a:active,
-#sidebar .sidebar-nav li.open a:focus {
-  color: #fff;
-  text-decoration: none;
-  background-color: transparent;
-}
-
-#sidebar .sidebar-nav li a span {
-  margin-left: 10px;
-}
 
 #sidebar .sidebar-header {
   text-align: center;
@@ -196,21 +162,6 @@ export default {
   position: relative;
   width: 100%;
   display: inline-block;
-}
-#sidebar .sidebar-brand {
-  height: 65px;
-  position: relative;
-  background: #212531;
-  background: linear-gradient(to right bottom, #2f3441 50%, #212531 50%);
-  padding-top: 1em;
-}
-#sidebar .sidebar-brand a {
-  color: #ddd;
-  text-decoration: none;
-  font-size: 700;
-}
-#sidebar .sidebar-brand a:hover {
-  color: #fff;
 }
 /*-------------------------------*/
 /*       Hamburger-Cross         */

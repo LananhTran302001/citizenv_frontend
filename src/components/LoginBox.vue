@@ -3,11 +3,11 @@
     id="login-box"
     class="flex-column d-flex justify-content-center align-items-center"
   >
-    <div id="login-section" class="section-style">
+    <div id="login-section" class="section-style" v-show="isLogin">
       <div
         class="flex-column d-flex justify-content-centerr align-items-center box-style"
       >
-        <img src="asset/img/general_user.jpg" alt="user image" class="icon" />
+        <img src="../assets/img/general_user.jpg" alt="user image" class="icon" />
         <form class="form-horizontal form-style">
           <div class="form-group flex-column input-container">
             <label for="user-name">Mã đăng nhập</label>
@@ -37,18 +37,18 @@
             </div>
             <span class="notification"></span>
             <div>
-              <a id="forgot-pw-link" href="">Quên mật khẩu</a>
+              <a id="forgot-pw-link" @click="clickLink">Quên mật khẩu</a>
             </div>
           </div>
           <button type="button" id="log-in-btn">Đăng nhập</button>
         </form>
       </div>
     </div>
-    <div id="forgot-pw-section" class="section-style">
+    <div id="forgot-pw-section" class="section-style" v-show="!isLogin">
       <div
         class="flex-column d-flex justify-content-center align-items-center box-style"
       >
-        <img src="asset/img/mail.jpg" alt="user image" class="icon" />
+        <img src="../assets/img/mail.jpg" alt="user image" class="icon" />
         <form class="form-horizontal form-style">
           <h4>Quên mật khẩu?</h4>
           <div class="form-group flex-column input-container">
@@ -72,7 +72,7 @@
             <span class="notification"></span>
           </div>
           <div>
-            <a id="login-link" href="">Quay lại đăng nhập</a>
+            <a id="login-link"  @click="clickLink">Quay lại đăng nhập</a>
           </div>
           <button type="button" id="send-email-btn">Send</button>
         </form>
@@ -83,7 +83,17 @@
 
 <script>
 export default {
-    name: "LoginBox"
+    name: "LoginBox",
+    data() {
+      return {
+        isLogin: true
+      }
+    },
+    methods: {
+      clickLink: function() {
+        this.isLogin = !this.isLogin
+      }
+    }
 }
 </script>
 
@@ -131,6 +141,10 @@ export default {
 .box-style .form-style .input-container {
     text-align: left;
     margin: 0 0 10px 0;
+}
+
+.box-style .form-style a:hover {
+  cursor: pointer;
 }
 
 .box-style .form-style button {

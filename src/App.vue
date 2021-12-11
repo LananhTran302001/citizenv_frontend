@@ -1,25 +1,10 @@
 <template>
   <div id="app">
-    <Navbar />
-    <Sidebar />
+    <router-view />
   </div>
 </template>
 
-<script>
-
-import Sidebar from './components/Sidebar.vue'
-import Navbar from './components/Navbar.vue'
-export default {
-  name: 'App',
-  components: {
-    Navbar,
-    Sidebar
-  }
-}
-</script>
-
-
-<style scope>
+<style scoped>
 #app {
   position: relative;
     overflow-x: hidden;

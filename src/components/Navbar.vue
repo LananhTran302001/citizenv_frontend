@@ -10,18 +10,36 @@
             <li class="nav-item"><a href="" class="nav-link">Liên hệ</a></li>
         </ul>
         <div class="nav flex-row justify-content-around" id="user-nav">
-            <div class="nav flex-row justify-content-center">
-                <label class="nav">Xin chào,</label>
-                <label class="nav" id="user-name-label"> 19020209 </label>
-            </div>
-            <button class="nav" id="log-out-btn">Đăng xuất</button>
+            <NavbarUserInfo message="Xin chào" userid="29"/>
+            <ToLoginButton v-if="!isActive"/>
+            <LogoutButton v-if="isActive"/>
         </div>
     </nav>
 </template>
 
 <script>
+
+import NavbarUserInfo from "./navbarbuttons/UserInfo.vue"
+import ToLoginButton from "./navbarbuttons/ToLoginButton.vue"
+import LogoutButton from "./navbarbuttons/LogoutButton.vue"
+
 export default {
-    name: "Navbar"
+    name: "Navbar",
+    components: {
+        NavbarUserInfo,
+        ToLoginButton,
+        LogoutButton
+    },
+    data: function() {
+        return {
+            isActive: false
+        }
+    },
+    methods: {
+        toLogin: function() {
+            this.$router.push('/login')
+        }
+    }
 }
 </script>
 
@@ -29,6 +47,7 @@ export default {
 #navbar {
     z-index: 100;
     background-color: white;
+    width: 100%;
 }
 .navbar-style {
     justify-content: space-around;
@@ -60,21 +79,7 @@ export default {
     color: #413e66;
     font-weight: 500;
 }
-#navbar label {
-    font-size: 18px;
-    color: black;
-    text-align: center;
-    align-items: center;
-}
-#navbar #log-out-btn {
-    padding: 5px 10px 5px 10px;
-    margin-left: 15px;
-    margin-right: 15px;
-    background-color: transparent;
-    border: solid 1px gainsboro;
-    border-radius: 10px;
-    color: mediumorchid;
-}
+
 @media (max-width: 800px) {
     #navbar .logo-img {
         height: 25px;
@@ -92,13 +97,6 @@ export default {
         font-size: 12px;
         color: #413e66;
         font-weight: 500;
-    }
-    
-    #navbar label {
-        font-size: 12px;
-        color: black;
-        text-align: center;
-        align-items: center;
     }
 }
 </style>
