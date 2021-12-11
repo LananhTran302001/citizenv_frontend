@@ -3,48 +3,46 @@
     id="login-box"
     class="flex-column d-flex justify-content-center align-items-center"
   >
-    <div id="login-section" class="section-style" v-show="isLogin">
+    <div id="login-section" class="section-style" v-show="toLogin">
       <div
         class="flex-column d-flex justify-content-centerr align-items-center box-style"
       >
         <img src="../assets/img/general_user.jpg" alt="user image" class="icon" />
         <form class="form-horizontal form-style">
           <div class="form-group flex-column input-container">
-            <label for="user-name">Mã đăng nhập</label>
+            <label for="user-id">Mã đăng nhập</label>
             <input
               type="text"
-              id="user-name"
+              v-model="user_id"
+              id="user-id"
               class="form-control"
               placeholder="Enter id"
             />
-            <span class="notification" id="user-name-noti"></span>
+            <span class="notification"></span>
           </div>
           <div class="form-group flex-column input-container">
-            <label for="user-password">Mật khẩu</label>
+            <label for="password">Mật khẩu</label>
             <div class="flex-row d-flex password-row">
               <input
-                type="password"
-                id="user-password"
+                :type="pw_input_type"
+                v-model="password"
+                id="password"
                 class="form-control"
                 placeholder="Enter password"
               />
-              <a href="#" id="eye-open">
-                <i class="far fa-eye" aria-hidden="true"></i>
-              </a>
-              <a href="#" id="eye-slash">
-                <i class="far fa-eye-slash" aria-hidden="true"></i>
-              </a>
+              <font-awesome-icon icon="eye" class="eye-style" v-show="hidePassword" @click="clickEye"/>
+              <font-awesome-icon icon="eye-slash" class="eye-style" v-show="!hidePassword" @click="clickEye"/>
             </div>
             <span class="notification"></span>
             <div>
               <a id="forgot-pw-link" @click="clickLink">Quên mật khẩu</a>
             </div>
           </div>
-          <button type="button" id="log-in-btn">Đăng nhập</button>
+          <button type="button" @click="login">Đăng nhập</button>
         </form>
       </div>
     </div>
-    <div id="forgot-pw-section" class="section-style" v-show="!isLogin">
+    <div id="forgot-pw-section" class="section-style" v-show="!toLogin">
       <div
         class="flex-column d-flex justify-content-center align-items-center box-style"
       >
@@ -52,10 +50,11 @@
         <form class="form-horizontal form-style">
           <h4>Quên mật khẩu?</h4>
           <div class="form-group flex-column input-container">
-            <label for="user-name2">Mã đăng nhập</label>
+            <label for="user-id2">Mã đăng nhập</label>
             <input
               type="text"
-              id="user-name2"
+              v-model="user_id"
+              id="user-id2"
               class="form-control"
               placeholder="Enter id"
             />
@@ -65,6 +64,7 @@
             <label for="user-email">Email</label>
             <input
               type="text"
+              v-model="user_email"
               id="user-email"
               class="form-control"
               placeholder="Enter email"
@@ -74,25 +74,66 @@
           <div>
             <a id="login-link"  @click="clickLink">Quay lại đăng nhập</a>
           </div>
-          <button type="button" id="send-email-btn">Send</button>
+          <button type="button" @click="sendMail">Send</button>
         </form>
       </div>
     </div>
   </div>
 </template>
 
+
 <script>
 export default {
     name: "LoginBox",
+
     data() {
       return {
-        isLogin: true
+        toLogin: true,
+        hidePassword: true,
+        pw_input_type: 'password',
+
+        user_id: '',
+        user_email: '',
+        password: ''
       }
     },
+
     methods: {
       clickLink: function() {
-        this.isLogin = !this.isLogin
+        this.toLogin = !this.toLogin
+      },
+
+      clickEye: function() {
+        if (this.hidePassword) {
+          this.pw_input_type = 'text'
+        } else {
+          this.pw_input_type = 'password'
+        }
+        this.hidePassword = !this.hidePassword
+      },
+
+      getLoginData: function() {
+        return {
+          user_id: this.user_id,
+          password: this.password
+        }
+      },
+
+      getForgotPwData: function() {
+        return {
+          user_id: this.user_id,
+          user_email: this.user_email
+        }
+      },
+
+      login: function() {
+        console.log(this.getLoginData)
+      },
+
+      sendMail: function() {
+        console.log("Send mail")
       }
+
     }
 }
 </script>
@@ -251,7 +292,7 @@ export default {
     background: rgba(130, 212, 245, 0.753);
 }
 
-#login-section #log-in-btn {
+#login-section button {
     background-color: rgba(3, 213, 250, 0.986);
     border: solid 1px skyblue;
 }
@@ -270,11 +311,12 @@ export default {
     position: relative;
 }
 
-#login-section .form-style .password-row #eye-open,
-#login-section .form-style .password-row #eye-slash {
+#login-section .form-style .password-row .eye-style {
     position: absolute;
     right: 15px;
-    bottom: 7px;
+    bottom: 12px;
+    color: rgb(11, 111, 168);
+    cursor: pointer;
 }
 
 /* Forgot password section 
@@ -292,7 +334,7 @@ export default {
     text-decoration: underline;
 }
 
-#forgot-pw-section #send-email-btn {
+#forgot-pw-section button {
     background-color: #ff9999;
     border: solid 1px white;
 }

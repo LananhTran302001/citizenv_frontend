@@ -17,6 +17,11 @@ export default {
     components: {
         Navbar,
         LoginBox
+    },
+    data: function() {
+        return {
+            
+        }
     }
 }
 </script>
