@@ -5,9 +5,15 @@
             <label class="logo-text">CitizenV</label>
         </a>
         <ul class="nav flex-row nav-pills justify-content-around">
-            <li class="nav-item"><a href="" class="nav-link">Trang chủ</a></li>
-            <li class="nav-item"><a href="" class="nav-link">Giới thiệu</a></li>
-            <li class="nav-item"><a href="" class="nav-link">Liên hệ</a></li>
+            <li class="nav-item">
+                <router-link to="/" class="nav-item">Trang chủ</router-link>
+            </li>
+            <li class="nav-item">
+                <router-link to="/" class="nav-item">Giới thiệu</router-link>
+            </li>
+            <li class="nav-item">
+                <router-link to="/contact" class="nav-item">Liên hệ</router-link>
+            </li>
         </ul>
         <div class="nav flex-row justify-content-around" id="user-nav">
             <NavbarUserInfo message="Xin chào" userid="29"/>
@@ -74,10 +80,17 @@ export default {
     color: green;
     text-decoration: none;
 }
-#navbar .nav-link {
+
+#navbar .nav-item {
     font-size: 18px;
     color: #413e66;
     font-weight: 500;
+    padding: 0px 15px 0px 15px;
+}
+
+#navbar .nav-item:hover {
+    color: rgb(0, 0, 194);
+    cursor: pointer;
 }
 
 @media (max-width: 800px) {
@@ -93,7 +106,7 @@ export default {
         letter-spacing: 1px;
     }
     
-    #navbar .nav-link {
+    #navbar .nav-item {
         font-size: 12px;
         color: #413e66;
         font-weight: 500;

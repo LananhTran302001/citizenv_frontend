@@ -9,7 +9,10 @@
           <SidebarUserInfo username="Hà Nội" userid="01"/>
         </li>
         <li>
-          <SidebarButton address="/access" icon="user-lock" text="Quản lý"></SidebarButton>
+          <SidebarButton address="/admin" icon="user-lock" text="Quản lý"></SidebarButton>
+        </li>
+        <li>
+          <SidebarButton address="/progress" icon="tasks" text="Tiến độ"></SidebarButton>
         </li>
         <li>
           <SidebarButton address="/view" icon="list-alt" text="Danh sách"></SidebarButton>
@@ -19,6 +22,9 @@
         </li>
         <li>
           <SidebarButton address="/search" icon="search" text="Tra cứu"></SidebarButton>
+        </li>
+        <li>
+          <SidebarButton address="/form" icon="file-alt" text="Nhập liệu"></SidebarButton>
         </li>
       </ul>
     </nav>
