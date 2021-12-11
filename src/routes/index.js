@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Login from '../views/Login.vue';
 import Home from '../views/Home.vue';
+import CencusTable from "../components/table/CencusTable.vue";
 
 Vue.use(VueRouter);
 
@@ -9,20 +10,17 @@ const routes = [
     {
         path: '/',
         name:'home',
-        meta: {title:"CitizenV"},
         component:Home
     },
     {
         path:'/login', 
         name:'login', 
-        meta: {title:"Đăng nhập"},
         component:Login
     },
     {
-        path: '/view',
-        name:'view',
-        meta: {title:"Danh sách"},
-        component:Home
+        path: '/cencus_table',
+        name: 'cencus table',
+        component: CencusTable
     }
 ];
 
