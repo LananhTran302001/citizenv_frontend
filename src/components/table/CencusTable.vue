@@ -4,61 +4,6 @@
     <b-row>
       <b-col lg="6" class="my-1">
         <b-form-group
-          label="Sort"
-          label-for="sort-by-select"
-          label-cols-sm="3"
-          label-align-sm="right"
-          label-size="sm"
-          class="mb-0"
-          v-slot="{ ariaDescribedby }"
-        >
-          <b-input-group size="sm">
-            <b-form-select
-              id="sort-by-select"
-              v-model="sortBy"
-              :options="sortOptions"
-              :aria-describedby="ariaDescribedby"
-              class="w-75"
-            >
-              <template #first>
-                <option value="">-- none --</option>
-              </template>
-            </b-form-select>
-
-            <b-form-select
-              v-model="sortDesc"
-              :disabled="!sortBy"
-              :aria-describedby="ariaDescribedby"
-              size="sm"
-              class="w-25"
-            >
-              <option :value="false">Asc</option>
-              <option :value="true">Desc</option>
-            </b-form-select>
-          </b-input-group>
-        </b-form-group>
-      </b-col>
-
-      <b-col lg="6" class="my-1">
-        <b-form-group
-          label="Initial sort"
-          label-for="initial-sort-select"
-          label-cols-sm="3"
-          label-align-sm="right"
-          label-size="sm"
-          class="mb-0"
-        >
-          <b-form-select
-            id="initial-sort-select"
-            v-model="sortDirection"
-            :options="['asc', 'desc', 'last']"
-            size="sm"
-          ></b-form-select>
-        </b-form-group>
-      </b-col>
-
-      <b-col lg="6" class="my-1">
-        <b-form-group
           label="Filter"
           label-for="filter-input"
           label-cols-sm="3"
@@ -82,29 +27,6 @@
       </b-col>
 
       <b-col lg="6" class="my-1">
-        <b-form-group
-          v-model="sortDirection"
-          label="Filter On"
-          description="Leave all unchecked to filter on all data"
-          label-cols-sm="3"
-          label-align-sm="right"
-          label-size="sm"
-          class="mb-0"
-          v-slot="{ ariaDescribedby }"
-        >
-          <b-form-checkbox-group
-            v-model="filterOn"
-            :aria-describedby="ariaDescribedby"
-            class="mt-1"
-          >
-            <b-form-checkbox value="name">Name</b-form-checkbox>
-            <b-form-checkbox value="age">Age</b-form-checkbox>
-            <b-form-checkbox value="isActive">Active</b-form-checkbox>
-          </b-form-checkbox-group>
-        </b-form-group>
-      </b-col>
-
-      <b-col sm="5" md="6" class="my-1">
         <b-form-group
           label="Per page"
           label-for="per-page-select"
@@ -190,22 +112,10 @@
         items: [
           { isActive: true, age: 40, name: { first: 'Dickerson', last: 'Macdonald' } },
           { isActive: false, age: 21, name: { first: 'Larsen', last: 'Shaw' } },
-          {
-            isActive: false,
-            age: 9,
-            name: { first: 'Mini', last: 'Navarro' },
-            _rowVariant: 'success'
-          },
           { isActive: false, age: 89, name: { first: 'Geneva', last: 'Wilson' } },
           { isActive: true, age: 38, name: { first: 'Jami', last: 'Carney' } },
           { isActive: false, age: 27, name: { first: 'Essie', last: 'Dunlap' } },
           { isActive: true, age: 40, name: { first: 'Thor', last: 'Macdonald' } },
-          {
-            isActive: true,
-            age: 87,
-            name: { first: 'Larsen', last: 'Shaw' },
-            _cellVariants: { age: 'danger', isActive: 'warning' }
-          },
           { isActive: false, age: 26, name: { first: 'Mitzi', last: 'Navarro' } },
           { isActive: false, age: 22, name: { first: 'Genevieve', last: 'Wilson' } },
           { isActive: true, age: 38, name: { first: 'John', last: 'Carney' } },
