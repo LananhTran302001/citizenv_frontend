@@ -6,13 +6,13 @@
         </a>
         <ul class="nav flex-row nav-pills justify-content-around">
             <li class="nav-item">
-                <router-link to="/" class="nav-item">Trang chủ</router-link>
+                <router-link to="/">Trang chủ</router-link>
             </li>
             <li class="nav-item">
-                <router-link to="/" class="nav-item">Giới thiệu</router-link>
+                <router-link to="/about">Giới thiệu</router-link>
             </li>
             <li class="nav-item">
-                <router-link to="/contact" class="nav-item">Liên hệ</router-link>
+                <router-link to="/contact">Liên hệ</router-link>
             </li>
         </ul>
         <div class="nav flex-row justify-content-around" id="user-nav">

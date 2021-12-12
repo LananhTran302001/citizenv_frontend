@@ -57,7 +57,7 @@ const routes = [
     {
         path: '/table',
         component: EditableTable
-    }
+    },
 ];
 
 const router = new VueRouter({
