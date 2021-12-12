@@ -23,6 +23,7 @@ input {
     width: 22px;
     padding: 0;
     border-radius: 5px;
+    cursor: pointer;
 }
 
 label {

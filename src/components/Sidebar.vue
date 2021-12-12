@@ -9,22 +9,40 @@
           <SidebarUserInfo username="Hà Nội" userid="01"/>
         </li>
         <li>
-          <SidebarButton address="/admin" icon="user-lock" text="Quản lý"></SidebarButton>
+          <SidebarButton 
+          address="/admin" icon="user-lock" text="Quản lý" 
+          v-if="role > 0 && role < 5">
+          </SidebarButton>
         </li>
         <li>
-          <SidebarButton address="/progress" icon="tasks" text="Tiến độ"></SidebarButton>
+          <SidebarButton 
+          address="/progress" icon="tasks" text="Tiến độ"
+          v-if="role > 0 && role < 5"
+          ></SidebarButton>
         </li>
         <li>
-          <SidebarButton address="/view" icon="list-alt" text="Danh sách"></SidebarButton>
+          <SidebarButton 
+          address="/view" icon="list-alt" text="Danh sách"
+          v-if="role > 0 && role < 5"
+          ></SidebarButton>
         </li>
         <li>
-          <SidebarButton address="/access" icon="chart-bar" text="Phân tích"></SidebarButton>
+          <SidebarButton 
+          address="/analytics" icon="chart-bar" text="Phân tích"
+          v-if="role > 0 && role < 5"
+          ></SidebarButton>
         </li>
         <li>
-          <SidebarButton address="/search" icon="search" text="Tra cứu"></SidebarButton>
+          <SidebarButton 
+          address="/search" icon="search" text="Tra cứu"
+          v-if="role > 0 && role < 5"
+          ></SidebarButton>
         </li>
         <li>
-          <SidebarButton address="/form" icon="file-alt" text="Nhập liệu"></SidebarButton>
+          <SidebarButton 
+          address="/form" icon="file-alt" text="Nhập liệu"
+          v-if="role == 4 || role == 5"
+          ></SidebarButton>
         </li>
       </ul>
     </nav>
@@ -59,12 +77,18 @@ export default {
     SidebarButton,
     SidebarUserInfo
   },
+
+  props: {
+    role:Number
+  },
+
   data: function () {
     return {
       isClosed: true,
       isToggled: false,
     };
   },
+
   methods: {
     openSidebar: function () {
       console.log(this.isClosed);

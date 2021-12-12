@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col items-center container-style">
         <header>
-            <Navbar />
+            <Navbar :isActive="false"/>
         </header>
         <LoginBox />
     </div>

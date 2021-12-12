@@ -1,12 +1,12 @@
 <template>
-    <nav id="navbar" class="navbar flex-row navbar-style justify-content-around navbar-expand-md">
+    <nav id="navbar" class="navbar flex-row navbar-style justify-content-between navbar-expand-md">
         <a href="" class="logo nav">
             <img src="../assets/img/logo.png" alt="logo" class="logo-img">
             <label class="logo-text">CitizenV</label>
         </a>
         <ul class="nav flex-row nav-pills justify-content-around">
             <li class="nav-item">
-                <router-link to="/">Trang chủ</router-link>
+                <router-link to="/" v-if="isActive">Trang chủ</router-link>
             </li>
             <li class="nav-item">
                 <router-link to="/about">Giới thiệu</router-link>
@@ -16,7 +16,7 @@
             </li>
         </ul>
         <div class="nav flex-row justify-content-around" id="user-nav">
-            <NavbarUserInfo message="Xin chào" userid="29"/>
+            <NavbarUserInfo message="Xin chào" userid="29" v-if="isActive"/>
             <ToLoginButton v-if="!isActive"/>
             <LogoutButton v-if="isActive"/>
         </div>
@@ -36,9 +36,11 @@ export default {
         ToLoginButton,
         LogoutButton
     },
+    props: {
+        isActive:Boolean
+    },
     data: function() {
         return {
-            isActive: false
         }
     },
     methods: {

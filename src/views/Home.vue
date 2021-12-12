@@ -1,9 +1,9 @@
 <template>
   <div class="container-style">
-    <Navbar /> 
+    <Navbar :isActive="true"/> 
     <router-view />   
     <div class="flex-row d-flex">
-      <Sidebar />
+      <Sidebar :role="4"/>
       <PageContent>
         <p>Xin chào</p>
         <p>Đây là home của citizenv</p>
