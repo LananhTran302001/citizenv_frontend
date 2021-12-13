@@ -2,16 +2,18 @@
     <div>
         <div id="options" v-show="isOpen">
             <h4>Chọn cột hiển thị</h4>
-            <CheckboxButton label="Họ tên"/>
+            <checkbox-button label="Tất cả"/>
+            <checkbox-button v-for="field in get_fields" :key="field.key" v-bind:label="field.label"></checkbox-button>
+            <!-- <CheckboxButton label="Họ tên"/>
             <CheckboxButton label="Ngày sinh"/>
             <CheckboxButton label="Nhóm máu"/>
             <CheckboxButton label="Giới tính"/>
             <CheckboxButton label="Tôn giáo"/>
             <CheckboxButton label="CCCD"/>
-            <CheckboxButton label="Tỉnh/thành" v-if="role == 1"/>
-            <CheckboxButton label="Quận/huyện/thị xã/tp thuộc tỉnh" v-if="role > 0 && role < 3"/>
-            <CheckboxButton label="Xã/phường/thị trấn" v-if="role > 0 && role < 4"/>
-            <CheckboxButton label="Thôn/xóm/bản/tổ dân phố" v-if="role > 0 && role < 5"/>
+            <CheckboxButton label="Tỉnh/thành"/>
+            <CheckboxButton label="Quận/huyện/thị xã/tp thuộc tỉnh"/>
+            <CheckboxButton label="Xã/phường/thị trấn"/>
+            <CheckboxButton label="Thôn/xóm/bản/tổ dân phố"/> -->
             <!-- Nút hoàn thành chọn lựa và đóng selcolumn -->
             <button type="button" id="close-selcolumn-btn" @click="openSelectColumns">Áp dụng</button>
         </div>
@@ -29,19 +31,20 @@ import CheckboxButton from "./CheckboxButton.vue"
 
 export default {
     name: "SelectColumns",
+    props: {fields:Array},
     components: {
         CheckboxButton
     },
-    props: {role:Number},
     data: function() {
         return {
-            isOpen: false
+            isOpen: false,
+            get_fields: this.fields
         }
     },
     methods: {
         openSelectColumns: function() {
             this.isOpen = !this.isOpen
-            console.log(this.isOpen)
+            console.log(this.get_fields)
         }
     }
 }

@@ -114,22 +114,34 @@
             </b-col>
         </b-row>
         <!-- Main table -->
-        <b-table>
-
+        <b-table
+        :items="items"
+        :fields="fields"
+        :current-page="currentPage"
+        :per-page="rowsPerPage"
+        sort-icon-left 
+        :sort-by.sync="sortBy"
+        responsive="sm"
+        class="my-2 table-style"
+        >
         </b-table>
+        <!-- Select columns -->
+        <SelectColumns :fields="fields"/>
     </b-container>
 </template>
 
 <script>
 
 import DropdownButton from "./buttons/DropdownButton.vue"
+import SelectColumns from "./buttons/SelectColumns.vue"
 
 export default {
     name:"MyTable",
     components: {
-        DropdownButton
+        DropdownButton,
+        SelectColumns
     },
-    props: ["items","fields", "role"],
+    //props: ["items","fields", "role"],
     data: function() {
         return {
             // CURRENT OPTION:
@@ -138,6 +150,10 @@ export default {
             // rowsPerPage: Số dòng hiện trong 1 trang
             rowsPerPage: 30,
 
+            // TEMP
+            search: null,
+            role: 1,
+            sortBy: 'name',
             // OPTIONS:
             // rowsPerPageOptions: các option cho số dòng / trang
             rowsPerPageOptions:[30, 50, 100],
@@ -148,7 +164,57 @@ export default {
             // Các xã/phường/thị trấn cho phép chọn: chỉ được xem trong option này
             wards:["Xã 1", "Xã 12", "Xã 15"],
             // Các thôn/xóm/tổ dân phố cho phép chọn: chỉ được xem trong option này
-            residentalGroups:["Thôn 1", "Thôn 2", "Thôn 3"]
+            residentalGroups:["Thôn 1", "Thôn 2", "Thôn 3"],
+
+
+            // DATA:
+            items:[
+                {name:"Nguyen Van A", 
+                birthday: "10/10/1999", 
+                blood_type: "O", 
+                gender: "Nam", 
+                religion:"Không có", 
+                residental_id: "012322456789",
+                city: "TP.HCM",
+                district: "Huyện Cần Giờ",
+                ward: "Xã Trung An",
+                residental_group: "thôn 1"
+                },
+                {name:"Bui Thi C", 
+                birthday: "01/09/1990", 
+                blood_type: "A", 
+                gender: "Nữ", 
+                religion:"Phật giáo", 
+                residental_id: "732048204932",
+                city: "Quảng Ninh",
+                district: "Thành phố Uông Bí",
+                ward: "Phường Nam Khê",
+                residental_group: "thôn 5"
+                },
+                {name:"Pham Van D", 
+                birthday: "21/03/1989", 
+                blood_type: "B", 
+                gender: "Nam", 
+                religion:"Tin Lành", 
+                residental_id: "091238902334",
+                city: "Hà Giang",
+                district: "Huyện Bắc Mê",
+                ward: "Xã Lạc Nông",
+                residental_group: "thôn 10"
+                }                
+            ],
+            fields: [
+                {key:"name", label:"Họ tên", sortable:true},
+                {key:"birthday", label:"Ngày sinh", sortable:true},
+                {key:"blood_type", label:"Nhóm máu", sortable:true},
+                {key:"gender", label:"Giới tính", sortable:true},
+                {key:"religion", label:"Tôn giáo", sortable:true},
+                {key:"residental_id", label:"CCCD", sortable:true},
+                {key:"city", label:"Tỉnh/thành", sortable:true},
+                {key:"district", label:"Quận/huyện/thị xã/tp thuộc tỉnh", sortable:true},
+                {key:"ward", label:"Xã/phường/thị trấn", sortable:true},
+                {key:"residental_group", label:"Thôn/bản/tổ dân phố", sortable:true}
+            ]
         }
     }
 }
@@ -157,5 +223,10 @@ export default {
 <style scoped>
 .container-style {
     padding: 15px;
+}
+
+.table-style {
+    background-color: white;
+    font-size: 13px;
 }
 </style>
