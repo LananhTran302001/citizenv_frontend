@@ -64,7 +64,7 @@
           </div>
           <!-- Nút đăng nhập -->
           <button type="button" 
-          @click="login"
+          @click="login({user_id:loginId, password:password})"
           :disabled="msg.loginId != '' || msg.password != ''"
           >Đăng nhập</button>
         </form>
@@ -109,7 +109,7 @@
           </div>
           <!-- Nút gửi email quên mật khẩu -->
           <button type="button" 
-          @click="sendEmail"
+          @click="sendEmail({user_id:forgotPwId, email:email})"
           :disabled="msg.forgotPwId != '' || msg.email != ''"
           >Send</button>
         </form>
