@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const User = {
     state: () => ({
         user: {
@@ -64,11 +66,26 @@ const User = {
     },
 
     actions: {
-        login({commit}, loginData) {
+        login({ commit }, loginData) {
             commit('setLoginData', loginData)
-            console.log("Login...")
+            const user = {
+                id: loginData.user_id,
+                password: loginData.password
+            }
+            console.log(user)
+
+            axios
+                .post("/login", user)
+                .then((res) => {
+                    if (res.status == 200) {
+                        console.log('success')
+                    }
+                }).catch((err) => {
+                    console.loc(err.response)
+                })
         },
-        sendEmail({commit}, forgotPwData) {
+        
+        sendEmail({ commit }, forgotPwData) {
             commit('setForgotPwData', forgotPwData)
             console.log("send email...")
         }

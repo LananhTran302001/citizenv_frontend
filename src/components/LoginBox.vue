@@ -126,7 +126,6 @@ export default {
 
   mounted: function () {
     this.resetLoginData();
-    this.resetErrors();
   },
 
   data: function () {
@@ -144,7 +143,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations(["resetLoginData", "resetErrors"]),
+    ...mapMutations(["resetLoginData"]),
     ...mapActions(["login", "sendEmail"]),
 
     // Chuyển giữa section đăng nhập và section quên mật khẩu
