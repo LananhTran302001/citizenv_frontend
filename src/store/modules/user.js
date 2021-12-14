@@ -70,6 +70,7 @@ const User = {
     actions: {
         login({ commit }, loginData) {
             commit('setLoginData', loginData)
+            // thông tin lấy từ backend
             const user = {
                 user_id: loginData.user_id,
                 user_name: "Lan Anh",

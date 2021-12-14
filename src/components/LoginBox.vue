@@ -275,8 +275,6 @@ export default {
 <style scoped>
 #login-box {
   height: 100%;
-  background-image: url("../assets/img/vietnam.jpg");
-  background-repeat: no-repeat;
 }
 
 /* Common section 

@@ -1,5 +1,5 @@
 <template>
-  <div id="sidebar-wrapper" v-bind:class="{ 'toggled': isToggled }">
+  <div id="sidebar-wrapper" v-bind:class="{ 'toggled': isToggled }" v-if="user.user_name && user.user_id">
     <!-- Sidebar -->
     <nav class="navbar navbar-inverse" id="sidebar" role="navigation">
       <ul class="nav sidebar-nav">
