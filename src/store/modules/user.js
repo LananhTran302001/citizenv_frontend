@@ -1,4 +1,5 @@
-import axios from "axios";
+//import axios from "axios";
+import router from "../../routes"
 
 const User = {
     state: () => ({
@@ -6,6 +7,7 @@ const User = {
             user_name: null,
             user_id: null,
             user_email: null,
+            role: null,
             start_time: null,
             expired_time: null
         },
@@ -69,22 +71,34 @@ const User = {
         login({ commit }, loginData) {
             commit('setLoginData', loginData)
             const user = {
-                id: loginData.user_id,
-                password: loginData.password
+                user_id: loginData.user_id,
+                user_name: "Lan Anh",
+                role: 2,
+                email: "lananh@gmail.com",
+                start_time: 0,
+                expired_time: 10,
             }
-            console.log(user)
+            commit('setUser', user)
+            router.push('/')
+            // const user = {
+            //     id: loginData.user_id,
+            //     password: loginData.password
+            // }
+            // console.log(user)
 
-            axios
-                .post("/login", user)
-                .then((res) => {
-                    if (res.status == 200) {
-                        console.log('success')
-                    }
-                }).catch((err) => {
-                    console.loc(err.response)
-                })
+            // axios
+            //     .post("/login", user)
+            //     .then((res) => {
+            //         if (res.status == 200) {
+            //             console.log('success')
+            //             this.$router.push('/home')
+            //         }
+            //         console.log(res.status)
+            //     }).catch((err) => {
+            //         console.log(err.response)
+            //     })
         },
-        
+
         sendEmail({ commit }, forgotPwData) {
             commit('setForgotPwData', forgotPwData)
             console.log("send email...")

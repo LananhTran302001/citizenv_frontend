@@ -24,7 +24,7 @@ Vue.use(BootstrapVueIcons)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
-axios.defaults.baseURL =  "http://127.0.0.1:5000/api/"; // local backend
+axios.defaults.baseURL =  "http://127.0.0.1:5000/"; // local backend
 
 Vue.config.productionTip = false
 

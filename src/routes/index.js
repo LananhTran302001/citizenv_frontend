@@ -3,7 +3,7 @@ import VueRouter from 'vue-router';
 import Login from '../views/Login.vue';
 import Home from '../views/Home.vue';
 import Contact from '../views/Contact.vue';
-import ManageAccess from "../views/ManageAccess.vue";
+import ManageAccount from "../views/ManageAccount.vue";
 import ManageCencus from "../views/ManageCencus.vue";
 import Progress from "../views/Progress.vue";
 import Analytics from "../views/Analytics.vue";
@@ -33,7 +33,7 @@ const routes = [
     {
         path:'/admin',
         name:'admin',
-        component:ManageAccess
+        component:ManageAccount
     },
     {
         path:'/view',

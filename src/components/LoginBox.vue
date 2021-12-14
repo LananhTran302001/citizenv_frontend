@@ -8,6 +8,10 @@
       <div
         class="flex-column d-flex justify-content-centerr align-items-center box-style"
       >
+        <!-- Hiện thông báo từ server -->
+        <span class="notification server-msg" v-if="msg.loginSubmit">
+          {{ msg.loginSubmit }}
+        </span>
         <img
           src="../assets/img/general_user.jpg"
           alt="user image"
@@ -63,10 +67,13 @@
             </div>
           </div>
           <!-- Nút đăng nhập -->
-          <button type="button" 
-          @click="login({user_id:loginId, password:password})"
-          :disabled="msg.loginId != '' || msg.password != ''"
-          >Đăng nhập</button>
+          <button
+            type="button"
+            @click="login({ user_id: loginId, password: password })"
+            :disabled="msg.loginId != '' || msg.password != ''"
+          >
+            Đăng nhập
+          </button>
         </form>
       </div>
     </div>
@@ -75,6 +82,10 @@
       <div
         class="flex-column d-flex justify-content-center align-items-center box-style"
       >
+        <!-- Hiện thông báo từ server -->
+        <span class="notification server-msg" v-if="msg.forgotPwSubmit">
+          {{ msg.forgotPwSubmit }}
+        </span>
         <img src="../assets/img/mail.jpg" alt="user image" class="icon" />
         <!-- User id -->
         <form class="form-horizontal form-style">
@@ -89,7 +100,9 @@
               placeholder="Enter id"
             />
             <!-- Thông báo của user id quên mật khẩu-->
-            <span class="notification" v-if="msg.forgotPwId"> {{ msg.forgotPwId }} </span>
+            <span class="notification" v-if="msg.forgotPwId">
+              {{ msg.forgotPwId }}
+            </span>
           </div>
           <div class="form-group flex-column input-container">
             <label for="user-email">Email</label>
@@ -108,10 +121,13 @@
             <a id="login-link" @click="clickLink">Quay lại đăng nhập</a>
           </div>
           <!-- Nút gửi email quên mật khẩu -->
-          <button type="button" 
-          @click="sendEmail({user_id:forgotPwId, email:email})"
-          :disabled="msg.forgotPwId != '' || msg.email != ''"
-          >Send</button>
+          <button
+            type="button"
+            @click="sendEmail({ user_id: forgotPwId, email: email })"
+            :disabled="msg.forgotPwId != '' || msg.email != ''"
+          >
+            Send
+          </button>
         </form>
       </div>
     </div>
@@ -126,6 +142,7 @@ export default {
 
   mounted: function () {
     this.resetLoginData();
+    this.resetForgotPwData();
   },
 
   data: function () {
@@ -134,16 +151,23 @@ export default {
       hidePassword: true,
       pw_input_type: "password",
 
-      loginId: '',
-      password: '',
-      forgotPwId: '',
-      email: '',
-      msg: [],
+      loginId: "",
+      password: "",
+      forgotPwId: "",
+      email: "",
+      msg: {
+        loginId: null,
+        password: null,
+        forgotPwId: null,
+        email: null,
+        loginSubmit: null,
+        forgotPwSubmit: null,
+      },
     };
   },
 
   methods: {
-    ...mapMutations(["resetLoginData"]),
+    ...mapMutations(["resetLoginData", "resetForgotPwData"]),
     ...mapActions(["login", "sendEmail"]),
 
     // Chuyển giữa section đăng nhập và section quên mật khẩu
@@ -161,36 +185,43 @@ export default {
       this.hidePassword = !this.hidePassword;
     },
 
+    // Kiểm tra nếu val rỗng
     isEmpty: function (val) {
-      return val.length == 0
-    }, 
+      return val.length == 0;
+    },
 
+    // Kiểm tra nếu chuỗi val chỉ gồm số
     isOnlyNums: function (val) {
-      return (/^[0-9]*$/.test(val))
+      return /^[0-9]*$/.test(val);
     },
 
+    // Kiểm tra nếu độ dài chuỗi val trong khoảng [lower, upper]
     lengthInRange: function (val, lower, upper) {
-      return ((val.length >= lower) && (val.length <= upper))
+      return val.length >= lower && val.length <= upper;
     },
 
-    isValidEmail: function(val) {
-      return (/\S+@\S+\.\S+/.test(val))
-    }
-
+    // Kiểm tra nếu val đúng format email: str@str.str
+    isValidEmail: function (val) {
+      return /\S+@\S+\.\S+/.test(val);
+    },
   },
 
   watch: {
     // Kiểm tra mã đăng nhập
     // length: từ 2 đến 8 và là số chẵn
     // chỉ gồm các số
-    loginId: function(val) {
-      this.loginId = val
-      if (this.isEmpty(val) || (!this.lengthInRange(val, 2, 8)) || (val.length % 2 == 1)) {
+    loginId: function (val) {
+      this.loginId = val;
+      if (
+        this.isEmpty(val) ||
+        !this.lengthInRange(val, 2, 8) ||
+        val.length % 2 == 1
+      ) {
         this.msg.loginId = "Id có độ dài chẵn trong khoảng 2-8 ký tự";
       } else if (!this.isOnlyNums(val)) {
         this.msg.loginId = "Id chỉ gồm các số và có 2-8 ký tự";
       } else {
-        this.msg.loginId = ""
+        this.msg.loginId = "";
       }
     },
 
@@ -198,41 +229,46 @@ export default {
     // length: từ 8 đến 25
     // chỉ gồm chữ và số
     // có ít nhất 1 số và 1 chữ
-    password: function(val) {
-      this.password = val
+    password: function (val) {
+      this.password = val;
       if (/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,25}$/.test(this.password)) {
-        this.msg.password = ""
+        this.msg.password = "";
       } else {
-        this.msg.password = "Mật khẩu phải có độ dài 8-25 ký tự, chỉ gồm chữ và số tiếng anh, có cả chữ và số"
+        this.msg.password =
+          "Mật khẩu phải có độ dài 8-25 ký tự, chỉ gồm chữ và số tiếng anh, có cả chữ và số";
       }
     },
 
     // Kiểm tra mã đăng nhập
     // length: từ 2 đến 8 và là số chẵn
     // chỉ gồm các số
-    forgotPwId: function(val) {
-      this.forgotPwId = val
-      if (this.isEmpty(val) || (!this.lengthInRange(val, 2, 8)) || (val.length % 2 == 1)) {
+    forgotPwId: function (val) {
+      this.forgotPwId = val;
+      if (
+        this.isEmpty(val) ||
+        !this.lengthInRange(val, 2, 8) ||
+        val.length % 2 == 1
+      ) {
         this.msg.forgotPwId = "Id có độ dài chẵn trong khoảng 2-8 ký tự";
       } else if (!this.isOnlyNums(val)) {
         this.msg.forgotPwId = "Id chỉ gồm các số và có 2-8 ký tự";
       } else {
-        this.msg.forgotPwId = ""
+        this.msg.forgotPwId = "";
       }
     },
 
     // Kiểm tra email
     // length: từ 10 đến 35
     // Đúng format: str@str.Str
-    email: function(val) {
-      this.email = val
+    email: function (val) {
+      this.email = val;
       if (this.isValidEmail(val) && this.lengthInRange(val, 5, 35)) {
-        this.msg.email = ""
+        this.msg.email = "";
       } else {
-        this.msg.email = "Email phải có độ dài từ 5-35 ký tự "
+        this.msg.email = "Email phải có độ dài từ 5-35 ký tự ";
       }
     },
-  }
+  },
 };
 </script>
 
@@ -290,8 +326,16 @@ export default {
   border-radius: 5px;
 }
 
-.box-style .form-style .notification {
-  color: red;
+.box-style .notification {
+  color: rgb(173, 2, 2);
+  font-size: 14px;
+}
+
+.box-style .server-msg {
+  background-color: #f4e6cb;
+  width: 100%;
+  padding: 5px;
+  margin: 10px auto 10px auto;
 }
 
 /* Responsive

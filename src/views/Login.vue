@@ -18,11 +18,6 @@ export default {
         Navbar,
         LoginBox
     },
-    data: function() {
-        return {
-            
-        }
-    }
 }
 </script>
 

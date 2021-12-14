@@ -6,42 +6,42 @@
         <div class="sidebar-header">
         </div>
         <li>
-          <SidebarUserInfo username="Hà Nội" userid="01"/>
+          <SidebarUserInfo :username="user.user_name" :userid="user.user_id"/>
         </li>
         <li>
           <SidebarButton 
           address="/admin" icon="user-lock" text="Quản lý" 
-          v-if="role > 0 && role < 5">
+          v-if="user.role > 0 && user.role < 5">
           </SidebarButton>
         </li>
         <li>
           <SidebarButton 
           address="/progress" icon="tasks" text="Tiến độ"
-          v-if="role > 0 && role < 5"
+          v-if="user.role > 0 && user.role < 5"
           ></SidebarButton>
         </li>
         <li>
           <SidebarButton 
           address="/view" icon="list-alt" text="Danh sách"
-          v-if="role > 0 && role < 5"
+          v-if="user.role > 0 && user.role < 5"
           ></SidebarButton>
         </li>
         <li>
           <SidebarButton 
           address="/analytics" icon="chart-bar" text="Phân tích"
-          v-if="role > 0 && role < 5"
+          v-if="user.role > 0 && user.role < 5"
           ></SidebarButton>
         </li>
         <li>
           <SidebarButton 
           address="/search" icon="search" text="Tra cứu"
-          v-if="role > 0 && role < 5"
+          v-if="user.role > 0 && user.role < 5"
           ></SidebarButton>
         </li>
         <li>
           <SidebarButton 
           address="/form" icon="file-alt" text="Nhập liệu"
-          v-if="role == 4 || role == 5"
+          v-if="user.role == 4 || user.role == 5"
           ></SidebarButton>
         </li>
       </ul>
@@ -68,18 +68,17 @@
 
 <script>
 
+import {mapGetters} from "vuex"
+
 import SidebarButton from "./sidebarbuttons/SidebarButton.vue"
 import SidebarUserInfo from "./sidebarbuttons/UserInfo.vue"
 
 export default {
   name: "Sidebar",
+  
   components: {
     SidebarButton,
     SidebarUserInfo
-  },
-
-  props: {
-    role:Number
   },
 
   data: function () {
@@ -87,6 +86,12 @@ export default {
       isClosed: true,
       isToggled: false,
     };
+  },
+
+  computed: {
+    ...mapGetters({
+      user:"getUser"
+    })
   },
 
   methods: {
