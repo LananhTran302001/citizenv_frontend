@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
 import Login from '../components/LoginBox.vue';
+import ChangePassword from '../views/ChangePassword.vue'
 import Contact from '../views/Contact.vue';
 import ManageAccount from "../views/ManageAccount.vue";
 import ManageCencus from "../views/ManageCencus.vue";
@@ -19,6 +20,11 @@ const routes = [
         path:'/login', 
         name:'login', 
         component:Login
+    },
+    {
+        path:'/changepass', 
+        name:'changepass', 
+        component:ChangePassword
     },
     {
         path: '/',

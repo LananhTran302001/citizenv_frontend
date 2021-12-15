@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header><Navbar/></header>
-    <div class="flex-row d-flex">
+    <div class="flex-row d-flex container-style">
       <Sidebar />
       <div class="content-style">
         <router-view />
@@ -33,8 +33,13 @@ export default {
   z-index: 0;
 }
 
-.content-style {
-  padding-left: 100px;
+.container-style {
   height: 100%;
+  width: 100%;
+}
+
+.content-style {
+  height: 100%;
+  width: 100%;
 }
 </style>

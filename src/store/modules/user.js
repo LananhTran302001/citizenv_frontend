@@ -1,4 +1,4 @@
-//import axios from "axios";
+import axios from "axios";
 import router from "../../routes"
 
 const User = {
@@ -70,34 +70,35 @@ const User = {
     actions: {
         login({ commit }, loginData) {
             commit('setLoginData', loginData)
-            // thông tin lấy từ backend
-            const user = {
-                user_id: loginData.user_id,
-                user_name: "Lan Anh",
-                role: 2,
-                email: "lananh@gmail.com",
-                start_time: 0,
-                expired_time: 10,
-            }
-            commit('setUser', user)
-            router.push('/')
+            //thông tin lấy từ backend
             // const user = {
-            //     id: loginData.user_id,
-            //     password: loginData.password
+            //     user_id: loginData.user_id,
+            //     user_name: "Lan Anh",
+            //     role: 2,
+            //     email: "lananh@gmail.com",
+            //     start_time: 0,
+            //     expired_time: 10,
             // }
-            // console.log(user)
+            // commit('setUser', user)
+            // router.push('/')
 
-            // axios
-            //     .post("/login", user)
-            //     .then((res) => {
-            //         if (res.status == 200) {
-            //             console.log('success')
-            //             this.$router.push('/home')
-            //         }
-            //         console.log(res.status)
-            //     }).catch((err) => {
-            //         console.log(err.response)
-            //     })
+            const user = {
+                id: loginData.user_id,
+                password: loginData.password
+            }
+            console.log(user)
+
+            axios
+                .post("/login", user)
+                .then((res) => {
+                    if (res.status == 200) {
+                        console.log('success')
+                        router.push('/')
+                    }
+                    console.log(res.status)
+                }).catch((err) => {
+                    console.log(err.response)
+                })
         },
 
         sendEmail({ commit }, forgotPwData) {

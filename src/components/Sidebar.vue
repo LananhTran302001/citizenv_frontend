@@ -117,6 +117,7 @@ export default {
   -o-transition: all 0.5s ease;
   transition: all 0.5s ease;
   height: 100%;
+  margin-right: 55px;
 }
 
 #sidebar-wrapper.toggled {
