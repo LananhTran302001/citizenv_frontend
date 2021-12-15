@@ -1,5 +1,5 @@
 import axios from "axios";
-import router from "../../routes"
+//import router from "../../routes"
 
 const User = {
     state: () => ({
@@ -88,12 +88,23 @@ const User = {
             }
             console.log(user)
 
+            // axios
+            //     .post("/login", user)
+            //     .then((res) => {
+            //         if (res.status == 200) {
+            //             console.log('success')
+            //             router.push('/')
+            //         }
+            //         console.log(res.status)
+            //     }).catch((err) => {
+            //         console.log(err.response)
+            //     })
+
             axios
-                .post("/login", user)
+                .get("https://jsonplaceholder.typicode.com/users")
                 .then((res) => {
                     if (res.status == 200) {
                         console.log('success')
-                        router.push('/')
                     }
                     console.log(res.status)
                 }).catch((err) => {
