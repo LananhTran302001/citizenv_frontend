@@ -16,6 +16,10 @@ export default new Vuex.Store ({
         setToken(state, payload) {
             state.token = payload
             localStorage.token = payload
+        },
+        resetToken(state) {
+            state.token = ""
+            localStorage.token = ""
         }
     },
     modules: {

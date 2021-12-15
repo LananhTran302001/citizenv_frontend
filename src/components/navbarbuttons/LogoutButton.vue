@@ -1,14 +1,20 @@
 <template>
-    <router-link to="/logout"
+    <div
 		class="flex items-center justify-center relative button-style"
+        @click="logout"
 	>
 		<span>Đăng xuất</span>
-	</router-link>
+	</div>
 </template>
 
 <script>
+import { mapActions } from "vuex"
+
 export default {
-    name: "LogoutButton"
+    name: "LogoutButton",
+    methods: {
+        ...mapActions(["logout"])
+    }
 }
 </script>
 

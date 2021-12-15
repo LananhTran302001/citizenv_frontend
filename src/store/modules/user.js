@@ -1,5 +1,7 @@
 import axios from "axios";
-//import router from "../../routes"
+import router from "../../routes"
+import VueJwtDecode from 'vue-jwt-decode'
+
 
 const User = {
     state: () => ({
@@ -9,12 +11,12 @@ const User = {
             user_email: null,
             role: null,
             start_time: null,
-            expired_time: null
+            expired_time: null,
+            is_locked: null,
         },
         loginData: {
             user_id: "",
             password: "",
-
         },
         forgotPasswordData: {
             user_id: "",
@@ -25,13 +27,14 @@ const User = {
             new_password: "",
             confirm_password: ""
         },
-
+        serverMsg: ""
     }),
     getters: {
         getUser: (state) => state.user,
         getLoginData: (state) => state.loginData,
         getForgotPwData: (state) => state.forgotPasswordData,
         getChangePwData: (state) => state.changePasswordData,
+        getServerMsg: (state) => state.serverMsg
     },
 
     mutations: {
@@ -45,6 +48,23 @@ const User = {
         },
         setForgotPwData(state, payload) {
             state.forgotPasswordData = payload
+        },
+        setChangePwData(state, payload) {
+            state.changePasswordData = payload
+        },
+        setServerMsg(state, payload) {
+            state.serverMsg = payload
+        },
+        resetUser(state) {
+            state.user = {
+                user_name: null,
+                user_id: null,
+                user_email: null,
+                role: null,
+                start_time: null,
+                expired_time: null,
+                is_locked: null,
+            }
         },
         resetLoginData(state) {
             state.loginData = {
@@ -70,51 +90,111 @@ const User = {
     actions: {
         login({ commit }, loginData) {
             commit('setLoginData', loginData)
-            //thông tin lấy từ backend
-            // const user = {
-            //     user_id: loginData.user_id,
-            //     user_name: "Lan Anh",
-            //     role: 2,
-            //     email: "lananh@gmail.com",
-            //     start_time: 0,
-            //     expired_time: 10,
-            // }
-            // commit('setUser', user)
-            // router.push('/')
 
-            const user = {
+            const login_data = {
                 id: loginData.user_id,
                 password: loginData.password
             }
-            console.log(user)
-
-            // axios
-            //     .post("/login", user)
-            //     .then((res) => {
-            //         if (res.status == 200) {
-            //             console.log('success')
-            //             router.push('/')
-            //         }
-            //         console.log(res.status)
-            //     }).catch((err) => {
-            //         console.log(err.response)
-            //     })
 
             axios
-                .get("https://jsonplaceholder.typicode.com/users")
+                .post("login", login_data)
                 .then((res) => {
                     if (res.status == 200) {
-                        console.log('success')
+                        commit('setToken', res.data.access_token)
+                        const token = VueJwtDecode.decode(res.data.access_token)
+                        console.log(token)
+                        const user = {
+                            user_name: "token.name",
+                            user_id: token.sub,
+                            user_email: null,
+                            role: token.role,
+                            start_time: null,
+                            expired_time: null,
+                            is_locked: token.isLocked
+                        }
+                        commit('setUser', user)
+                        console.log(user)
+                        router.push('/')
                     }
-                    console.log(res.status)
-                }).catch((err) => {
-                    console.log(err.response)
+
                 })
+
+                .catch(err => {
+                    //     // commit('setServerLoginMsg', err.response.data.message)
+                    //     // console.log("day la dataa:")
+                    //     // console.log(err.response.data.message)
+                    console.log(err)
+                })
+
+
         },
 
         sendEmail({ commit }, forgotPwData) {
             commit('setForgotPwData', forgotPwData)
-            console.log("send email...")
+            const forgot_pw_data = {
+                id: forgotPwData.user_id,
+                email: "lananh30thang07@gmail.com"
+            }
+            axios
+                .post("repass", forgot_pw_data)
+                .then((res) => {
+                    if (res.status == 200) {
+                        console.log(res.data)
+                        router.push('/')
+                    }
+                }).catch(err => {
+                    console.log("Day la loi")
+                    console.log(err.response)
+                })
+
+        },
+
+        changePassword({ commit }, changePwData) {
+            commit('setChangePwData', changePwData)
+            const change_pw_data = {
+                password: changePwData.old,
+                newpassword: changePwData.new,
+            }
+            const headers = {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.token}`
+            }
+            axios
+                .post("changepass", change_pw_data, { headers: headers })
+                .then((res) => {
+                    if (res.status == 200) {
+                        console.log(res.data)
+                    }
+                    console.log("-------------------")
+                    console.log(res.data.message)
+                }).catch(err => {
+                    console.log("Day la loi")
+                    console.log(err)
+                    console.log("-------------------")
+                    console.log(err.response)
+                })
+
+        },
+
+        logout({ commit }) {
+            const headers = {
+                Authorization: `Bearer ${localStorage.token}`
+            }
+            axios
+                .post("logout", null, { headers: headers })
+                .then((res) => {
+                    if (res.status == 200) {
+                        console.log(res.data)
+                    }
+                    router.push('/login')
+                    commit("resetToken")
+                    commit("resetUser")
+
+                }).catch(err => {
+                    console.log("Day la loi")
+                    console.log("-------------------")
+                    console.log(err.response)
+                })
         }
     }
 }

@@ -9,8 +9,8 @@
         class="flex-column d-flex justify-content-centerr align-items-center box-style"
       >
         <!-- Hiện thông báo từ server -->
-        <span class="notification server-msg" v-if="msg.loginSubmit">
-          {{ msg.loginSubmit }}
+        <span class="notification server-msg" v-if="server_msg.login_msg">
+          {{ server_msg.login_msg }}
         </span>
         <img
           src="../assets/img/general_user.jpg"
@@ -83,8 +83,8 @@
         class="flex-column d-flex justify-content-center align-items-center box-style"
       >
         <!-- Hiện thông báo từ server -->
-        <span class="notification server-msg" v-if="msg.forgotPwSubmit">
-          {{ msg.forgotPwSubmit }}
+        <span class="notification server-msg" v-if="server_msg.forgotPw_msg">
+          {{ server_msg.forgotPw_msg }}
         </span>
         <img src="../assets/img/mail.jpg" alt="user image" class="icon" />
         <!-- User id -->
@@ -135,7 +135,7 @@
 </template>
 
 <script>
-import { mapMutations, mapActions } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
   name: "LoginBox",
@@ -160,10 +160,14 @@ export default {
         password: null,
         forgotPwId: null,
         email: null,
-        loginSubmit: null,
-        forgotPwSubmit: null,
       },
     };
+  },
+
+  computed: {
+    ...mapGetters({
+      server_msg: "getServerMsg"
+    })
   },
 
   methods: {
@@ -231,17 +235,19 @@ export default {
     // có ít nhất 1 số và 1 chữ
     password: function (val) {
       this.password = val;
-      if (/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,25}$/.test(this.password)) {
-        this.msg.password = "";
-      } else {
-        this.msg.password =
-          "Mật khẩu phải có độ dài 8-25 ký tự, chỉ gồm chữ và số tiếng anh, có cả chữ và số";
-      }
+      this.msg.password = "";
+      // if (/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,25}$/.test(this.password)) {
+      //   this.msg.password = "";
+      // } else {
+      //   this.msg.password =
+      //     "Mật khẩu phải có độ dài 8-25 ký tự, chỉ gồm chữ và số tiếng anh, có cả chữ và số";
+      // }
     },
 
     // Kiểm tra mã đăng nhập
     // length: từ 2 đến 8 và là số chẵn
     // chỉ gồm các số
+
     forgotPwId: function (val) {
       this.forgotPwId = val;
       if (

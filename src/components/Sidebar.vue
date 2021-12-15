@@ -28,7 +28,7 @@
         </li>
         <li>
           <SidebarButton 
-          address="/analytics" icon="chart-bar" text="Phân tích"
+          address="/changepass" icon="chart-bar" text="Phân tích"
           v-if="user.role > 0 && user.role < 5"
           ></SidebarButton>
         </li>

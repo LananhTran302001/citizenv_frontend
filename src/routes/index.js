@@ -7,7 +7,7 @@ import Contact from '../views/Contact.vue';
 import ManageAccount from "../views/ManageAccount.vue";
 import ManageCencus from "../views/ManageCencus.vue";
 import Progress from "../views/Progress.vue";
-import Analytics from "../views/Analytics.vue";
+//import Analytics from "../views/Analytics.vue";
 import CencusForm from "../views/CencusForm.vue";
 
 import CencusTable from "../components/table/CencusTable.vue";
@@ -52,9 +52,10 @@ const routes = [
         component:Progress
     },
     {
-        path:'/analytics',
+        // Dùng tạm
+        path:'/changepass',
         name:'analytics',
-        component:Analytics
+        component:ChangePassword
     },
     {
         path:'/form',
