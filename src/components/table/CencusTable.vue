@@ -45,7 +45,7 @@
         />
       </b-col>
     </b-row>
-    <!-- Filter -->
+    <!-- Selection -->
     <b-row>
       <b-col xs="12" sm="12" md="6" lg="3" class="my-1">
         <!-- Chọn tỉnh thành: A1: role = 1 -->

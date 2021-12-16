@@ -1,34 +1,78 @@
 <template>
   <b-container fluid>
+    
+    <!-- User interface control -->
+    <b-row class="my-2">
+      
+      <!-- Search bar -->
+      <b-col xs="10" sm="10" md="6" lg="6">
+        <b-form-group
+          label="Tìm kiếm"
+          label-for="search-input"
+          label-cols-xs="12"
+          label-cols-sm="4"
+          label-cols-md="3"
+          label-cols-lg="2"
+          label-align-sm="right"
+          label-size="sm"
+          class="mb-0"
+        >
+          <b-input-group size="sm">
+            <!-- Input -->
+            <b-form-input
+              id="search-input"
+              type="search"
+              placeholder="Nhập để tìm kiếm"
+            >
+            </b-form-input>
+            <!-- Nút Clear -->
+            <b-input-group-append>
+              <b-button>Clear</b-button>
+            </b-input-group-append>
+          </b-input-group>
+        </b-form-group>
+      </b-col>
+
+      <!-- Rows per page -->
+      <b-col xs="10" sm="10" md="6" lg="6" class="my-1">
+        <DropdownButton
+          title="Số dòng/trang"
+          :xs="12"
+          :sm="4"
+          :md="5"
+          :lg="3"
+          :options="rowsPerPageOptions"
+          v-model="rowsPerPage"
+        />
+      </b-col>
+    </b-row>
+
+
     <!-- Main table element -->
     <b-table
       :items="items"
       :fields="fields"
       :current-page="currentPage"
       :per-page="perPage"
-      :filter="filter"
-      :filter-included-fields="filterOn"
-      :sort-by.sync="sortBy"
-      :sort-desc.sync="sortDesc"
-      :sort-direction="sortDirection"
-      stacked="md"
-      sticky-header
-      show-empty
-      small
-      @filtered="onFiltered"
+      sort-icon-left
     >
-      <template #cell(progress) ="row">
-        <b-form-checkbox v-model="row.progress"/>
+      <template #cell(progress)="row">
+        <b-form-checkbox v-model="row.progress" />
       </template>
 
-      <template #row-details="row">
-        <b-card>
-          <ul>
-            <li v-for="(value, key) in row.item" :key="key">
-              {{ key }}: {{ value }}
-            </li>
-          </ul>
-        </b-card>
+      <template #cell(authorization)="data">
+        <b-button size="xs" class="mr-2 sm-button-style delete-button-style">
+          <font-awesome-icon icon="trash" size="sm" @click="deleteRow(data.area_id)"/>
+          Xóa
+        </b-button>
+        <b-button size="xs" class="mr-2 sm-button-style edit-button-style">
+          <font-awesome-icon icon="edit" size="sm" @click="editRow(data.area_id)"/>
+          Sửa
+        </b-button>
+        <b-button size="xs" class="mr-2 sm-button-style detail-button-style">
+          <font-awesome-icon icon="eye" size="sm" @click="detailsRow(data.area_id)"/>
+          Chi tiết
+        </b-button>
       </template>
     </b-table>
 
@@ -41,41 +85,40 @@
     >
       <pre>{{ infoModal.content }}</pre>
     </b-modal>
-    <SelectColumns />
   </b-container>
 </template>
 
+
+
+
+
 <script>
-import SelectColumns from "./buttons/SelectColumns.vue";
+
+import DropdownButton from "./buttons/DropdownButton.vue";
 
 export default {
-  components: { SelectColumns },
+  name: "AreaTable",
+  components: {DropdownButton},
   data() {
     return {
+      //Do backend trả về, có thể thay đổi các trường
       items: [
-        { area_id: "01", area_name: "abc", progress: true, selected: true 
-        },
-        { area_id: "01", area_name: "abc", progress: true },
-        { area_id: "01", area_name: "abc", progress: true },
-        { area_id: "01", area_name: "abc", progress: true },
-        { area_id: "01", area_name: "abc", progress: true },
-        { area_id: "01", area_name: "abc", progress: true },
+        { area_id: "01", area_name: "Quảng Ninh", progress: true },
+        { area_id: "02", area_name: "Cà Mau", progress: true },
+        { area_id: "03", area_name: "Đồng Tháp", progress: true },
       ],
       fields: [
         { key: "area_id", label: "Mã vùng", sortable: true },
         { key: "area_name", label: "Tên vùng", sortable: true },
-        { key: "progress", label: "Tiến độ", sortable: false },
+        { key: "progress", label: "Tiến độ", sortable: false},
+        { key: "authorization", label: "Chỉnh sửa"}
       ],
-      totalRows: 1,
-      currentPage: 1,
-      perPage: 5,
-      pageOptions: [5, 10, 15, { value: 100, text: "Show a lot" }],
-      sortBy: "",
-      sortDesc: false,
-      sortDirection: "asc",
-      selected: true,
-      filter: null,
-      filterOn: [],
+
+      totalRows: 1, // Tổng số dòng
+      currentPage: 1, // Trang bảng hiện tại
+      perPage: 100, // Số dòng hiện trong mỗi trang bảng
+      rowsPerPageOptions: [5, 10, 50], // Các options cho số dòng hiện / trang bảng
+      rowsPerPage: 10, // Số dòng/trang đang chọn
       infoModal: {
         id: "info-modal",
         title: "",
@@ -94,7 +137,7 @@ export default {
     },
   },
   mounted() {
-    // Set the initial number of items
+    // Hiện tổng số dòng tất cả sau khi load bảng
     this.totalRows = this.items.length;
   },
   methods: {
@@ -115,3 +158,18 @@ export default {
   },
 };
 </script>
+
+
+<style scoped>
+.sm-button-style {
+  padding: 5px;
+  color: rgba(1, 5, 58, 0.836);
+  background-color: transparent;
+  border: none;
+  font-size: 16px;
+}
+
+.sm-button-style:hover {
+  color: #32b890;
+}
+</style>

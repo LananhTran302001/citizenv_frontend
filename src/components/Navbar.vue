@@ -26,12 +26,12 @@
       />
       <ToLoginButton v-if="!user.user_id && !user.user_name" />
       <b-dropdown
-        id="account-menu"
+        right
         text="Menu"
         v-if="user.user_id && user.user_name"
       >
-        <b-dropdown-item><LogoutButton /></b-dropdown-item>
         <b-dropdown-item><ToChangePassButton /></b-dropdown-item>
+        <b-dropdown-item><LogoutButton /></b-dropdown-item>
       </b-dropdown>
     </div>
   </nav>
