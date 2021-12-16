@@ -1,186 +1,238 @@
 <template>
-  <b-container fluid>
-    <!-- User Interface controls -->
+  <b-container fluid class="container-style">
+    <!-- User interface control -->
     <b-row>
-      <b-col lg="6" class="my-1">
+      <!-- Search bar -->
+      <b-col xs="10" sm="10" md="6" lg="6" class="my-1">
         <b-form-group
-          label="Filter"
-          label-for="filter-input"
-          label-cols-sm="3"
+          label="Tìm kiếm"
+          label-for="search-input"
+          label-cols-xs="12"
+          label-cols-sm="4"
+          label-cols-md="3"
+          label-cols-lg="2"
           label-align-sm="right"
           label-size="sm"
           class="mb-0"
         >
           <b-input-group size="sm">
+            <!-- Chỗ nhập input -->
             <b-form-input
-              id="filter-input"
-              v-model="filter"
+              id="search-input"
+              v-model="search"
               type="search"
-              placeholder="Type to Search"
-            ></b-form-input>
-
+              placeholder="Nhập để tìm kiếm"
+            >
+            </b-form-input>
+            <!-- Nút Clear -->
             <b-input-group-append>
-              <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
+              <b-button>Clear</b-button>
             </b-input-group-append>
           </b-input-group>
         </b-form-group>
       </b-col>
 
-      <b-col lg="6" class="my-1">
-        <b-form-group
-          label="Per page"
-          label-for="per-page-select"
-          label-cols-sm="6"
-          label-cols-md="4"
-          label-cols-lg="3"
-          label-align-sm="right"
-          label-size="sm"
-          class="mb-0"
-        >
-          <b-form-select
-            id="per-page-select"
-            v-model="perPage"
-            :options="pageOptions"
-            size="sm"
-          ></b-form-select>
-        </b-form-group>
-      </b-col>
-
-      <b-col sm="7" md="6" class="my-1">
-        <b-pagination
-          v-model="currentPage"
-          :total-rows="totalRows"
-          :per-page="perPage"
-          align="fill"
-          size="sm"
-          class="my-0"
-        ></b-pagination>
+      <!-- Rows per page -->
+      <b-col xs="10" sm="10" md="6" lg="6" class="my-1">
+        <DropdownButton
+          title="Số dòng/trang"
+          :xs="12"
+          :sm="4"
+          :md="5"
+          :lg="3"
+          :options="rowsPerPageOptions"
+          v-model="rowsPerPage"
+        />
       </b-col>
     </b-row>
+    <!-- Filter -->
+    <b-row>
+      <b-col xs="12" sm="12" md="6" lg="3" class="my-1">
+        <!-- Chọn tỉnh thành: A1: role = 1 -->
+        <DropdownButton
+          title="Tỉnh/thành"
+          :xs="12"
+          :sm="4"
+          :md="5"
+          :lg="4"
+          :options="cities"
+          v-if="role == 1"
+        />
+      </b-col>
 
-    <!-- Main table element -->
+      <b-col xs="12" sm="12" md="6" lg="3" class="my-1">
+        <!-- Chọn quận/huyện/thị xã: A1, A2: role = 1,2 -->
+        <DropdownButton
+          title="Quận/huyện/thị xã"
+          :xs="12"
+          :sm="4"
+          :md="5"
+          :lg="5"
+          :options="districts"
+          v-if="role > 0 && role < 3"
+        />
+      </b-col>
+      <b-col xs="12" sm="12" md="6" lg="3" class="my-1">
+        <!-- Chọn xã/phường/thị trấn: A1, A2, A3: role = 1,2,3 -->
+        <DropdownButton
+          title="Xã/phường/thị trấn"
+          :xs="12"
+          :sm="4"
+          :md="5"
+          :lg="6"
+          :options="wards"
+          v-if="role > 0 && role < 4"
+      /></b-col>
+      <b-col xs="12" sm="12" md="6" lg="3" class="my-1">
+        <!-- Chọn thôn/xóm/bản/tổ dân phố: A1, A2, A3, B1=A4: role = 1,2,3,4 -->
+        <DropdownButton
+          title="Thôn/bản/tổ dân phố"
+          :xs="12"
+          :sm="4"
+          :md="5"
+          :lg="6"
+          :options="residentalGroups"
+          v-if="role > 0 && role < 5"
+        />
+      </b-col>
+    </b-row>
+    <!-- Main table -->
     <b-table
       :items="items"
       :fields="fields"
       :current-page="currentPage"
-      :per-page="perPage"
-      :filter="filter"
-      :filter-included-fields="filterOn"
+      :per-page="rowsPerPage"
+      sort-icon-left
       :sort-by.sync="sortBy"
-      :sort-desc.sync="sortDesc"
-      :sort-direction="sortDirection"
-      stacked="md"
-      show-empty
-      small
-      @filtered="onFiltered"
+      responsive="sm"
+      class="my-2 table-style"
     >
-      <template #cell(name)="row">
-        {{ row.value.first }} {{ row.value.last }}
-      </template>
-
-      <template #cell(actions)="row">
-        <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="mr-1">
-          Info modal
+      <template #cell(actions)="data">
+        <b-button size="xs" class="mr-0">
+          <font-awesome-icon icon="trash" size="sm" @click="deleteRow(data.name)"/>
         </b-button>
-        <b-button size="sm" @click="row.toggleDetails">
-          {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
+        <b-button size="xs" class="mr-0">
+          <font-awesome-icon icon="edit" size="sm" @click="editRow(data.name)"/>
         </b-button>
-      </template>
-
-      <template #row-details="row">
-        <b-card>
-          <ul>
-            <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
-          </ul>
-        </b-card>
+        <b-button size="xs" class="mr-0">
+          <font-awesome-icon icon="eye" size="sm" @click="detailsRow(data.name)"/>
+        </b-button>
       </template>
     </b-table>
-
-    <!-- Info modal -->
-    <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
-      <pre>{{ infoModal.content }}</pre>
-    </b-modal>
+    <!-- Select columns -->
+    <SelectColumns :fields="fields" />
   </b-container>
 </template>
 
-
-
 <script>
-  export default {
-    data() {
-      return {
-        items: [
-          { isActive: true, age: 40, name: { first: 'Dickerson', last: 'Macdonald' } },
-          { isActive: false, age: 21, name: { first: 'Larsen', last: 'Shaw' } },
-          { isActive: false, age: 89, name: { first: 'Geneva', last: 'Wilson' } },
-          { isActive: true, age: 38, name: { first: 'Jami', last: 'Carney' } },
-          { isActive: false, age: 27, name: { first: 'Essie', last: 'Dunlap' } },
-          { isActive: true, age: 40, name: { first: 'Thor', last: 'Macdonald' } },
-          { isActive: false, age: 26, name: { first: 'Mitzi', last: 'Navarro' } },
-          { isActive: false, age: 22, name: { first: 'Genevieve', last: 'Wilson' } },
-          { isActive: true, age: 38, name: { first: 'John', last: 'Carney' } },
-          { isActive: false, age: 29, name: { first: 'Dick', last: 'Dunlap' } }
-        ],
-        fields: [
-          { key: 'name', label: 'Person full name', sortable: true, sortDirection: 'desc' },
-          { key: 'age', label: 'Person age', sortable: true, class: 'text-center' },
-          {
-            key: 'isActive',
-            label: 'Is Active',
-            formatter: (value) => {
-              return value ? 'Yes' : 'No'
-            },
-            sortable: true,
-            sortByFormatted: true,
-            filterByFormatted: true
-          },
-          { key: 'actions', label: 'Actions' }
-        ],
-        totalRows: 1,
-        currentPage: 1,
-        perPage: 5,
-        pageOptions: [5, 10, 15, { value: 100, text: "Show a lot" }],
-        sortBy: '',
-        sortDesc: false,
-        sortDirection: 'asc',
-        filter: null,
-        filterOn: [],
-        infoModal: {
-          id: 'info-modal',
-          title: '',
-          content: ''
-        }
-      }
-    },
-    computed: {
-      sortOptions() {
-        // Create an options list from our fields
-        return this.fields
-          .filter(f => f.sortable)
-          .map(f => {
-            return { text: f.label, value: f.key }
-          })
-      }
-    },
-    mounted() {
-      // Set the initial number of items
-      this.totalRows = this.items.length
-    },
-    methods: {
-      info(item, index, button) {
-        this.infoModal.title = `Row index: ${index}`
-        this.infoModal.content = JSON.stringify(item, null, 2)
-        this.$root.$emit('bv::show::modal', this.infoModal.id, button)
-      },
-      resetInfoModal() {
-        this.infoModal.title = ''
-        this.infoModal.content = ''
-      },
-      onFiltered(filteredItems) {
-        // Trigger pagination to update the number of buttons/pages due to filtering
-        this.totalRows = filteredItems.length
-        this.currentPage = 1
-      }
-    }
+import DropdownButton from "./buttons/DropdownButton.vue";
+import SelectColumns from "./buttons/SelectColumns.vue";
+export default {
+  name: "MyTable",
+  components: {
+    DropdownButton,
+    SelectColumns,
+  },
+  //props: ["items","fields", "role"],
+  data: function () {
+    return {
+      // CURRENT OPTION:
+      // currentPage: Trang hiện tại
+      currentPage: 1,
+      // rowsPerPage: Số dòng hiện trong 1 trang
+      rowsPerPage: 30,
+      // TEMP
+      search: null,
+      role: 1,
+      sortBy: "name",
+      // OPTIONS:
+      // rowsPerPageOptions: các option cho số dòng / trang
+      rowsPerPageOptions: [30, 50, 100],
+      // Các tỉnh/thành phố cho phép chọn: chỉ được xem trong option này
+      cities: ["Ha Noi", "Ha Giang", "Can Tho"],
+      // Các quận/huyện/thị xã cho phép chọn: chỉ được xem trong option này
+      districts: ["Quận 1", "Quận 2", "Quận 3"],
+      // Các xã/phường/thị trấn cho phép chọn: chỉ được xem trong option này
+      wards: ["Xã 1", "Xã 12", "Xã 15"],
+      // Các thôn/xóm/tổ dân phố cho phép chọn: chỉ được xem trong option này
+      residentalGroups: ["Thôn 1", "Thôn 2", "Thôn 3"],
+      // DATA:
+      items: [
+        {
+          name: "Nguyen Van A",
+          birthday: "10/10/1999",
+          blood_type: "O",
+          gender: "Nam",
+          religion: "Không có",
+          residental_id: "012322456789",
+          city: "TP.HCM",
+          district: "Huyện Cần Giờ",
+          ward: "Xã Trung An",
+          residental_group: "thôn 1",
+        },
+        {
+          name: "Bui Thi C",
+          birthday: "01/09/1990",
+          blood_type: "A",
+          gender: "Nữ",
+          religion: "Phật giáo",
+          residental_id: "732048204932",
+          city: "Quảng Ninh",
+          district: "Thành phố Uông Bí",
+          ward: "Phường Nam Khê",
+          residental_group: "thôn 5",
+        },
+        {
+          name: "Pham Van D",
+          birthday: "21/03/1989",
+          blood_type: "B",
+          gender: "Nam",
+          religion: "Tin Lành",
+          residental_id: "091238902334",
+          city: "Hà Giang",
+          district: "Huyện Bắc Mê",
+          ward: "Xã Lạc Nông",
+          residental_group: "thôn 10",
+        },
+      ],
+      fields: [
+        { key: "name", label: "Họ tên", sortable: true },
+        { key: "birthday", label: "Ngày sinh", sortable: true },
+        { key: "blood_type", label: "Nhóm máu", sortable: true },
+        { key: "gender", label: "Giới tính", sortable: true },
+        { key: "religion", label: "Tôn giáo", sortable: true },
+        { key: "residental_id", label: "CCCD", sortable: true },
+        { key: "city", label: "Tỉnh/thành", sortable: true },
+        {
+          key: "district",
+          label: "Quận/huyện/thị xã/tp thuộc tỉnh",
+          sortable: true,
+        },
+        { key: "ward", label: "Xã/phường/thị trấn", sortable: true },
+        {
+          key: "residental_group",
+          label: "Thôn/bản/tổ dân phố",
+          sortable: true,
+        },
+        {key: "actions", label: "Chỉnh sửa"}
+      ],
+    };
+  },
+
+  methods: {
+    deleteRow(val) {console.log(val)},
+    editRow(val) {console.log(val)},
+    detailsRow(val) {console.log(val)},
   }
+};
 </script>
+
+<style scoped>
+.container-style {
+  padding: 15px;
+}
+.table-style {
+  background-color: white;
+  font-size: 13px;
+}
+</style>

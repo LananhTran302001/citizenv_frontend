@@ -1,47 +1,59 @@
 <template>
-  <div id="sidebar-wrapper" v-bind:class="{ 'toggled': isToggled }" v-if="user.user_name && user.user_id">
+  <div
+    id="sidebar-wrapper"
+    v-bind:class="{ toggled: isToggled }"
+    v-if="user.user_name && user.user_id"
+  >
     <!-- Sidebar -->
     <nav class="navbar navbar-inverse" id="sidebar" role="navigation">
       <ul class="nav sidebar-nav">
-        <div class="sidebar-header">
-        </div>
+        <div class="sidebar-header"></div>
         <li>
-          <SidebarUserInfo :username="user.user_name" :userid="user.user_id"/>
+          <SidebarUserInfo :username="user.user_name" :userid="user.user_id" />
         </li>
         <li>
-          <SidebarButton 
-          address="/admin" icon="user-lock" text="Quản lý" 
-          v-if="user.role > 0 && user.role < 5">
-          </SidebarButton>
+          <SidebarMenuButton
+          :options="adminOptions"
+          ></SidebarMenuButton>
         </li>
         <li>
-          <SidebarButton 
-          address="/progress" icon="tasks" text="Tiến độ"
-          v-if="user.role > 0 && user.role < 5"
+          <SidebarButton
+            address="/progress"
+            icon="tasks"
+            text="Tiến độ"
+            v-if="user.role > 0 && user.role < 5"
           ></SidebarButton>
         </li>
         <li>
-          <SidebarButton 
-          address="/view" icon="list-alt" text="Danh sách"
-          v-if="user.role > 0 && user.role < 5"
+          <SidebarButton
+            address="/view"
+            icon="list-alt"
+            text="Danh sách"
+            v-if="user.role > 0 && user.role < 5"
           ></SidebarButton>
         </li>
         <li>
-          <SidebarButton 
-          address="/changepass" icon="chart-bar" text="Phân tích"
-          v-if="user.role > 0 && user.role < 5"
+          <SidebarButton
+            address="/changepass"
+            icon="chart-bar"
+            text="Phân tích"
+            v-if="user.role > 0 && user.role < 5"
           ></SidebarButton>
         </li>
         <li>
-          <SidebarButton 
-          address="/search" icon="search" text="Tra cứu"
-          v-if="user.role > 0 && user.role < 5"
+          <SidebarButton
+            address="/search"
+            icon="search"
+            text="Tra cứu"
+            v-if="user.role > 0 && user.role < 5"
           ></SidebarButton>
         </li>
         <li>
-          <SidebarButton 
-          address="/form" icon="file-alt" text="Nhập liệu"
-          v-if="user.role == 4 || user.role == 5"
+          <SidebarButton
+            address="/form"
+            icon="file-alt"
+            text="Nhập liệu"
+            v-if="user.role == 4 || user.role == 5"
           ></SidebarButton>
         </li>
       </ul>
@@ -65,24 +77,39 @@
   </div>
 </template>
 
-
 <script>
+import { mapGetters } from "vuex";
 
-import {mapGetters} from "vuex"
-
-import SidebarButton from "./sidebarbuttons/SidebarButton.vue"
-import SidebarUserInfo from "./sidebarbuttons/UserInfo.vue"
+import SidebarButton from "./sidebarbuttons/SidebarButton.vue";
+import SidebarMenuButton from "./sidebarbuttons/SidebarMenuButton.vue";
+import SidebarUserInfo from "./sidebarbuttons/UserInfo.vue";
 
 export default {
   name: "Sidebar",
-  
+
   components: {
     SidebarButton,
-    SidebarUserInfo
+    SidebarUserInfo,
+    SidebarMenuButton
   },
 
   data: function () {
     return {
+      adminOptions: {
+        icon: "user-lock",
+        text: "Quản lý",
+        options: [
+          {
+            address: "admin_area",
+            text: "Cấp mã vùng",
+          },
+          {
+            address: "admin_account",
+            text: "Cấp tài khoản",
+          },
+        ],
+      },
+
       isClosed: true,
       isToggled: false,
     };
@@ -90,8 +117,8 @@ export default {
 
   computed: {
     ...mapGetters({
-      user:"getUser"
-    })
+      user: "getUser",
+    }),
   },
 
   methods: {
@@ -311,5 +338,4 @@ export default {
   -webkit-transform: translate3d(-100px, 0, 0);
   -webkit-transition: all 0.35s ease-in-out;
 }
-
 </style>

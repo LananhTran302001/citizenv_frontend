@@ -4,6 +4,7 @@
     <div class="flex-row d-flex container-style">
       <Sidebar />
       <div class="content-style">
+        <!-- Điều kiện v-if user -->
         <router-view />
       </div>
     </div>

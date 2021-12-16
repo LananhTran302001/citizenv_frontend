@@ -9,7 +9,7 @@
     </a>
     <ul class="nav flex-row nav-pills justify-content-around">
       <li class="nav-item">
-        <router-link to="/" v-if="user.user_id && user.user_name">Trang chủ</router-link>
+        <router-link to="/">Trang chủ</router-link>
       </li>
       <li class="nav-item">
         <router-link to="/about">Giới thiệu</router-link>
@@ -19,9 +19,20 @@
       </li>
     </ul>
     <div class="nav flex-row justify-content-around" id="user-nav">
-      <NavbarUserInfo message="Xin chào " :userid="user.user_id" v-if="user.user_id && user.user_name" />
-      <ToLoginButton v-if="!user.user_id || !user.user_name" />
-      <LogoutButton v-if="user.user_id && user.user_name" />
+      <NavbarUserInfo
+        message="Xin chào "
+        :userid="user.user_id"
+        v-if="user.user_id && user.user_name"
+      />
+      <ToLoginButton v-if="!user.user_id && !user.user_name" />
+      <b-dropdown
+        id="account-menu"
+        text="Menu"
+        v-if="user.user_id && user.user_name"
+      >
+        <b-dropdown-item><LogoutButton /></b-dropdown-item>
+        <b-dropdown-item><ToChangePassButton /></b-dropdown-item>
+      </b-dropdown>
     </div>
   </nav>
 </template>
@@ -32,6 +43,7 @@ import { mapGetters } from "vuex";
 import NavbarUserInfo from "./navbarbuttons/UserInfo.vue";
 import ToLoginButton from "./navbarbuttons/ToLoginButton.vue";
 import LogoutButton from "./navbarbuttons/LogoutButton.vue";
+import ToChangePassButton from "./navbarbuttons/ToChangePassButton.vue";
 
 export default {
   name: "Navbar",
@@ -39,6 +51,7 @@ export default {
     NavbarUserInfo,
     ToLoginButton,
     LogoutButton,
+    ToChangePassButton,
   },
   computed: {
     ...mapGetters({

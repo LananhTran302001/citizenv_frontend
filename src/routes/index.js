@@ -1,17 +1,16 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
-import Login from '../components/LoginBox.vue';
+import Login from '../views/Login.vue';
 import ChangePassword from '../views/ChangePassword.vue'
 import Contact from '../views/Contact.vue';
 import ManageAccount from "../views/ManageAccount.vue";
 import ManageCencus from "../views/ManageCencus.vue";
 import Progress from "../views/Progress.vue";
-//import Analytics from "../views/Analytics.vue";
+import Analytics from "../views/Analytics.vue";
 import CencusForm from "../views/CencusForm.vue";
 
 import CencusTable from "../components/table/CencusTable.vue";
-import EditableTable from "../components/table/EditableTable.vue";
 
 Vue.use(VueRouter);
 
@@ -37,9 +36,14 @@ const routes = [
         component:Contact
     },
     {
-        path:'/admin',
-        name:'admin',
+        path:'/admin_area',
+        name:'admin_area',
         component:ManageAccount
+    },
+    {
+        path:'/admin_cencus',
+        name:'admin_cencus',
+        component:ManageCencus
     },
     {
         path:'/view',
@@ -52,10 +56,9 @@ const routes = [
         component:Progress
     },
     {
-        // Dùng tạm
-        path:'/changepass',
+        path:'/analytics',
         name:'analytics',
-        component:ChangePassword
+        component: Analytics
     },
     {
         path:'/form',
@@ -66,10 +69,6 @@ const routes = [
         path: '/cencus_table',
         name: 'cencus table',
         component: CencusTable
-    },
-    {
-        path: '/table',
-        component: EditableTable
     },
 ];
 
