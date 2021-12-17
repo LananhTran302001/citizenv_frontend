@@ -68,6 +68,7 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
 }
 .navbar-style {
   justify-content: space-around;

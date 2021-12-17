@@ -8,8 +8,8 @@
         class="flex-column d-flex justify-content-centerr align-items-center box-style"
       >
         <!-- Hiện thông báo từ server -->
-        <span class="notification server-msg" v-if="server_msg.login_msg">
-          {{ server_msg.login_msg }}
+        <span class="notification server-msg" v-if="server_msg">
+          {{ server_msg }}
         </span>
         <img
           src="../assets/img/general_user.jpg"
@@ -82,8 +82,8 @@
         class="flex-column d-flex justify-content-center align-items-center box-style"
       >
         <!-- Hiện thông báo từ server -->
-        <span class="notification server-msg" v-if="server_msg.forgotPw_msg">
-          {{ server_msg.forgotPw_msg }}
+        <span class="notification server-msg" v-if="server_msg">
+          {{ server_msg }}
         </span>
         <img src="../assets/img/mail.jpg" alt="user image" class="icon" />
         <!-- User id -->
@@ -170,12 +170,13 @@ export default {
   },
 
   methods: {
-    ...mapMutations(["resetLoginData", "resetForgotPwData"]),
+    ...mapMutations(["resetLoginData", "resetForgotPwData", "resetServerMsg"]),
     ...mapActions(["login", "sendEmail"]),
 
     // Chuyển giữa section đăng nhập và section quên mật khẩu
     clickLink: function () {
       this.toLogin = !this.toLogin;
+      this.resetServerMsg();
     },
 
     // Xem mật khẩu
@@ -194,8 +195,8 @@ export default {
     },
 
     // Kiểm tra nếu chuỗi val chỉ gồm số
-    isOnlyNums: function (val) {
-      return /^[0-9]*$/.test(val);
+    isValidId: function (val) {
+      return /^[0-9]|(((0[1-9]|[1-9][0-9]))*)$/.test(val);
     },
 
     // Kiểm tra nếu độ dài chuỗi val trong khoảng [lower, upper]
@@ -217,11 +218,12 @@ export default {
       this.loginId = val;
       if (
         this.isEmpty(val) ||
-        !this.lengthInRange(val, 2, 8) ||
-        val.length % 2 == 1
+        !this.lengthInRange(val, 1, 8) ||
+        val.length % 2 == 1 &&
+        val.length != 1
       ) {
-        this.msg.loginId = "Id có độ dài chẵn trong khoảng 2-8 ký tự";
-      } else if (!this.isOnlyNums(val)) {
+        this.msg.loginId = "Id có độ dài chẵn trong khoảng 1-8 ký tự";
+      } else if (!this.isValidId(val)) {
         this.msg.loginId = "Id chỉ gồm các số và có 2-8 ký tự";
       } else {
         this.msg.loginId = "";
@@ -251,11 +253,12 @@ export default {
       this.forgotPwId = val;
       if (
         this.isEmpty(val) ||
-        !this.lengthInRange(val, 2, 8) ||
-        val.length % 2 == 1
+        !this.lengthInRange(val, 1, 8) ||
+        val.length % 2 == 1 &&
+        val.length != 1
       ) {
         this.msg.forgotPwId = "Id có độ dài chẵn trong khoảng 2-8 ký tự";
-      } else if (!this.isOnlyNums(val)) {
+      } else if (!this.isValidId(val)) {
         this.msg.forgotPwId = "Id chỉ gồm các số và có 2-8 ký tự";
       } else {
         this.msg.forgotPwId = "";

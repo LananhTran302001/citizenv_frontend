@@ -3,7 +3,7 @@
     class="flex-column d-flex justify-content-center align-items-center container-style"
   >
     <b-col lg="4" md="6" sm="8" xs="9" class="box-style">
-    <h2>Đổi mật khẩu</h2>
+      <h2>Đổi mật khẩu</h2>
       <b-form-group>
         <label for="oldpass">Mật khẩu hiện tại</label>
         <b-form-input
@@ -47,7 +47,7 @@
             new: newPass,
           })
         "
-        :disabled="(state.old && state.new && state.confirm)"
+        :disabled="!(state.old && state.new && state.confirm)"
       >
         Đổi mật khẩu
       </button>
@@ -68,7 +68,7 @@ export default {
       state: {
         old: null,
         new: null,
-        confirm: null
+        confirm: null,
       },
       msg: {
         old: null,
@@ -166,5 +166,9 @@ export default {
   cursor: pointer;
 }
 
-
+.box-style button:disabled {
+  cursor: auto;
+  color: rgb(192, 192, 192);
+  background-color: rgba(34, 87, 117, 0.986);
+}
 </style>

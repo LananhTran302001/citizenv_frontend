@@ -13,7 +13,10 @@
         :key="index"
         class="dropdown-item-style"
       >
-        <router-link :to="option.address" class="link-style">
+        <router-link 
+        :to="option.address"
+        class="link-style"
+        >
           <span>{{ option.text }}</span>
         </router-link>
       </li>

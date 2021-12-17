@@ -85,6 +85,9 @@ const User = {
                 confirm_password: ""
             }
         },
+        resetServerMsg(state) {
+            state.serverMsg = null;
+        }
     },
 
     actions: {
@@ -120,9 +123,9 @@ const User = {
                 })
 
                 .catch(err => {
-                    //     // commit('setServerLoginMsg', err.response.data.message)
-                    //     // console.log("day la dataa:")
-                    //     // console.log(err.response.data.message)
+                    commit('setServerMsg', err.response.data.message)
+                    console.log("day la dataa:")
+                    console.log(err.response.data.message)
                     console.log(err)
                 })
 
@@ -133,7 +136,7 @@ const User = {
             commit('setForgotPwData', forgotPwData)
             const forgot_pw_data = {
                 id: forgotPwData.user_id,
-                email: "lananh30thang07@gmail.com"
+                email: forgotPwData.email
             }
             axios
                 .post("repass", forgot_pw_data)
@@ -143,6 +146,7 @@ const User = {
                         router.push('/')
                     }
                 }).catch(err => {
+                    commit('setServerMsg', err.response.data.message)
                     console.log("Day la loi")
                     console.log(err.response)
                 })

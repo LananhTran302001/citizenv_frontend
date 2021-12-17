@@ -9,7 +9,7 @@ import ManageCencus from "../views/ManageCencus.vue";
 import Progress from "../views/Progress.vue";
 import Analytics from "../views/Analytics.vue";
 import CencusForm from "../views/CencusForm.vue";
-import AreaForm from "../components/table/forms/AreaForm.vue";
+import AreaAddForm from "../components/table/forms/AreaAddForm.vue";
 
 import CencusTable from "../components/table/CencusTable.vue";
 
@@ -74,7 +74,7 @@ const routes = [
     {
         path: '/area_form',
         name: 'area form',
-        component: AreaForm
+        component: AreaAddForm
     },
 ];
 

@@ -141,6 +141,8 @@ export default {
 
 <style scoped>
 .container-style {
-    margin: 0;
+  max-width: 100px;
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
 </style>

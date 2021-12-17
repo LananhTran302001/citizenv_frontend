@@ -13,8 +13,17 @@
         </li>
         <li>
           <SidebarMenuButton
+          v-if="user.role > 0 && user.role < 5"
           :options="adminOptions"
           ></SidebarMenuButton>
+        </li>
+        <li>
+          <SidebarButton
+            address="/admin_account"
+            icon="user-lock"
+            text="Quản lý"
+            v-if="user.role == 0"
+          ></SidebarButton>
         </li>
         <li>
           <SidebarButton

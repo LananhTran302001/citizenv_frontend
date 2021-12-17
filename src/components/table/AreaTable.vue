@@ -1,7 +1,7 @@
 <template>
   <b-container fluid class="container-style">
     <!-- User interface control -->
-    <b-row class="my-2">
+    <b-row class="my-1">
       <!-- Search bar -->
       <b-col xs="10" sm="10" md="6" lg="6">
         <b-form-group
@@ -53,16 +53,16 @@
       </b-col>
     </b-row>
 
-    <b-row class="my-3">
+    <b-row>
       <b-col xs="10" sm="10" md="6" lg="6">
-        <AreaForm />
+        <AreaAddForm />
       </b-col>
     </b-row>
 
     <!-- Main table element -->
     <b-table
       id="area-table"
-      :items="items"
+      :items="table_items"
       :fields="fields"
       :current-page="currentPage"
       :per-page="rowsPerPage"
@@ -116,29 +116,28 @@
       class="justify-content-center"
     ></b-pagination>
 
-    <!-- Modal để thêm/edit dòng -->
-    <div></div>
+    <!--  Button để hiện -->
+    <div>
+      <button @click="chandoi()">Hiện</button>
+    </div>
   </b-container>
 </template>
 
 <script>
-import AreaForm from "./forms/AreaForm.vue";
+
+import {mapGetters, mapActions} from "vuex"
+import AreaAddForm from "./forms/AreaAddForm.vue";
 
 export default {
   name: "AreaTable",
-  components: { AreaForm },
+  components: { AreaAddForm },
   data() {
     return {
       //Do backend trả về, có thể thay đổi các trường
-      items: [
-        { area_id: "01", area_name: "Quảng Ninh", progress: true },
-        { area_id: "02", area_name: "Cà Mau", progress: true },
-        { area_id: "03", area_name: "Đồng Tháp", progress: true },
-      ],
+      table_items: null,
       fields: [
-        { key: "area_id", label: "Mã vùng", sortable: true },
-        { key: "area_name", label: "Tên vùng", sortable: true },
-        { key: "progress", label: "Tiến độ", sortable: false },
+        { key: "cityProvinceId", label: "Mã vùng", sortable: true },
+        { key: "cityProvinceName", label: "Tên vùng", sortable: true },
         { key: "authorization", label: "Chỉnh sửa" },
       ],
 
@@ -155,6 +154,10 @@ export default {
     };
   },
   computed: {
+    ...mapGetters({
+      items: "getCities"
+    }),
+
     sortOptions() {
       // Create an options list from our fields
       return this.fields
@@ -166,9 +169,13 @@ export default {
   },
   mounted() {
     // Hiện tổng số dòng tất cả sau khi load bảng
-    this.totalRows = this.items.length;
+    this.totalRows = 10;
+    this.clickGetCities();
+    console.log(this.items)
   },
   methods: {
+    ...mapActions(["clickGetCities"]),
+
     info(item, index, button) {
       this.infoModal.title = `Row index: ${index}`;
       this.infoModal.content = JSON.stringify(item, null, 2);
@@ -183,13 +190,20 @@ export default {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
+    chandoi() {
+      this.table_items = this.items;
+      console.log("Day la items")
+      console.log(this.items)
+      console.log("Day la item")
+      console.log(this.item)
+    }
   },
 };
 </script>
 
 <style scoped>
 .container-style {
-  margin-top: 100px;
+  margin-top: 80px;
 }
 
 #area-table {
