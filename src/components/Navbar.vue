@@ -25,14 +25,10 @@
         v-if="user.user_id && user.user_name"
       />
       <ToLoginButton v-if="!user.user_id && !user.user_name" />
-      <b-dropdown
-        right
-        text="Menu"
+      <AccountMenuButton
+        text="Tài khoản"
         v-if="user.user_id && user.user_name"
-      >
-        <b-dropdown-item><ToChangePassButton /></b-dropdown-item>
-        <b-dropdown-item><LogoutButton /></b-dropdown-item>
-      </b-dropdown>
+      />
     </div>
   </nav>
 </template>
@@ -42,16 +38,14 @@ import { mapGetters } from "vuex";
 
 import NavbarUserInfo from "./navbarbuttons/UserInfo.vue";
 import ToLoginButton from "./navbarbuttons/ToLoginButton.vue";
-import LogoutButton from "./navbarbuttons/LogoutButton.vue";
-import ToChangePassButton from "./navbarbuttons/ToChangePassButton.vue";
+import AccountMenuButton from "./navbarbuttons/AccountMenuButton.vue";
 
 export default {
   name: "Navbar",
   components: {
     NavbarUserInfo,
     ToLoginButton,
-    LogoutButton,
-    ToChangePassButton,
+    AccountMenuButton,
   },
   computed: {
     ...mapGetters({
@@ -71,6 +65,9 @@ export default {
   z-index: 100;
   background-color: white;
   width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
 .navbar-style {
   justify-content: space-around;
@@ -110,7 +107,13 @@ export default {
   cursor: pointer;
 }
 
-@media (max-width: 800px) {
+#navbar .user-dropdown {
+  height: 80%;
+  background-image: url("../assets/img/general_user.jpg");
+  border-radius: 50px;
+}
+
+@media (max-width: 700px) {
   #navbar .logo-img {
     height: 25px;
     padding: 0;
@@ -125,6 +128,24 @@ export default {
 
   #navbar .nav-item {
     font-size: 12px;
+    color: #413e66;
+    font-weight: 500;
+  }
+}
+
+@media (max-width: 400px) {
+  #navbar .logo-img {
+    height: 20px;
+    padding: 0;
+    margin: 5px;
+  }
+
+  #navbar .logo {
+    display: none;
+  }
+
+  #navbar .nav-item {
+    font-size: 11px;
     color: #413e66;
     font-weight: 500;
   }

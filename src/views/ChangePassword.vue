@@ -2,7 +2,7 @@
   <div
     class="flex-column d-flex justify-content-center align-items-center container-style"
   >
-    <b-col lg="4" md="6" sm="8" xs="10" class="box-style">
+    <b-col lg="4" md="6" sm="8" xs="9" class="box-style">
     <h2>Đổi mật khẩu</h2>
       <b-form-group>
         <label for="oldpass">Mật khẩu hiện tại</label>

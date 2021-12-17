@@ -1,12 +1,12 @@
 <template>
-  <a>
+  <div class="button-style">
     <router-link
       to="/changepass"
-      class="flex items-center justify-center relative button-style"
+      class="flex items-center justify-center relative"
     >
       <span>Đổi mật khẩu</span>
     </router-link>
-  </a>
+  </div>
 </template>
 
 <script>
@@ -18,6 +18,5 @@ export default {
 <style scoped>
 .button-style {
   padding: 5px;
-  margin: 5px auto 5px auto;
 }
 </style>
