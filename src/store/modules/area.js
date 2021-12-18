@@ -1,41 +1,24 @@
 import axios from "axios"
 const Area = {
-    state: () => ({
-        area: {
-            cities: null
-        }
-    }),
-
-    getters: {
-        getCities: (state) => state.cities
-    },
-
-    mutations: {
-        setCities (state, payload) {
-            state.cities = payload
-        }
-    },
 
     actions: {
-        clickGetCities({ commit }) {
+        clickGetCities() {
             const headers = {
-                'Content-Type': 'application/json',
                 Authorization: `Bearer ${localStorage.token}`
             }
             axios
                 .get("cities", { headers: headers })
                 .then((res) => {
                     if (res.status == 200) {
-                        console.log(res.data)
-                        commit("setCities", res.data.Cities)
+                        return res.data.Cities
                     }
                     console.log("-------------------")
-                    console.log(res.data.message)
+                    return null
                 }).catch(err => {
                     console.log("Day la loi")
-                    console.log(err)
                     console.log("-------------------")
-                    console.log(err.response)
+                    console.log(err)
+                    return null
                 })
         }
     }

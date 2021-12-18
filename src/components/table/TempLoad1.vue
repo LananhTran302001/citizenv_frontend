@@ -119,19 +119,21 @@
 
     <!--  Button để hiện -->
     <div>
-      <button @click="fetchData()">Hiện</button>
+      <button @click="chandoi()">Hiện</button>
     </div>
   </b-container>
 </template>
 
 <script>
-import { mapActions } from "vuex";
+
+import {mapActions} from "vuex"
 import AreaAddForm from "./forms/AreaAddForm.vue";
 
 export default {
   name: "AreaTable",
   components: { AreaAddForm },
   data() {
+
     return {
       //Do backend trả về, có thể thay đổi các trường
       items: [],
@@ -146,23 +148,42 @@ export default {
       rowsPerPageOptions: [2, 5, 10, 50], // Các options cho số dòng hiện / trang bảng
       rowsPerPage: 10, // Số dòng/trang đang chọn
       filter: null, // Phần text tìm kiếm trong bảng
+      infoModal: {
+        id: "info-modal",
+        title: "",
+        content: "",
+      },
       loadedData: false,
     };
   },
 
-  created() {
-    this.fetchData()
-  },
+  
 
-  mounted() {
+  async mounted() {
+    // Hiện tổng số dòng tất cả sau khi load bảng
+    //this.items = this.clickGetCities();
+    this.fetchData().catch((err) => {
+      console.log(err)
+    })
     this.totalRows = this.items.length;
-    this.loadedData = true;
-    console.log("Day là items của bảng");
-    console.log(this.items);
+    this.loadedData = true
+    console.log("Day là items của bảng")
+    console.log(this.items)
   },
 
   methods: {
     ...mapActions(["clickGetCities"]),
+
+    info(item, index, button) {
+      this.infoModal.title = `Row index: ${index}`;
+      this.infoModal.content = JSON.stringify(item, null, 2);
+      this.$root.$emit("bv::show::modal", this.infoModal.id, button);
+    },
+
+    resetInfoModal() {
+      this.infoModal.title = "";
+      this.infoModal.content = "";
+    },
 
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
@@ -170,17 +191,9 @@ export default {
       this.currentPage = 1;
     },
 
-    fetchData() {
-      fetch("http://localhost:8080/cities", {headers: {Authorization: `Bearer ${localStorage.token}`}})
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        // this accounts for api urls in which the data is not the first result
-        this.items = data.Cities
-        console.log("Tôi ở đây !!!!!!!")
-        console.log(data.Cities)
-      });
+    chandoi() {
+      console.log("Day la items")
+      console.log(this.items)
     },
   },
 };
