@@ -45,6 +45,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   data() {
     return {
@@ -116,13 +118,38 @@ export default {
         return;
       }
       // Gửi thông tin đã được nhập đi
-      
-      
-
+      this.addArea(this.name, this.id)
       // Hide the modal manually
       this.$nextTick(() => {
         this.$bvModal.hide("area-modal");
       });
+    },
+
+    addArea(name, id) {
+      const headers = {
+        Authorization: `Bearer ${localStorage.token}`,
+      };
+      let url = "city";
+      axios
+        .post(
+          url,
+          {
+            cityProvinceId: id,
+            cityProvinceName: name,
+          },
+          { headers: headers }
+        )
+        .then((res) => {
+          if (res.status == 200) {
+            console.log(res.data.message);
+          }
+          console.log("-------------------");
+        })
+        .catch((err) => {
+          console.log("Day la loi");
+          console.log("-------------------");
+          console.log(err);
+        });
     },
   },
 

@@ -1,25 +1,70 @@
 import axios from "axios"
 const Area = {
+    state: () => ({
+        area: {
+
+        }
+    }),
 
     actions: {
-        clickGetCities() {
+
+        getAllArea() {
+
+        },
+
+        deleteArea(areaId) {
+            console.log(areaId)
             const headers = {
                 Authorization: `Bearer ${localStorage.token}`
             }
+            console.log("Day la id: " + areaId)
+            let url = "city/"
             axios
-                .get("cities", { headers: headers })
+                .delete(url, {
+                    params: {
+                      city_id : areaId
+                    }}, { headers: headers })
                 .then((res) => {
                     if (res.status == 200) {
-                        return res.data.Cities
+                        console.log(res.data.message)
                     }
                     console.log("-------------------")
-                    return null
                 }).catch(err => {
                     console.log("Day la loi")
                     console.log("-------------------")
                     console.log(err)
-                    return null
                 })
+        }, 
+
+        addArea(area) {
+            const headers = {
+                Authorization: `Bearer ${localStorage.token}`,
+              };
+              let url = "city";
+              axios
+                .post(
+                  url,
+                  {
+                    cityProvinceId: area.id,
+                    cityProvinceName: area.name,
+                  },
+                  { headers: headers }
+                )
+                .then((res) => {
+                  if (res.status == 200) {
+                    console.log(res.data.message);
+                  }
+                  console.log("-------------------");
+                })
+                .catch((err) => {
+                  console.log("Day la loi");
+                  console.log("-------------------");
+                  console.log(err);
+                });
+        },
+
+        updateArea() {
+
         }
     }
 }

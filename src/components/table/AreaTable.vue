@@ -67,7 +67,6 @@
       :current-page="currentPage"
       :per-page="rowsPerPage"
       :filter="filter"
-      v-if="loadedData"
       sort-icon-left
       stacked="md"
     >
@@ -77,29 +76,29 @@
       </template>
 
       <!-- Các nút xóa/sửa/chi tiết -->
-      <template #cell(authorization)="data">
-        <b-button size="xs" class="mr-2 sm-button-style delete-button-style">
-          <font-awesome-icon
-            icon="trash"
-            size="sm"
-            @click="deleteRow(data.area_id)"
-          />
+      <template #cell(authorization)="{ data, index }">
+        <b-button
+          size="xs"
+          class="mr-2 sm-button-style delete-button-style"
+          @click="deleteRow(items[index].cityProvinceId)"
+        >
+          <font-awesome-icon icon="trash" size="sm" />
           Xóa
         </b-button>
-        <b-button size="xs" class="mr-2 sm-button-style edit-button-style">
-          <font-awesome-icon
-            icon="edit"
-            size="sm"
-            @click="editRow(data.area_id)"
-          />
+        <b-button
+          size="xs"
+          class="mr-2 sm-button-style edit-button-style"
+          @click="editRow(data.cityProvinceId)"
+        >
+          <font-awesome-icon icon="edit" size="sm" />
           Sửa
         </b-button>
-        <b-button size="xs" class="mr-2 sm-button-style detail-button-style">
-          <font-awesome-icon
-            icon="eye"
-            size="sm"
-            @click="detailsRow(data.area_id)"
-          />
+        <b-button
+          size="xs"
+          class="mr-2 sm-button-style detail-button-style"
+          @click="detailsRow(data.cityProvinceId)"
+        >
+          <font-awesome-icon icon="eye" size="sm" />
           Chi tiết
         </b-button>
       </template>
@@ -125,14 +124,18 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import BACKEND_URL from "../../store/backend_url"
+import getAreaAPI from "../../store/modules/area_constants";
 import AreaAddForm from "./forms/AreaAddForm.vue";
+import { mapActions } from "vuex";
+import axios from "axios";
 
 export default {
   name: "AreaTable",
   components: { AreaAddForm },
   data() {
     return {
+      api: null,
       //Do backend trả về, có thể thay đổi các trường
       items: [],
       fields: [
@@ -146,23 +149,16 @@ export default {
       rowsPerPageOptions: [2, 5, 10, 50], // Các options cho số dòng hiện / trang bảng
       rowsPerPage: 10, // Số dòng/trang đang chọn
       filter: null, // Phần text tìm kiếm trong bảng
-      loadedData: false,
     };
   },
 
   created() {
-    this.fetchData()
-  },
-
-  mounted() {
-    this.totalRows = this.items.length;
-    this.loadedData = true;
-    console.log("Day là items của bảng");
-    console.log(this.items);
+    this.api= getAreaAPI();
+    this.fetchData();
   },
 
   methods: {
-    ...mapActions(["clickGetCities"]),
+    ...mapActions(["deleteArea"]),
 
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
@@ -171,16 +167,48 @@ export default {
     },
 
     fetchData() {
-      fetch("http://localhost:8080/cities", {headers: {Authorization: `Bearer ${localStorage.token}`}})
-      .then((response) => {
-        return response.json();
+      let url = BACKEND_URL + this.api.urlAll
+      fetch(url, {
+        headers: { Authorization: `Bearer ${localStorage.token}` },
       })
-      .then((data) => {
-        // this accounts for api urls in which the data is not the first result
-        this.items = data.Cities
-        console.log("Tôi ở đây !!!!!!!")
-        console.log(data.Cities)
-      });
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          // this accounts for api urls in which the data is not the first result
+          this.items = data.Cities;
+          this.totalRows = this.items.length;
+          console.log(this.items);
+        });
+    },
+
+    deleteRow(id) {
+      console.log("Xoas ma vung");
+      console.log(id);
+      this.deleteArea1(id);
+      this.fetchData();
+    },
+
+    deleteArea1(areaId) {
+      console.log(areaId);
+      const headers = {
+        Authorization: `Bearer ${localStorage.token}`,
+      };
+      console.log("Day la id: " + areaId);
+      let url = `city/${areaId}`;
+      axios
+        .delete(url, { headers: headers })
+        .then((res) => {
+          if (res.status == 200) {
+            console.log(res.data.message);
+          }
+          console.log("-------------------");
+        })
+        .catch((err) => {
+          console.log("Day la loi");
+          console.log("-------------------");
+          console.log(err);
+        });
     },
   },
 };

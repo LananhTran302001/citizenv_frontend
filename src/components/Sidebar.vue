@@ -132,7 +132,6 @@ export default {
 
   methods: {
     openSidebar: function () {
-      console.log(this.isClosed);
       if (this.isClosed) {
         this.isClosed = false;
       } else {

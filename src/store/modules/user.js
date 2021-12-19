@@ -43,8 +43,6 @@ const User = {
         },
         setLoginData(state, payload) {
             state.loginData = payload
-            console.log('set login data')
-            console.log(state.loginData)
         },
         setForgotPwData(state, payload) {
             state.forgotPasswordData = payload
@@ -105,7 +103,6 @@ const User = {
                     if (res.status == 200) {
                         commit('setToken', res.data.access_token)
                         const token = VueJwtDecode.decode(res.data.access_token)
-                        console.log(token)
                         const user = {
                             user_name: "token.name",
                             user_id: token.sub,
@@ -116,7 +113,6 @@ const User = {
                             is_locked: token.isLocked
                         }
                         commit('setUser', user)
-                        console.log(user)
                         router.push('/')
                     }
 
@@ -142,7 +138,6 @@ const User = {
                 .post("repass", forgot_pw_data)
                 .then((res) => {
                     if (res.status == 200) {
-                        console.log(res.data)
                         router.push('/')
                     }
                 }).catch(err => {
@@ -168,14 +163,12 @@ const User = {
                 .then((res) => {
                     if (res.status == 200) {
                         console.log(res.data)
+                        console.log("---------changed pass success----------")
                     }
-                    console.log("-------------------")
-                    console.log(res.data.message)
                 }).catch(err => {
                     console.log("Day la loi")
                     console.log(err)
                     console.log("-------------------")
-                    console.log(err.response)
                 })
 
         },
