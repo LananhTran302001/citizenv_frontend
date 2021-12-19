@@ -1,5 +1,5 @@
 import axios from "axios"
-import { getAreaAPI, jsonFormat } from "../modules/area_constants"
+import { getAreaAPI, jsonFormat } from "../statics/area_constants"
 
 
 const Area = {

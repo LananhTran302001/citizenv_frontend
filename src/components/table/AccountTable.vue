@@ -55,7 +55,7 @@
 
     <b-row>
       <b-col xs="10" sm="10" md="6" lg="6">
-        <AreaAddForm :role="user.role" :api="api"/>
+        <AccountAddForm :role="user.role" :api="api"/>
       </b-col>
     </b-row>
 
@@ -70,11 +70,6 @@
       sort-icon-left
       stacked="md"
     >
-      <!-- Checkbox tiến độ -->
-      <template #cell(progress)="row">
-        <b-form-checkbox v-model="row.progress" />
-      </template>
-
       <!-- Các nút xóa/sửa/chi tiết -->
       <template #cell(authorization)="{ data, index }">
         <b-button
@@ -124,15 +119,15 @@
 </template>
 
 <script>
-import AreaAddForm from "./forms/AreaAddForm.vue";
+import AccountAddForm from "./forms/AreaAddForm.vue";
 import { mapGetters, mapActions } from "vuex";
-import { getAreaAPI, decodeJson } from "../../store/modules/area_constants";
+import { getAreaAPI, decodeJson } from "../../store/statics/area_constants";
 import axios from "axios";
-import { BACKEND_URL } from "../../store/backend_url";
+import { BACKEND_URL } from "../../store/statics/backend_url";
 
 export default {
   name: "AreaTable",
-  components: { AreaAddForm },
+  components: { AccountAddForm },
   data() {
     return {
       api: null,

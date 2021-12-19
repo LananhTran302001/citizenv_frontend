@@ -67,6 +67,7 @@
       :current-page="currentPage"
       :per-page="rowsPerPage"
       :filter="filter"
+      @filtered="onFiltered"
       sort-icon-left
       stacked="md"
     >
@@ -126,9 +127,9 @@
 <script>
 import AreaAddForm from "./forms/AreaAddForm.vue";
 import { mapGetters, mapActions } from "vuex";
-import { getAreaAPI, decodeJson } from "../../store/modules/area_constants";
+import { getAreaAPI, decodeJson } from "../../store/statics/area_constants";
 import axios from "axios";
-import { BACKEND_URL } from "../../store/backend_url";
+import { BACKEND_URL } from "../../store/statics/backend_url";
 
 export default {
   name: "AreaTable",

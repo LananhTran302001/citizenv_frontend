@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './routes'
 import store from "./store"
 import axios from 'axios'
-import {BACKEND_URL} from "./store/backend_url"
+import {BACKEND_URL} from "./store/statics/backend_url"
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
