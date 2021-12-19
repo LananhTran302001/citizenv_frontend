@@ -19,7 +19,7 @@
         </li>
         <li>
           <SidebarButton
-            address="/admin_account"
+            address="/manager_account"
             icon="user-lock"
             text="Quản lý"
             v-if="user.role == 0"
@@ -109,11 +109,11 @@ export default {
         text: "Quản lý",
         options: [
           {
-            address: "admin_area",
+            address: "manager_area",
             text: "Cấp mã vùng",
           },
           {
-            address: "admin_account",
+            address: "manager_account",
             text: "Cấp tài khoản",
           },
         ],
@@ -126,7 +126,7 @@ export default {
 
   computed: {
     ...mapGetters({
-      user: "getUser",
+      user: "User/getUser",
     }),
   },
 

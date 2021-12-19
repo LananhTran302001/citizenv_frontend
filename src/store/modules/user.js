@@ -4,6 +4,7 @@ import VueJwtDecode from 'vue-jwt-decode'
 
 
 const User = {
+    namespaced: true,
     state: () => ({
         user: {
             user_name: null,
@@ -101,7 +102,7 @@ const User = {
                 .post("login", login_data)
                 .then((res) => {
                     if (res.status == 200) {
-                        commit('setToken', res.data.access_token)
+                        commit('setToken', res.data.access_token, {root: true})
                         const token = VueJwtDecode.decode(res.data.access_token)
                         const user = {
                             user_name: "token.name",
@@ -184,7 +185,7 @@ const User = {
                         console.log(res.data)
                     }
                     router.push('/login')
-                    commit("resetToken")
+                    // commit("resetToken", { root: true })
                     commit("resetUser")
 
                 }).catch(err => {

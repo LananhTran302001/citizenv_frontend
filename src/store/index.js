@@ -6,7 +6,8 @@ Vue.use(Vuex)
 import User from "./modules/user";
 import Area from "./modules/area"
 
-export default new Vuex.Store ({
+const store = new Vuex.Store ({
+    namespaced: false,
     state: {
         token: localStorage.token,
     },
@@ -28,3 +29,5 @@ export default new Vuex.Store ({
         Area
     },
 })
+
+export default store;

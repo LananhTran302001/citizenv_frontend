@@ -55,7 +55,7 @@
 
     <b-row>
       <b-col xs="10" sm="10" md="6" lg="6">
-        <AreaAddForm />
+        <AreaAddForm :role="user.role" :api="api"/>
       </b-col>
     </b-row>
 
@@ -80,7 +80,7 @@
         <b-button
           size="xs"
           class="mr-2 sm-button-style delete-button-style"
-          @click="deleteRow(items[index].cityProvinceId)"
+          @click="deleteRow(index)"
         >
           <font-awesome-icon icon="trash" size="sm" />
           Xóa
@@ -124,11 +124,11 @@
 </template>
 
 <script>
-import BACKEND_URL from "../../store/backend_url"
-import getAreaAPI from "../../store/modules/area_constants";
 import AreaAddForm from "./forms/AreaAddForm.vue";
-import { mapActions } from "vuex";
+import { mapGetters, mapActions } from "vuex";
+import { getAreaAPI, decodeJson } from "../../store/modules/area_constants";
 import axios from "axios";
+import { BACKEND_URL } from "../../store/backend_url";
 
 export default {
   name: "AreaTable",
@@ -136,13 +136,9 @@ export default {
   data() {
     return {
       api: null,
-      //Do backend trả về, có thể thay đổi các trường
+      // Dữ liệu backend trả về, có thể thay đổi các trường
       items: [],
-      fields: [
-        { key: "cityProvinceId", label: "Mã vùng", sortable: true },
-        { key: "cityProvinceName", label: "Tên vùng", sortable: true },
-        { key: "authorization", label: "Chỉnh sửa" },
-      ],
+      fields: [],
 
       totalRows: 1, // Tổng số dòng
       currentPage: 1, // Trang bảng hiện tại
@@ -152,13 +148,24 @@ export default {
     };
   },
 
+  computed: {
+    ...mapGetters({
+      user: "User/getUser",
+    }),
+  },
+
   created() {
-    this.api= getAreaAPI();
+    this.api = getAreaAPI(this.user.role);
+    this.fields = this.api.fields;
+    this.fields.push({ key: "authorization", label: "Chỉnh sửa" });
     this.fetchData();
   },
 
   methods: {
-    ...mapActions(["deleteArea"]),
+    ...mapActions({
+      getAllArea: "Area/getAllArea",
+      deleteArea: "Area/deleteArea",
+    }),
 
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
@@ -167,7 +174,7 @@ export default {
     },
 
     fetchData() {
-      let url = BACKEND_URL + this.api.urlAll
+      let url = BACKEND_URL + this.api.urlAll;
       fetch(url, {
         headers: { Authorization: `Bearer ${localStorage.token}` },
       })
@@ -176,16 +183,22 @@ export default {
         })
         .then((data) => {
           // this accounts for api urls in which the data is not the first result
-          this.items = data.Cities;
+          this.items = data.Areas;
           this.totalRows = this.items.length;
-          console.log(this.items);
         });
     },
 
-    deleteRow(id) {
+    deleteRow(index) {
+      const id = decodeJson({
+        role: this.user.role,
+        area: this.items[index]
+        }).id
       console.log("Xoas ma vung");
       console.log(id);
-      this.deleteArea1(id);
+      this.deleteArea({
+        role: this.user.role,
+        area:{id: id}
+      });
       this.fetchData();
     },
 

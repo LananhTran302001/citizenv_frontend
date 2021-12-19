@@ -165,13 +165,22 @@ export default {
 
   computed: {
     ...mapGetters({
-      server_msg: "getServerMsg"
+      server_msg: "User/getServerMsg"
     })
   },
 
   methods: {
-    ...mapMutations(["resetLoginData", "resetForgotPwData", "resetServerMsg"]),
-    ...mapActions(["login", "sendEmail"]),
+    
+    ...mapMutations({
+      resetLoginData: "User/resetLoginData",
+      resetForgotPwData: "User/resetForgotPwData",
+      resetServerMsg: "User/resetServerMsg"
+      }),
+
+    ...mapActions({
+      login: "User/login",
+      sendEmail: "User/sendEmail"
+    }),
 
     // Chuyển giữa section đăng nhập và section quên mật khẩu
     clickLink: function () {

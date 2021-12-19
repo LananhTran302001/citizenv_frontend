@@ -15,7 +15,7 @@ import { mapActions } from "vuex";
 export default {
   name: "LogoutButton",
   methods: {
-    ...mapActions(["logout"]),
+    ...mapActions({logout: "User/logout"}),
   },
 };
 </script>

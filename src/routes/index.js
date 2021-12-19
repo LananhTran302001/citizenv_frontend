@@ -4,12 +4,12 @@ import Home from '../views/Home.vue';
 import Login from '../views/Login.vue';
 import ChangePassword from '../views/ChangePassword.vue'
 import Contact from '../views/Contact.vue';
+import ManageArea from "../views/ManageArea.vue";
 import ManageAccount from "../views/ManageAccount.vue";
 import ManageCencus from "../views/ManageCencus.vue";
 import Progress from "../views/Progress.vue";
 import Analytics from "../views/Analytics.vue";
 import CencusForm from "../views/CencusForm.vue";
-import AreaAddForm from "../components/table/forms/AreaAddForm.vue";
 
 import CencusTable from "../components/table/CencusTable.vue";
 
@@ -37,13 +37,18 @@ const routes = [
         component:Contact
     },
     {
-        path:'/admin_area',
-        name:'admin_area',
+        path:'/manager_area',
+        name:'manager_area',
+        component:ManageArea
+    },
+    {
+        path:'/manager_account',
+        name:'manager_account',
         component:ManageAccount
     },
     {
-        path:'/admin_cencus',
-        name:'admin_cencus',
+        path:'/manager_cencus',
+        name:'manager_cencus',
         component:ManageCencus
     },
     {
@@ -70,11 +75,6 @@ const routes = [
         path: '/cencus_table',
         name: 'cencus table',
         component: CencusTable
-    },
-    {
-        path: '/area_form',
-        name: 'area form',
-        component: AreaAddForm
     },
 ];
 
