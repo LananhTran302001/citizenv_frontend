@@ -11,6 +11,7 @@
       @show="resetModal"
       @hidden="resetModal"
       @ok="handleOk"
+      @hide="hide"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
         <b-form-group
@@ -45,7 +46,7 @@
 </template>
 
 <script>
-// import axios from "axios";
+
 import { mapActions } from "vuex";
 
 export default {
@@ -62,7 +63,6 @@ export default {
         name: String,
         id: String,
       },
-      submittedNames: [],
     };
   },
 
@@ -133,15 +133,22 @@ export default {
         return;
       }
       // Gửi thông tin đã được nhập đi
-      this.addArea({
+        this.addArea({
         role: this.role,
         area: { id: this.id, name: this.name },
-      });
-      // Hide the modal manually
+      })
+     
+      // Khi ấn nút
       this.$nextTick(() => {
-        this.$bvModal.hide("area-modal");
-      });
+        this.hide();
+      });      
     },
+
+    // Đóng modal
+    hide() {
+      this.$bvModal.hide("area-modal");
+      this.$emit('added', true)
+    }
 
   },
 

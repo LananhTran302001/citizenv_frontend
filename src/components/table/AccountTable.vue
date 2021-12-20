@@ -53,11 +53,11 @@
       </b-col>
     </b-row>
 
-    <b-row>
+    <!-- <b-row>
       <b-col xs="10" sm="10" md="6" lg="6">
         <AccountAddForm :role="user.role" :api="api"/>
       </b-col>
-    </b-row>
+    </b-row> -->
 
     <!-- Main table element -->
     <b-table
@@ -119,15 +119,12 @@
 </template>
 
 <script>
-import AccountAddForm from "./forms/AreaAddForm.vue";
-import { mapGetters, mapActions } from "vuex";
-import { getAreaAPI, decodeJson } from "../../store/statics/area_constants";
-import axios from "axios";
-import { BACKEND_URL } from "../../store/statics/backend_url";
+import { mapActions } from "vuex";
+import { getAccountAPI } from "../../store/statics/account_constants.js";
+import { BACKEND_URL } from "../../store/statics/backend_url.js";
 
 export default {
-  name: "AreaTable",
-  components: { AccountAddForm },
+  name: "AccountTable",
   data() {
     return {
       api: null,
@@ -143,14 +140,9 @@ export default {
     };
   },
 
-  computed: {
-    ...mapGetters({
-      user: "User/getUser",
-    }),
-  },
-
   created() {
-    this.api = getAreaAPI(this.user.role);
+    this.api = getAccountAPI();
+    console.log("Đây là các trường sẽ hiện");
     this.fields = this.api.fields;
     this.fields.push({ key: "authorization", label: "Chỉnh sửa" });
     this.fetchData();
@@ -158,12 +150,13 @@ export default {
 
   methods: {
     ...mapActions({
-      getAllArea: "Area/getAllArea",
-      deleteArea: "Area/deleteArea",
+      getAllAccount: "Account/getAllAccounts",
+      deleteAccount: "Account/deleteAccount",
+      addAccount: "Account/addAccount",
     }),
 
+    // khi tìm kiếm thì tính lại số dòng kết quả
     onFiltered(filteredItems) {
-      // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
@@ -178,44 +171,9 @@ export default {
         })
         .then((data) => {
           // this accounts for api urls in which the data is not the first result
-          this.items = data.Areas;
+          this.items = data.Accounts;
+          console.log(data);
           this.totalRows = this.items.length;
-        });
-    },
-
-    deleteRow(index) {
-      const id = decodeJson({
-        role: this.user.role,
-        area: this.items[index]
-        }).id
-      console.log("Xoas ma vung");
-      console.log(id);
-      this.deleteArea({
-        role: this.user.role,
-        area:{id: id}
-      });
-      this.fetchData();
-    },
-
-    deleteArea1(areaId) {
-      console.log(areaId);
-      const headers = {
-        Authorization: `Bearer ${localStorage.token}`,
-      };
-      console.log("Day la id: " + areaId);
-      let url = `city/${areaId}`;
-      axios
-        .delete(url, { headers: headers })
-        .then((res) => {
-          if (res.status == 200) {
-            console.log(res.data.message);
-          }
-          console.log("-------------------");
-        })
-        .catch((err) => {
-          console.log("Day la loi");
-          console.log("-------------------");
-          console.log(err);
         });
     },
   },

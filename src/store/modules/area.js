@@ -1,11 +1,16 @@
 import axios from "axios"
+import { messageFormat } from "../statics/messages"
 import { getAreaAPI, jsonFormat } from "../statics/area_constants"
 
 
 const Area = {
     namespaced: true,
     state: () => ({
-        serverMsg: ""
+        serverMsg: {
+            title: "",
+            content: "",
+            varient: "info"
+        }
     }),
 
     getters: {
@@ -19,47 +24,37 @@ const Area = {
     },
 
     actions: {
-
-        getAllArea({ commit }, data) {
-            console.log("Đây là data input")
-            console.log(data)
-            const API = getAreaAPI(data.role);
-            console.log("Đây là data api")
-            console.log(API)
-            let url = axios.defaults.baseURL + API.urlAll
-            fetch(url, {
-                headers: { Authorization: `Bearer ${localStorage.token}` },
-            })
-                .then((response) => {
-                    commit("setServerMsg", "success")
-                    return response.json();
-                });
-
-        },
-
         deleteArea({ commit }, data) {
-            console.log(data)
             const API = getAreaAPI(data.role);
-            console.log(API)
             const headers = {
                 Authorization: `Bearer ${localStorage.token}`,
             };
-            console.log("đây là url id")
-            console.log(API.urlId)
-            let url = `${API.urlId}/${data.area.id}`;
+            const url = `${API.urlId}/${data.area.id}`;
             console.log(url)
             axios
                 .delete(url, { headers: headers })
                 .then((res) => {
                     if (res.status == 200) {
                         console.log(res.data.message);
+                        const message = messageFormat(
+                            "Thông báo",
+                            res.data.Message,
+                            res.status
+                        )
+                        commit("setServerMsg", message)
                     }
                     console.log("-------------------");
                 })
                 .catch((err) => {
                     console.log("Day la loi");
                     console.log("-------------------");
-                    commit("setServerMsg", err.response.message)
+                    const msg = messageFormat(
+                        "Thông báo",
+                        err.response.message,
+                        400
+                    )
+                    commit("setServerMsg", msg)
+                    console.log(msg)
                     console.log(err);
                 });
         },
@@ -82,17 +77,74 @@ const Area = {
                 )
                 .then((res) => {
                     if (res.status == 200) {
-                        console.log(res.data.message);
+                        console.log(res);
                     }
+                    const message = messageFormat(
+                        "Thông báo",
+                        res.data.Message,
+                        res.status
+                    )
+                    commit("setServerMsg", message)
+                    console.log("-------------------");
                     console.log("-------------------");
                 })
                 .catch((err) => {
                     console.log("Day la loi");
                     console.log("-------------------");
-                    commit("setServerMsg", err.response.message)
+                    const msg = messageFormat(
+                        "Thông báo",
+                        err.response.message,
+                        410
+                    )
+                    commit("setServerMsg", msg)
+                    console.log(msg)
                     console.log(err);
                 });
+            
         },
+
+
+        updateArea({ commit }, data) {
+            const API = getAreaAPI(data.role);
+            const headers = {
+                Authorization: `Bearer ${localStorage.token}`,
+            };
+            // Chỉ in ra để xem
+            const add_data = jsonFormat(data);
+            const url = `${API.urlId}/${data.area.id}`;
+            console.log(add_data)
+            axios
+                .put(
+                    url,
+                    jsonFormat(data),
+                    { headers: headers }
+                )
+                .then((res) => {
+                    if (res.status == 200) {
+                        console.log(res);
+                    }
+                    const message = messageFormat(
+                        "Thông báo",
+                        res.data.Message,
+                        res.status
+                    )
+                    commit("setServerMsg", message)
+                    console.log("-------------------");
+                    console.log("-------------------");
+                })
+                .catch((err) => {
+                    console.log("Day la loi");
+                    console.log("-------------------");
+                    const msg = messageFormat(
+                        "Thông báo",
+                        err.response.message,
+                        410
+                    )
+                    commit("setServerMsg", msg)
+                    console.log(msg)
+                    console.log(err);
+                });
+        }
 
     }
 }

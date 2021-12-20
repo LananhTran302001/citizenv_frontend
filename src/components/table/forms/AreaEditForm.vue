@@ -1,41 +1,41 @@
 <template>
   <div class="container-style">
-    <b-button @click="show" v-b-modal.area-modal size="sm"> Cấp mã </b-button>
-
     <b-modal
-      id="area-modal"
+      id="area-edit-modal"
       ref="modal"
       :title="title"
-      ok-title="Thêm"
+      ok-title="Cập nhật"
       cancel-title="Hủy"
       @show="resetModal"
       @hidden="resetModal"
       @ok="handleOk"
+      @hide="hide"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
         <b-form-group
-          :label="titleName"
-          label-for="area-name"
-          :invalid-feedback="msg.name"
-          :state="nameState"
-        >
-          <b-form-input
-            id="area-name"
-            v-model="name"
-            :state="nameState"
-            required
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group
           :label="titleId"
-          label-for="area-id"
+          label-for="area-edit-id"
           :invalid-feedback="msg.id"
           :state="idState"
         >
           <b-form-input
-            id="area-id"
+            id="area-edit-id"
             v-model="id"
             :state="idState"
+            required
+          ></b-form-input>
+        </b-form-group>
+
+        <b-form-group
+          :label="titleName"
+          label-for="area-edit-name"
+          :invalid-feedback="msg.name"
+          :state="nameState"
+        >
+          <b-form-input
+            id="area-edit-name"
+            v-model="name"
+            :state="nameState"
             required
           ></b-form-input>
         </b-form-group>
@@ -45,50 +45,48 @@
 </template>
 
 <script>
-// import axios from "axios";
 import { mapActions } from "vuex";
 
 export default {
+  name: "AreaEditForm",
   data() {
     return {
       title: "Chỉnh sửa ",
       titleName: "Tên ",
       titleId: "Mã ",
-      name: null,
-      nameState: null,
-      id: null,
+
+      id: this.oldData.id,
       idState: null,
+      name: this.oldData.name,
+      nameState: null,
       msg: {
         name: String,
         id: String,
       },
-      submittedNames: [],
     };
   },
 
-  props: {role:Number, api:Object},
+  props: { role: Number, api: Object, oldData: Object },
 
-  created() {
-    this.title = "Cấp mã " + this.api.type;
-    this.titleName = "Tên " + this.api.type;
-    this.titleId = "Mã " + this.api.type;
+  mounted() {
+    if (this.api) {
+      this.title = "Chỉnh sửa  " + this.api.type;
+      this.titleName = "Tên " + this.api.type;
+      this.titleId = "Mã " + this.api.type;
+    }
+    this.$bvModal.show("area-edit-modal");
   },
 
   methods: {
-    ...mapActions ({addArea: "Area/addArea"}),
-
-    show() {
-      this.$refs['modal'].show()
-    },
-
+    ...mapActions({ updateArea: "Area/updateArea" }),
+    
     resetModal() {
-      this.name = null;
       this.nameState = null;
-      this.id = null;
       this.idState = null;
       this.msg.id = "";
       this.msg.name = "";
     },
+
     // Tên vùng chỉ gồm các ký tự chữ cái và số
     checkValidName(val) {
       if (!val) {
@@ -102,6 +100,7 @@ export default {
         this.msg.name = "";
       }
     },
+
     // Mã vùng chỉ gồm số
     checkValidId(val) {
       if (!val) {
@@ -135,17 +134,23 @@ export default {
       if (!this.checkFormValidity()) {
         return;
       }
+      console.log("Data cũ")
+      console.log(this.oldData)
       // Gửi thông tin đã được nhập đi
-      this.addArea({
+      this.updateArea({
         role: this.role,
-        area : {id: this.id, name: this.name}
-      })
-      // Hide the modal manually
+        area: { id: this.id, name: this.name },
+      });
+      // Chọn tiếp 1 trong 2 nút thì đóng
       this.$nextTick(() => {
-        this.$bvModal.hide("area-modal");
+        this.hide()
       });
     },
 
+    // Đóng modal
+    hide() {
+      this.$emit("updated", true);
+    }
   },
 
   watch: {
@@ -163,8 +168,6 @@ export default {
 
 <style scoped>
 .container-style {
-  max-width: 100px;
-  margin-top: 15px;
-  margin-bottom: 15px;
+  margin: 0;
 }
 </style>

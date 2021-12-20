@@ -1,6 +1,11 @@
 <template>
   <b-container fluid class="container-style">
     <!-- User interface control -->
+    <Message
+      :title="serverMsg.title"
+      :content="serverMsg.content"
+      :variant="serverMsg.variant"
+    />
     <b-row class="my-1">
       <!-- Search bar -->
       <b-col xs="10" sm="10" md="6" lg="6">
@@ -54,8 +59,25 @@
     </b-row>
 
     <b-row>
-      <b-col xs="10" sm="10" md="6" lg="6">
-        <AreaAddForm :role="user.role" :api="api"/>
+      <b-col xs="4" sm="4" md="4" lg="4">
+        <AreaAddForm :role="user.role" :api="api" @added="forceRefresh" />
+      </b-col>
+      <b-col xs="4" sm="4" md="4" lg="4">
+        <AreaEditForm
+          :role="user.role"
+          :api="api"
+          :oldData="editingArea"
+          v-if="editingArea"
+          @updated="forceRefresh"
+        />
+      </b-col>
+      <b-col xs="4" sm="4" md="4" lg="4">
+        <AreaDetailsForm
+          :api="api"
+          :data="detailingArea"
+          v-if="detailingArea"
+          @detailed="forceRefresh"
+        />
       </b-col>
     </b-row>
 
@@ -71,33 +93,34 @@
       sort-icon-left
       stacked="md"
     >
-      <!-- Checkbox tiến độ -->
-      <template #cell(progress)="row">
-        <b-form-checkbox v-model="row.progress" />
+      <template #cell(index)="items">
+        {{ items.index + 1 }}
       </template>
 
       <!-- Các nút xóa/sửa/chi tiết -->
-      <template #cell(authorization)="{ data, index }">
+      <template #cell(authorization)="row">
         <b-button
           size="xs"
           class="mr-2 sm-button-style delete-button-style"
-          @click="deleteRow(index)"
+          @click="deleteRow(row)"
         >
           <font-awesome-icon icon="trash" size="sm" />
           Xóa
         </b-button>
+
         <b-button
           size="xs"
           class="mr-2 sm-button-style edit-button-style"
-          @click="editRow(data.cityProvinceId)"
+          @click="editRow(row)"
         >
           <font-awesome-icon icon="edit" size="sm" />
           Sửa
         </b-button>
+
         <b-button
           size="xs"
           class="mr-2 sm-button-style detail-button-style"
-          @click="detailsRow(data.cityProvinceId)"
+          @click="detailsRow(row)"
         >
           <font-awesome-icon icon="eye" size="sm" />
           Chi tiết
@@ -116,24 +139,21 @@
       aria-controls="area-table"
       class="justify-content-center"
     ></b-pagination>
-
-    <!--  Button để hiện -->
-    <div>
-      <button @click="fetchData()">Hiện</button>
-    </div>
   </b-container>
 </template>
 
 <script>
 import AreaAddForm from "./forms/AreaAddForm.vue";
+import AreaEditForm from "./forms/AreaEditForm.vue";
+import AreaDetailsForm from "./forms/AreaDetailsForm.vue";
+import Message from "../Message.vue";
 import { mapGetters, mapActions } from "vuex";
 import { getAreaAPI, decodeJson } from "../../store/statics/area_constants";
-import axios from "axios";
 import { BACKEND_URL } from "../../store/statics/backend_url";
 
 export default {
   name: "AreaTable",
-  components: { AreaAddForm },
+  components: { Message, AreaAddForm, AreaEditForm, AreaDetailsForm },
   data() {
     return {
       api: null,
@@ -146,12 +166,16 @@ export default {
       rowsPerPageOptions: [2, 5, 10, 50], // Các options cho số dòng hiện / trang bảng
       rowsPerPage: 10, // Số dòng/trang đang chọn
       filter: null, // Phần text tìm kiếm trong bảng
+
+      editingArea: null, // Thông tin vùng đang được chỉnh sửa
+      detailingArea: null, // Thông tin vùng đang hiển thị chi tiết
     };
   },
 
   computed: {
     ...mapGetters({
       user: "User/getUser",
+      serverMsg: "Area/getServerMsg",
     }),
   },
 
@@ -159,6 +183,7 @@ export default {
     this.api = getAreaAPI(this.user.role);
     this.fields = this.api.fields;
     this.fields.push({ key: "authorization", label: "Chỉnh sửa" });
+    this.fields.unshift({ key: "index", label: "STT" });
     this.fetchData();
   },
 
@@ -174,55 +199,51 @@ export default {
       this.currentPage = 1;
     },
 
-    fetchData() {
-      let url = BACKEND_URL + this.api.urlAll;
-      fetch(url, {
-        headers: { Authorization: `Bearer ${localStorage.token}` },
-      })
-        .then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-          // this accounts for api urls in which the data is not the first result
-          this.items = data.Areas;
-          this.totalRows = this.items.length;
-        });
+    getAreaAtRow(row) {
+      return decodeJson({
+        role: this.user.role,
+        area: row.item,
+      });
     },
 
-    deleteRow(index) {
-      const id = decodeJson({
-        role: this.user.role,
-        area: this.items[index]
-        }).id
-      console.log("Xoas ma vung");
-      console.log(id);
+    fetchData() {
+      if (this.api) {
+        let url = BACKEND_URL + this.api.urlAll;
+        fetch(url, {
+          headers: { Authorization: `Bearer ${localStorage.token}` },
+        })
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            // this accounts for api urls in which the data is not the first result
+            this.items = data.Areas;
+            this.totalRows = this.items.length;
+          });
+      }
+    },
+
+    forceRefresh() {
+      this.editingArea = null;
+      this.detailingArea = null;
+      setTimeout(() => this.fetchData(), 2000);
+    },
+
+    deleteRow(row) {
+      const areaId = this.getAreaAtRow(row).id;
       this.deleteArea({
         role: this.user.role,
-        area:{id: id}
+        area: { id: areaId },
       });
-      this.fetchData();
+      this.forceRefresh();
     },
 
-    deleteArea1(areaId) {
-      console.log(areaId);
-      const headers = {
-        Authorization: `Bearer ${localStorage.token}`,
-      };
-      console.log("Day la id: " + areaId);
-      let url = `city/${areaId}`;
-      axios
-        .delete(url, { headers: headers })
-        .then((res) => {
-          if (res.status == 200) {
-            console.log(res.data.message);
-          }
-          console.log("-------------------");
-        })
-        .catch((err) => {
-          console.log("Day la loi");
-          console.log("-------------------");
-          console.log(err);
-        });
+    editRow(row) {
+      this.editingArea = this.getAreaAtRow(row);
+    },
+
+    detailsRow(row) {
+      this.detailingArea = this.getAreaAtRow(row);
     },
   },
 };
