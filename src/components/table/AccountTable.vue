@@ -26,7 +26,9 @@
             </b-form-input>
             <!-- Nút Clear -->
             <b-input-group-append>
-              <b-button>Xóa</b-button>
+              <b-button
+              @click="filter = ''"
+              >Xóa</b-button>
             </b-input-group-append>
           </b-input-group>
         </b-form-group>
@@ -182,7 +184,7 @@ export default {
 
 <style scoped>
 .container-style {
-  margin-top: 80px;
+  margin: 0px;
 }
 
 #area-table {

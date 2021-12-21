@@ -12,19 +12,9 @@
       @hide="hide"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
-        <b-form-group
-          :label="titleId"
-          label-for="area-edit-id"
-          :invalid-feedback="msg.id"
-          :state="idState"
-        >
-          <b-form-input
-            id="area-edit-id"
-            v-model="id"
-            :state="idState"
-            required
-          ></b-form-input>
-        </b-form-group>
+        <b-form-group :label="titleId">
+        <label> {{ oldData.id }} </label>
+      </b-form-group>
 
         <b-form-group
           :label="titleName"
@@ -55,13 +45,10 @@ export default {
       titleName: "Tên ",
       titleId: "Mã ",
 
-      id: this.oldData.id,
-      idState: null,
       name: this.oldData.name,
       nameState: null,
       msg: {
         name: String,
-        id: String,
       },
     };
   },
@@ -82,8 +69,6 @@ export default {
     
     resetModal() {
       this.nameState = null;
-      this.idState = null;
-      this.msg.id = "";
       this.msg.name = "";
     },
 
@@ -101,27 +86,6 @@ export default {
       }
     },
 
-    // Mã vùng chỉ gồm số
-    checkValidId(val) {
-      if (!val) {
-        this.idState = false;
-        this.msg.id = "Bạn phải nhập mã (thêm 2 chữ số)";
-      } else if (/^[0-9]*$/.test(this.id)) {
-        this.idState = true;
-        this.msg.id = "";
-      } else {
-        this.idState = false;
-        this.msg.id = "Trường này chỉ gồm 2 ký tự số";
-      }
-    },
-
-    // Kiểm tra tên vùng và mã vùng trước khi submit
-    checkFormValidity() {
-      this.checkValidName(this.name);
-      this.checkValidId(this.id);
-      return this.nameState && this.idState;
-    },
-
     handleOk(bvModalEvt) {
       // Prevent modal from closing
       bvModalEvt.preventDefault();
@@ -130,16 +94,18 @@ export default {
     },
 
     handleSubmit() {
+      this.checkValidName(this.name)
       // Không cho phép submit nếu chưa nhập thông tin hợp lệ
-      if (!this.checkFormValidity()) {
+      if (!this.nameState) {
         return;
       }
+      
       console.log("Data cũ")
       console.log(this.oldData)
       // Gửi thông tin đã được nhập đi
       this.updateArea({
         role: this.role,
-        area: { id: this.id, name: this.name },
+        area: { id: this.oldData.id, name: this.name },
       });
       // Chọn tiếp 1 trong 2 nút thì đóng
       this.$nextTick(() => {
@@ -157,10 +123,6 @@ export default {
     name: function (val) {
       this.name = val;
       this.checkValidName(val);
-    },
-    id: function (val) {
-      this.id = val;
-      this.checkValidId(val);
     },
   },
 };

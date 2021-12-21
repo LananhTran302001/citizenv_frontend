@@ -105,7 +105,7 @@ const User = {
                         commit('setToken', res.data.access_token, {root: true})
                         const token = VueJwtDecode.decode(res.data.access_token)
                         const user = {
-                            user_name: "token.name",
+                            user_name: token.name,
                             user_id: token.sub,
                             user_email: null,
                             role: token.role,

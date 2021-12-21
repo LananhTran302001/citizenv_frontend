@@ -2,6 +2,7 @@
   <b-container fluid class="container-style">
     <!-- User interface control -->
     <Message
+      :id="serverMsg.id"
       :title="serverMsg.title"
       :content="serverMsg.content"
       :variant="serverMsg.variant"
@@ -31,7 +32,7 @@
             </b-form-input>
             <!-- Nút Clear -->
             <b-input-group-append>
-              <b-button>Xóa</b-button>
+              <b-button @click="filter = ''">Xóa</b-button>
             </b-input-group-append>
           </b-input-group>
         </b-form-group>
@@ -93,8 +94,8 @@
       sort-icon-left
       stacked="md"
     >
-      <template #cell(index)="items">
-        {{ items.index + 1 }}
+      <template #cell(index)="row">
+        {{ row.index + 1 }}
       </template>
 
       <!-- Các nút xóa/sửa/chi tiết -->
@@ -251,7 +252,7 @@ export default {
 
 <style scoped>
 .container-style {
-  margin-top: 80px;
+  margin: 0;
 }
 
 #area-table {

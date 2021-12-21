@@ -4,7 +4,10 @@ import Vuex from "vuex"
 Vue.use(Vuex)
 
 import User from "./modules/user";
-import Area from "./modules/area"
+import Area from "./modules/area";
+import Account from "./modules/account";
+import Progress from "./modules/progress"
+
 
 const store = new Vuex.Store ({
     namespaced: false,
@@ -26,7 +29,9 @@ const store = new Vuex.Store ({
     },
     modules: {
         User,
-        Area
+        Area,
+        Account,
+        Progress
     },
 })
 

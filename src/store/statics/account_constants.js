@@ -1,4 +1,4 @@
-export const ACCOUNT_API = {
+const ACCOUNT_API = {
     urlAll: "accounts",
     urlId: "accounts",
     fields: [

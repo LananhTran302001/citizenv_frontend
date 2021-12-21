@@ -7,6 +7,7 @@ const Area = {
     namespaced: true,
     state: () => ({
         serverMsg: {
+            id: 0,
             title: "",
             content: "",
             varient: "info"
@@ -19,7 +20,14 @@ const Area = {
 
     mutations: {
         setServerMsg(state, payload) {
-            state.serverMsg = payload
+            state.serverMsg = messageFormat(
+                state.serverMsg.id + 1,
+                payload.title,
+                payload.content,
+                payload.status
+            )
+            console.log("đây là server message")
+            console.log(state.serverMsg)
         }
     },
 
@@ -36,26 +44,25 @@ const Area = {
                 .then((res) => {
                     if (res.status == 200) {
                         console.log(res.data.message);
-                        const message = messageFormat(
-                            "Thông báo",
-                            res.data.Message,
-                            res.status
+                        commit("setServerMsg",
+                            {
+                                title: "Thông báo",
+                                content: res.data.message,
+                                status: res.status
+                            }
                         )
-                        commit("setServerMsg", message)
                     }
                     console.log("-------------------");
                 })
                 .catch((err) => {
-                    console.log("Day la loi");
                     console.log("-------------------");
-                    const msg = messageFormat(
-                        "Thông báo",
-                        err.response.message,
-                        400
+                    commit("setServerMsg",
+                        {
+                            title: "Thông báo",
+                            content: err.response.data.message,
+                            status: err.response.status
+                        }
                     )
-                    commit("setServerMsg", msg)
-                    console.log(msg)
-                    console.log(err);
                 });
         },
 
@@ -78,29 +85,28 @@ const Area = {
                 .then((res) => {
                     if (res.status == 200) {
                         console.log(res);
+                        commit("setServerMsg",
+                            {
+                                title: "Thông báo",
+                                content: res.data.Message,
+                                status: res.status
+                            }
+                        )
+
                     }
-                    const message = messageFormat(
-                        "Thông báo",
-                        res.data.Message,
-                        res.status
-                    )
-                    commit("setServerMsg", message)
-                    console.log("-------------------");
+                    console.log(res.data.Message);
                     console.log("-------------------");
                 })
                 .catch((err) => {
-                    console.log("Day la loi");
-                    console.log("-------------------");
-                    const msg = messageFormat(
-                        "Thông báo",
-                        err.response.message,
-                        410
+                    commit("setServerMsg",
+                        {
+                            title: "Thông báo",
+                            content: err.response.data.message,
+                            status: err.response.status
+                        }
                     )
-                    commit("setServerMsg", msg)
-                    console.log(msg)
-                    console.log(err);
                 });
-            
+
         },
 
 
@@ -110,9 +116,9 @@ const Area = {
                 Authorization: `Bearer ${localStorage.token}`,
             };
             // Chỉ in ra để xem
-            const add_data = jsonFormat(data);
+            const update_data = jsonFormat(data);
             const url = `${API.urlId}/${data.area.id}`;
-            console.log(add_data)
+            console.log(update_data)
             axios
                 .put(
                     url,
@@ -123,26 +129,25 @@ const Area = {
                     if (res.status == 200) {
                         console.log(res);
                     }
-                    const message = messageFormat(
-                        "Thông báo",
-                        res.data.Message,
-                        res.status
+                    commit("setServerMsg",
+                        {
+                            title: "Thông báo",
+                            content: res.data.message,
+                            status: res.status
+                        }
                     )
-                    commit("setServerMsg", message)
                     console.log("-------------------");
                     console.log("-------------------");
                 })
                 .catch((err) => {
-                    console.log("Day la loi");
-                    console.log("-------------------");
-                    const msg = messageFormat(
-                        "Thông báo",
-                        err.response.message,
-                        410
+                    commit("setServerMsg",
+                        {
+                            title: "Thông báo",
+                            content: err.response.data.message,
+                            status: err.response.status
+                        }
                     )
-                    commit("setServerMsg", msg)
-                    console.log(msg)
-                    console.log(err);
+                    console.log(err.response.data.message);
                 });
         }
 

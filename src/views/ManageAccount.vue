@@ -1,5 +1,7 @@
 <template>
-    <div><AccountTable /></div>
+    <div class="container-style">
+        <AccountTable />
+    </div>
 </template>
 
 <script>
@@ -9,3 +11,9 @@ export default {
     components: {AccountTable},
 }
 </script>
+
+<style scoped>
+.container-style {
+    margin-top: 80px;
+}
+</style>

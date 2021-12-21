@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="container-style">
         <AreaTable/>
     </div>
 </template>
@@ -13,3 +13,9 @@ export default {
     components: {AreaTable}
 }
 </script>
+
+<style scoped>
+.container-style {
+    margin-top: 80px;
+}
+</style>

@@ -1,10 +1,16 @@
 import axios from "axios"
 import { getAccountAPI } from "../statics/account_constants";
+import { messageFormat } from "../statics/messages";
 
 const Account = {
     namespaced: true,
     state: () => ({
-        serverMsg: "",
+        serverMsg: {
+            id: 0,
+            title: "",
+            content: "",
+            varient: "info"
+        }
     }),
 
     getters: {
@@ -13,7 +19,12 @@ const Account = {
 
     mutations: {
         setServerMsg(state, payload) {
-            state.serverMsg = payload
+            state.serverMsg = messageFormat(
+                state.serverMsg.id + 1,
+                payload.title,
+                payload.content,
+                payload.status
+            )
         }
     },
 
@@ -30,13 +41,27 @@ const Account = {
                 .then((res) => {
                     if (res.status == 200) {
                         console.log(res.data.message);
+                        // Hiện thông báo success
+                        commit("setServerMsg",
+                            {
+                                title: "Thông báo",
+                                content: res.data.Message,
+                                status: res.status
+                            }
+                        )
                     }
                     console.log("-------------------");
                 })
                 .catch((err) => {
-                    console.log("Day la loi");
-                    console.log("-------------------");
-                    commit("setServerMsg", err.response.message)
+
+                    // Hiện lỗi
+                    commit("setServerMsg",
+                        {
+                            title: "Thông báo",
+                            content: err.response.data.message,
+                            status: err.response.status
+                        }
+                    )
                     console.log(err);
                 });
         },
@@ -49,19 +74,33 @@ const Account = {
             axios
                 .post(
                     API.urlId,
-                    {id: account.id, email: account.email},
+                    { id: account.id, email: account.email },
                     { headers: headers }
                 )
                 .then((res) => {
                     if (res.status == 200) {
                         console.log(res.data.message);
+                        // Hiện thông báo success
+                        commit("setServerMsg",
+                            {
+                                title: "Thông báo",
+                                content: res.data.Message,
+                                status: res.status
+                            }
+                        )
                     }
                     console.log("-------------------");
                 })
                 .catch((err) => {
-                    console.log("Day la loi");
                     console.log("-------------------");
-                    commit("setServerMsg", err.response.message)
+                    // Hiện lỗi
+                    commit("setServerMsg",
+                        {
+                            title: "Thông báo",
+                            content: err.response.data.message,
+                            status: err.response.status
+                        }
+                    )
                     console.log(err);
                 });
         },
