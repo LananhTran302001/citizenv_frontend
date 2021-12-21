@@ -59,6 +59,13 @@
       </b-col>
     </b-row>
 
+    <!-- Total progress -->
+    <b-row class="my-2">
+      <span class="ml-5"
+        >Tổng kết tiến độ: {{ completedAreas }} / {{ totalAreas }}
+      </span>
+    </b-row>
+
     <b-table
       id="progress-table"
       :items="items"
@@ -73,15 +80,40 @@
       <template #cell(index)="row">
         {{ row.index + 1 }}
       </template>
-      <template #cell(progress)="row">
+      <template #cell(completed)="row">
         <b-form-checkbox
           size="lg"
           :disabled="user.role != 4 || user.is_locked"
+          v-model="row.item.completed"
           @click="completeRow(row)"
         >
         </b-form-checkbox>
       </template>
+
+      <template #cell(sendEmail)="row">
+        <button
+          v-if="user.role > 0 && user.role < 5"
+          class="mr-2 sm-button-style row-btn-style"
+          @click="sendEmail(row)"
+        >
+          <font-awesome-icon icon="paper-plane" size="sm" />
+          Nhắc nhở
+        </button>
+      </template>
     </b-table>
+
+    <!-- Total rows -->
+    <b-row class="my-2">
+      <span class="ml-5">Danh sách có tổng cộng {{ totalRows }} dòng </span>
+    </b-row>
+    <!-- Pages of table -->
+    <b-pagination
+      v-model="currentPage"
+      :total-rows="totalRows"
+      :per-page="rowsPerPage"
+      aria-controls="area-table"
+      class="justify-content-center"
+    ></b-pagination>
   </b-container>
 </template>
 
@@ -102,7 +134,10 @@ export default {
       items: [],
       fields: [],
 
-      totalRows: 1, // Tổng số dòng
+      totalAreas: 0,
+      completedAreas: 0,
+
+      totalRows: 0, // Tổng số dòng
       currentPage: 1, // Trang bảng hiện tại
       rowsPerPageOptions: [2, 5, 10, 50], // Các options cho số dòng hiện / trang bảng
       rowsPerPage: 10, // Số dòng/trang đang chọn
@@ -121,6 +156,7 @@ export default {
     this.api = getProgressAPI(this.user.role);
     this.fields = this.api.fields;
     this.fields.unshift({ key: "index", label: "STT" });
+    this.fields.push({ key: "sendEmail", label: "Nhắc nhở" });
     this.fetchData();
   },
 
@@ -140,9 +176,10 @@ export default {
             return response.json();
           })
           .then((data) => {
-            // this accounts for api urls in which the data is not the first result
-            // this.items = data.Areas;
-            // this.totalRows = this.items.length;
+            this.items = data.progress;
+            this.totalRows = this.items.length;
+            this.totalAreas = data.total;
+            this.completedAreas = data.completed;
             console.log(data);
           });
       }
@@ -150,3 +187,19 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.row-btn-style {
+  padding: 5px;
+  color: rgba(1, 5, 58, 0.836);
+  background-color: transparent;
+  border: solid 1px transparent;
+  border-radius: 3px;
+  font-size: 16px;
+}
+
+.row-btn-style:hover {
+  color: #32b890;
+  background-color: white;
+}
+</style>

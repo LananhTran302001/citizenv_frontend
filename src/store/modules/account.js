@@ -105,6 +105,45 @@ const Account = {
                 });
         },
 
+        updateAccount({ commit }, data) {
+            const API = getAccountAPI(data.role);
+            const headers = {
+                Authorization: `Bearer ${localStorage.token}`,
+            };
+            // Chỉ in ra để xem
+            const url = `${API.urlId}/${data.area.id}`;
+            axios
+                .put(
+                    url,
+                    data,
+                    { headers: headers }
+                )
+                .then((res) => {
+                    if (res.status == 200) {
+                        console.log(res);
+                    }
+                    commit("setServerMsg",
+                        {
+                            title: "Thông báo",
+                            content: res.data.message,
+                            status: res.status
+                        }
+                    )
+                    console.log("-------------------");
+                    console.log("-------------------");
+                })
+                .catch((err) => {
+                    commit("setServerMsg",
+                        {
+                            title: "Thông báo",
+                            content: err.response.data.message,
+                            status: err.response.status
+                        }
+                    )
+                    console.log(err.response.data.message);
+                });
+        }
+
     }
 }
 

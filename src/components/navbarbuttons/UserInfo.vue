@@ -1,7 +1,6 @@
 <template>
     <div class="nav flex-row justify-content-center">
-        <label class="nav">{{message}}</label>
-        <label class="nav"> {{userid}} </label>
+        <label class="nav">{{message}} {{userid}}   </label>
     </div>
 </template>
 

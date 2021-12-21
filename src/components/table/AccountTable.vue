@@ -26,9 +26,7 @@
             </b-form-input>
             <!-- Nút Clear -->
             <b-input-group-append>
-              <b-button
-              @click="filter = ''"
-              >Xóa</b-button>
+              <b-button @click="filter = ''">Xóa</b-button>
             </b-input-group-append>
           </b-input-group>
         </b-form-group>
@@ -55,11 +53,17 @@
       </b-col>
     </b-row>
 
-    <!-- <b-row>
-      <b-col xs="10" sm="10" md="6" lg="6">
-        <AccountAddForm :role="user.role" :api="api"/>
+    <b-row>
+      <b-col xs="10" sm="10" md="10" lg="10">
+        <AccountAddForm
+          :accountId="addingToAreaId"
+          :role="user.role"
+          :api="api"
+          v-if="addingToAreaId"
+          @added="forceRefresh"
+        />
       </b-col>
-    </b-row> -->
+    </b-row>
 
     <!-- Main table element -->
     <b-table
@@ -73,11 +77,20 @@
       stacked="md"
     >
       <!-- Các nút xóa/sửa/chi tiết -->
-      <template #cell(authorization)="{ data, index }">
+      <template #cell(authorization)="row">
         <b-button
           size="xs"
           class="mr-2 sm-button-style delete-button-style"
-          @click="deleteRow(index)"
+          @click="addToRow(row)"
+        >
+          <font-awesome-icon icon="plus" size="sm" />
+          Thêm
+        </b-button>
+
+        <b-button
+          size="xs"
+          class="mr-2 sm-button-style delete-button-style"
+          @click="deleteRow(row)"
         >
           <font-awesome-icon icon="trash" size="sm" />
           Xóa
@@ -85,7 +98,7 @@
         <b-button
           size="xs"
           class="mr-2 sm-button-style edit-button-style"
-          @click="editRow(data.cityProvinceId)"
+          @click="editRow(row)"
         >
           <font-awesome-icon icon="edit" size="sm" />
           Sửa
@@ -93,7 +106,7 @@
         <b-button
           size="xs"
           class="mr-2 sm-button-style detail-button-style"
-          @click="detailsRow(data.cityProvinceId)"
+          @click="detailsRow(row)"
         >
           <font-awesome-icon icon="eye" size="sm" />
           Chi tiết
@@ -121,12 +134,14 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import AccountAddForm from "./forms/AccountAddForm.vue";
+import { mapGetters, mapActions } from "vuex";
 import { getAccountAPI } from "../../store/statics/account_constants.js";
 import { BACKEND_URL } from "../../store/statics/backend_url.js";
 
 export default {
   name: "AccountTable",
+  components: { AccountAddForm },
   data() {
     return {
       api: null,
@@ -139,7 +154,15 @@ export default {
       rowsPerPageOptions: [2, 5, 10, 50], // Các options cho số dòng hiện / trang bảng
       rowsPerPage: 10, // Số dòng/trang đang chọn
       filter: null, // Phần text tìm kiếm trong bảng
+
+      addingToAreaId: null,
     };
+  },
+
+  computed: {
+    ...mapGetters({
+      user: "User/getUser",
+    }),
   },
 
   created() {
@@ -163,6 +186,17 @@ export default {
       this.currentPage = 1;
     },
 
+    addToRow(row) {
+      console.log(row.item.areaId)
+      this.addingToAreaId = row.item.areaId;
+    },
+
+    deleteRow(row) {
+      this.deleteAccount({id: row.item.areaId});
+      console.log(row.item.areaId)
+      this.forceRefresh();
+    },
+
     fetchData() {
       let url = BACKEND_URL + this.api.urlAll;
       fetch(url, {
@@ -177,6 +211,12 @@ export default {
           console.log(data);
           this.totalRows = this.items.length;
         });
+    },
+
+    forceRefresh() {
+      this.editingArea = null;
+      this.detailingArea = null;
+      setTimeout(() => this.fetchData(), 2000);
     },
   },
 };

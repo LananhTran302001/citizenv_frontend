@@ -13,8 +13,8 @@
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
         <b-form-group :label="titleId">
-        <label> {{ oldData.id }} </label>
-      </b-form-group>
+          <label> {{ oldData.id }} </label>
+        </b-form-group>
 
         <b-form-group
           :label="titleName"
@@ -66,7 +66,7 @@ export default {
 
   methods: {
     ...mapActions({ updateArea: "Area/updateArea" }),
-    
+
     resetModal() {
       this.nameState = null;
       this.msg.name = "";
@@ -94,14 +94,14 @@ export default {
     },
 
     handleSubmit() {
-      this.checkValidName(this.name)
+      this.checkValidName(this.name);
       // Không cho phép submit nếu chưa nhập thông tin hợp lệ
       if (!this.nameState) {
         return;
       }
-      
-      console.log("Data cũ")
-      console.log(this.oldData)
+
+      console.log("Data cũ");
+      console.log(this.oldData);
       // Gửi thông tin đã được nhập đi
       this.updateArea({
         role: this.role,
@@ -109,14 +109,14 @@ export default {
       });
       // Chọn tiếp 1 trong 2 nút thì đóng
       this.$nextTick(() => {
-        this.hide()
+        this.hide();
       });
     },
 
     // Đóng modal
     hide() {
       this.$emit("updated", true);
-    }
+    },
   },
 
   watch: {

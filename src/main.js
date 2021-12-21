@@ -12,14 +12,15 @@ import {
   faEye, faEyeSlash, faUserLock, 
   faTasks, faListAlt, faChartBar, 
   faSearch, faTable, faFileAlt,
-  faTrash, faEdit, faPlus, faCaretDown
+  faTrash, faEdit, faPlus, faCaretDown,
+  faPaperPlane, faLock, faLockOpen
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 library.add(faEye, faEyeSlash, faUserLock, 
   faTasks, faListAlt, faChartBar, faSearch, 
   faTable, faFileAlt, faTrash, faEdit, faPlus,
-  faCaretDown)
+  faCaretDown, faPaperPlane, faLock, faLockOpen)
 
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
