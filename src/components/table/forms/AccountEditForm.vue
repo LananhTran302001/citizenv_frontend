@@ -5,7 +5,7 @@
       id="account-edit-modal"
       ref="modal"
       :title="title"
-      ok-title="Thêm"
+      ok-title="Cập nhật"
       cancel-title="Hủy"
       @show="resetModal"
       @hidden="resetModal"
@@ -20,35 +20,35 @@
               <label> {{ accountId }} </label>
             </b-form-group>
 
-            <!-- Name edit -->
+            <!-- Password edit -->
             <b-form-group
-              :label="titleName"
-              label-for="area-name"
-              :invalid-feedback="msg.name"
-              :state="nameState"
+              :label="titlePassword"
+              label-for="account-password"
+              :invalid-feedback="msg.password"
+              :state="passwordState"
             >
               <b-form-input
-                id="area-name"
-                v-model="name"
-                :state="nameState"
+                id="account-password"
+                v-model="password"
+                :state="passwordState"
                 required
               ></b-form-input>
             </b-form-group>
 
             <!-- Email edit -->
             <b-form-group label="Email" label-for="email">
-              <b-form-input id="email" required></b-form-input>
+              <b-form-input id="email" v-model="email" required></b-form-input>
             </b-form-group>
           </b-col>
 
           <b-col lg="6">
             <!-- Cấp quyền -->
             <b-form-group label="Chức năng thêm/sửa/xóa">
-              <b-button v-if="isLocked" @click="unLock">
-                <font-awesome-icon icon="lock" size="md" /> Đang khóa
+              <b-button variant="danger" v-show="isLocked" @click="unLock">
+                <font-awesome-icon icon="lock" size="sm" /> Đang khóa
               </b-button>
-              <b-button v-if="!isLocked" @click="lock">
-                <font-awesome-icon icon="lock-open" size="md" /> Đang mở
+              <b-button variant="success" v-show="!isLocked" @click="lock">
+                <font-awesome-icon icon="lock-open" size="sm" /> Đang mở
               </b-button>
             </b-form-group>
 
@@ -85,6 +85,10 @@
 </template>
 
 <script>
+import {
+  validatePassword,
+  validateEmail,
+} from "../../../store/statics/validations";
 import { mapActions } from "vuex";
 
 export default {
@@ -94,20 +98,20 @@ export default {
     return {
       title: "Cấp tài khoản ",
       titleId: "Mã ",
-      titleName: "Tên ",
+      titlePassword: "Mật khẩu ",
 
-      name: null,
+      password: null,
       email: null,
-      isLocked: null,
+      isLocked: true,
       startDate: null,
       endDate: null,
 
-      nameState: null,
+      passwordState: null,
       emailState: null,
       startDateState: null,
       endDateState: null,
       msg: {
-        name: String,
+        password: String,
         email: String,
         isLocked: String,
         startDate: String,
@@ -116,26 +120,36 @@ export default {
     };
   },
 
-  props: { role: Number, api: Object, accountId: Number },
+  props: { role: Number, api: Object, accountId: String },
 
   mounted() {
-    if (this.api) {
-      this.title = "Cấp tài khoản các " + this.api.type;
-      this.titleName = "Tên " + this.api.type;
-      this.titleId = "Mã " + this.api.type;
-    }
+    this.title = "Cấp tài khoản các " + this.api.type;
+    this.titleName = "Tên " + this.api.type;
+    this.titleId = "Mã " + this.api.type;
     this.$bvModal.show("account-edit-modal");
   },
 
   methods: {
     ...mapActions({ updateAccount: "Account/updateAccount" }),
+
     resetModal() {
-      this.name = null;
-      this.nameState = null;
-      this.id = null;
-      this.idState = null;
-      this.msg.id = "";
-      this.msg.name = "";
+      this.password = null;
+      this.email = null;
+      this.isLocked = true;
+      this.startDate = null;
+      this.endDate = null;
+
+      this.passwordState = null;
+      this.emailState = null;
+      this.startDateState = null;
+      this.endDateState = null;
+      this.msg = {
+        password: null,
+        email: null,
+        isLocked: null,
+        startDate: null,
+        endDate: null,
+      };
     },
 
     lock() {
@@ -146,55 +160,58 @@ export default {
       this.isLocked = false;
     },
 
-    // Tên vùng chỉ gồm các ký tự chữ cái và số
-    checkValidName(val) {
-      if (!val) {
-        this.nameState = false;
-        this.msg.name = "Bạn phải nhập tên";
-      } else if (/[`~,.<>;':"/[\]|{}()=_+-]/.test(this.name)) {
-        this.nameState = false;
-        this.msg.name = "Trường này chỉ gồm các ký tự chữ cái và số";
-      } else {
-        this.nameState = true;
-        this.msg.name = "";
+    // Kiểm tra tên vùng và mã vùng trước khi submit
+    checkFormValidity() {
+      return this.passwordState && this.emailState;
+    },
+
+    handleOk(bvModalEvt) {
+      // Prevent modal from closing
+      bvModalEvt.preventDefault();
+      // Trigger submit handler
+      this.handleSubmit();
+    },
+
+    handleSubmit() {
+      // Không cho phép submit nếu chưa nhập thông tin hợp lệ
+      if (!this.checkFormValidity()) {
+        return;
       }
+      // Gửi thông tin đã được nhập đi
+      this.updateAccount({
+        role: this.role,
+        account: {
+          id: this.accountId,
+          password: this.password,
+          email: this.email,
+          isLocked: this.isLocked,
+          startDate: this.startDate,
+          endDate: this.endDate,
+        },
+      });
+
+      // Khi ấn nút
+      this.$nextTick(() => {
+        this.hide();
+      });
+    },
+
+    // Đóng modal
+    hide() {
+      this.$emit("updated", true);
     },
   },
 
-  // Kiểm tra tên vùng và mã vùng trước khi submit
-  checkFormValidity() {
-    this.checkValidName(this.name);
-    return this.nameState;
-  },
+  watch: {
+    email: function (val) {
+      this.msg.email = validateEmail(val);
+      this.emailState = this.msg.email.length == 0;
+    },
 
-  handleOk(bvModalEvt) {
-    // Prevent modal from closing
-    bvModalEvt.preventDefault();
-    // Trigger submit handler
-    this.handleSubmit();
-  },
-
-  handleSubmit() {
-    // Không cho phép submit nếu chưa nhập thông tin hợp lệ
-    if (!this.checkFormValidity()) {
-      return;
-    }
-    // Gửi thông tin đã được nhập đi
-    this.updateAccount({
-      role: this.role,
-      area: { id: this.id, name: this.name },
-    });
-
-    // Khi ấn nút
-    this.$nextTick(() => {
-      this.hide();
-    });
-  },
-
-  // Đóng modal
-  hide() {
-    this.$bvModal.hide("area-modal");
-    this.$emit("updated", true);
+    password: function (val) {
+      this.msg.password = validatePassword(val);
+      this.passwordState = this.msg.password.length == 0;
+    },
   },
 };
 </script>

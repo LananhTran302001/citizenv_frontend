@@ -1,5 +1,15 @@
+// Ẩn nút thêm nếu đã có
+// Ẩn nút chỉnh sửa nếu chưa có
+
 <template>
   <b-container fluid class="container-style">
+    <!-- Thông báo từ server -->
+    <Message
+      :id="serverMsg.id"
+      :title="serverMsg.title"
+      :content="serverMsg.content"
+      :variant="serverMsg.variant"
+    />
     <!-- User interface control -->
     <b-row class="my-1">
       <!-- Search bar -->
@@ -56,11 +66,28 @@
     <b-row>
       <b-col xs="10" sm="10" md="10" lg="10">
         <AccountAddForm
-          :accountId="addingToAreaId"
+          :accountId="addingAccountId"
           :role="user.role"
           :api="api"
-          v-if="addingToAreaId"
+          v-if="addingAccountId && api"
           @added="forceRefresh"
+        />
+      </b-col>
+      <b-col xs="10" sm="10" md="10" lg="10">
+        <AccountEditForm
+          :accountId="editingAccountId"
+          :role="user.role"
+          :api="api"
+          v-if="editingAccountId && api"
+          @updated="forceRefresh"
+        />
+      </b-col>
+      <b-col xs="10" sm="10" md="10" lg="10">
+        <AccountDetailsForm
+          :data="detailingAccount"
+          :api="api"
+          v-if="detailingAccount && api"
+          @detailed="forceRefresh"
         />
       </b-col>
     </b-row>
@@ -81,6 +108,7 @@
         <b-button
           size="xs"
           class="mr-2 sm-button-style delete-button-style"
+          v-if="!row.item.email"
           @click="addToRow(row)"
         >
           <font-awesome-icon icon="plus" size="sm" />
@@ -98,6 +126,7 @@
         <b-button
           size="xs"
           class="mr-2 sm-button-style edit-button-style"
+          v-if="row.item.email"
           @click="editRow(row)"
         >
           <font-awesome-icon icon="edit" size="sm" />
@@ -135,13 +164,19 @@
 
 <script>
 import AccountAddForm from "./forms/AccountAddForm.vue";
+import AccountEditForm from "./forms/AccountEditForm.vue";
+import AccountDetailsForm from "./forms/AccountDetailsForm.vue";
+import Message from "../Message.vue";
 import { mapGetters, mapActions } from "vuex";
-import { getAccountAPI } from "../../store/statics/account_constants.js";
+import {
+  getAccountAPI,
+  decodeJson,
+} from "../../store/statics/account_constants.js";
 import { BACKEND_URL } from "../../store/statics/backend_url.js";
 
 export default {
   name: "AccountTable",
-  components: { AccountAddForm },
+  components: { AccountAddForm, AccountEditForm, AccountDetailsForm, Message },
   data() {
     return {
       api: null,
@@ -155,19 +190,21 @@ export default {
       rowsPerPage: 10, // Số dòng/trang đang chọn
       filter: null, // Phần text tìm kiếm trong bảng
 
-      addingToAreaId: null,
+      addingAccountId: null,
+      editingAccountId: null,
+      detailingAccount: null,
     };
   },
 
   computed: {
     ...mapGetters({
       user: "User/getUser",
+      serverMsg: "Account/getServerMsg",
     }),
   },
 
   created() {
-    this.api = getAccountAPI();
-    console.log("Đây là các trường sẽ hiện");
+    this.api = getAccountAPI(this.user.role);
     this.fields = this.api.fields;
     this.fields.push({ key: "authorization", label: "Chỉnh sửa" });
     this.fetchData();
@@ -187,14 +224,24 @@ export default {
     },
 
     addToRow(row) {
-      console.log(row.item.areaId)
-      this.addingToAreaId = row.item.areaId;
+      this.addingAccountId = row.item.areaId;
+    },
+
+    editRow(row) {
+      this.editingAccountId = row.item.areaId;
     },
 
     deleteRow(row) {
-      this.deleteAccount({id: row.item.areaId});
-      console.log(row.item.areaId)
+      this.deleteAccount({
+        role: this.user.role,
+        account: { id: row.item.areaId },
+      });
+      console.log(row.item.areaId);
       this.forceRefresh();
+    },
+
+    detailsRow(row) {
+      this.detailingAccount = decodeJson(row.item);
     },
 
     fetchData() {
@@ -214,8 +261,9 @@ export default {
     },
 
     forceRefresh() {
-      this.editingArea = null;
-      this.detailingArea = null;
+      this.addingAccountId = null;
+      this.editingAccountId = null;
+      this.detailingAccount = null;
       setTimeout(() => this.fetchData(), 2000);
     },
   },

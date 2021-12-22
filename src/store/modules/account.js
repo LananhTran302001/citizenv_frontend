@@ -29,13 +29,12 @@ const Account = {
     },
 
     actions: {
-
-        deleteAccount({ commit }, account) {
+        deleteAccount({ commit }, data) {
             const headers = {
                 Authorization: `Bearer ${localStorage.token}`,
             };
-            const API = getAccountAPI()
-            const url = `${API.urlId}/${account.id}`;
+            const API = getAccountAPI(data.role)
+            const url = `${API.urlId}/${data.account.id}`;
             axios
                 .delete(url, { headers: headers })
                 .then((res) => {
@@ -45,7 +44,7 @@ const Account = {
                         commit("setServerMsg",
                             {
                                 title: "Thông báo",
-                                content: res.data.Message,
+                                content: res.data.message,
                                 status: res.status
                             }
                         )
@@ -66,15 +65,15 @@ const Account = {
                 });
         },
 
-        addAccount({ commit }, account) {
-            const API = getAccountAPI()
+        addAccount({ commit }, data) {
+            const API = getAccountAPI(data.role)
             const headers = {
                 Authorization: `Bearer ${localStorage.token}`,
             };
             axios
                 .post(
                     API.urlId,
-                    { id: account.id, email: account.email },
+                    { id: data.account.id, email: data.account.email },
                     { headers: headers }
                 )
                 .then((res) => {
@@ -106,16 +105,25 @@ const Account = {
         },
 
         updateAccount({ commit }, data) {
-            const API = getAccountAPI(data.role);
+            console.log("Đây là update data");
+            console.log(data);
             const headers = {
                 Authorization: `Bearer ${localStorage.token}`,
             };
-            // Chỉ in ra để xem
-            const url = `${API.urlId}/${data.area.id}`;
+            const API = getAccountAPI(data.role);
+            const url = `${API.urlId}/${data.account.id}`;
+            const account = {
+                password: data.account.password,
+                email: data.account.email,
+                isLocked: data.account.isLocked,
+                startDate: data.account.startDate,
+                endDate: data.account.endDate,
+            }
+            console.log(account)
             axios
                 .put(
                     url,
-                    data,
+                    account,
                     { headers: headers }
                 )
                 .then((res) => {

@@ -134,6 +134,8 @@
 </template>
 
 <script>
+
+import { validateId, validateEmail, validatePassword } from "../store/statics/validations"
 import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
@@ -197,26 +199,6 @@ export default {
       }
       this.hidePassword = !this.hidePassword;
     },
-
-    // Kiểm tra nếu val rỗng
-    isEmpty: function (val) {
-      return val.length == 0;
-    },
-
-    // Kiểm tra nếu chuỗi val chỉ gồm số
-    isValidId: function (val) {
-      return /^[0-9]|(((0[1-9]|[1-9][0-9]))*)$/.test(val);
-    },
-
-    // Kiểm tra nếu độ dài chuỗi val trong khoảng [lower, upper]
-    lengthInRange: function (val, lower, upper) {
-      return val.length >= lower && val.length <= upper;
-    },
-
-    // Kiểm tra nếu val đúng format email: str@str.str
-    isValidEmail: function (val) {
-      return /\S+@\S+\.\S+/.test(val);
-    },
   },
 
   watch: {
@@ -225,18 +207,7 @@ export default {
     // chỉ gồm các số
     loginId: function (val) {
       this.loginId = val;
-      if (
-        this.isEmpty(val) ||
-        !this.lengthInRange(val, 1, 8) ||
-        val.length % 2 == 1 &&
-        val.length != 1
-      ) {
-        this.msg.loginId = "Id có độ dài chẵn trong khoảng 1-8 ký tự";
-      } else if (!this.isValidId(val)) {
-        this.msg.loginId = "Id chỉ gồm các số và có 2-8 ký tự";
-      } else {
-        this.msg.loginId = "";
-      }
+      this.msg.loginId = validateId(val);
     },
 
     // Kiểm tra mật khẩu đăng nhập
@@ -245,33 +216,15 @@ export default {
     // có ít nhất 1 số và 1 chữ
     password: function (val) {
       this.password = val;
-      this.msg.password = "";
-      // if (/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,25}$/.test(this.password)) {
-      //   this.msg.password = "";
-      // } else {
-      //   this.msg.password =
-      //     "Mật khẩu phải có độ dài 8-25 ký tự, chỉ gồm chữ và số tiếng anh, có cả chữ và số";
-      // }
+      this.msg.password = validatePassword(val);      
     },
 
     // Kiểm tra mã đăng nhập
     // length: từ 2 đến 8 và là số chẵn
     // chỉ gồm các số
-
     forgotPwId: function (val) {
       this.forgotPwId = val;
-      if (
-        this.isEmpty(val) ||
-        !this.lengthInRange(val, 1, 8) ||
-        val.length % 2 == 1 &&
-        val.length != 1
-      ) {
-        this.msg.forgotPwId = "Id có độ dài chẵn trong khoảng 2-8 ký tự";
-      } else if (!this.isValidId(val)) {
-        this.msg.forgotPwId = "Id chỉ gồm các số và có 2-8 ký tự";
-      } else {
-        this.msg.forgotPwId = "";
-      }
+      this.msg.forgotPwId = validateId(val);
     },
 
     // Kiểm tra email
@@ -279,11 +232,7 @@ export default {
     // Đúng format: str@str.Str
     email: function (val) {
       this.email = val;
-      if (this.isValidEmail(val) && this.lengthInRange(val, 5, 35)) {
-        this.msg.email = "";
-      } else {
-        this.msg.email = "Email phải có độ dài từ 5-35 ký tự ";
-      }
+      this.msg.email = validateEmail(val);
     },
   },
 };

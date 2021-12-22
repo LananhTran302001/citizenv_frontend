@@ -12,34 +12,19 @@
       @hide="hide"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
-        
         <!-- ID k= id area lấy sẵn -->
         <b-form-group :label="titleId">
           <label> {{ accountId }} </label>
         </b-form-group>
 
-        <!-- Name -->
-        <b-form-group
-          :label="titleName"
-          label-for="account-name"
-          :invalid-feedback="msg.name"
-          :state="nameState"
-        >
-          <b-form-input
-            id="account-name"
-            v-model="name"
-            :state="nameState"
-            required
-          ></b-form-input>
-        </b-form-group>
-
         <!-- Email -->
-        <b-form-group label="Email" label-for="account-email">
-          <b-form-input 
-          id="account-email" 
-          v-model="email"
-          :state="emailState"
-          required
+        <b-form-group :label="titleEmail" label-for="account-email">
+          <b-form-input
+            id="account-email"
+            v-model="email"
+            :invalid-feedback="msg.email"
+            :state="emailState"
+            required
           >
           </b-form-input>
         </b-form-group>
@@ -49,6 +34,7 @@
 </template>
 
 <script>
+import { validateEmail } from "../../../store/statics/validations";
 import { mapActions } from "vuex";
 
 export default {
@@ -58,15 +44,11 @@ export default {
     return {
       title: "Cấp tài khoản ",
       titleId: "Mã ",
-      titleName: "Tên ",
+      titleEmail: "Địa chỉ email của ",
 
-      name: null,
       email: null,
-
-      nameState: null,
       emailState: null,
       msg: {
-        name: String,
         email: String,
       },
     };
@@ -75,11 +57,9 @@ export default {
   props: { role: Number, api: Object, accountId: String },
 
   mounted() {
-    if (this.api) {
-      this.title = "Cấp tài khoản các " + this.api.type;
-      this.titleName = "Tên " + this.api.type;
-      this.titleId = "Mã " + this.api.type;
-    }
+    this.title = "Cấp tài khoản các " + this.api.type;
+    this.titleEmail = "Địa chỉ email của " + this.api.type;
+    this.titleId = "Mã " + this.api.type;
     this.$bvModal.show("account-add-modal");
   },
 
@@ -87,33 +67,21 @@ export default {
     ...mapActions({ addAccount: "Account/addAccount" }),
 
     resetModal() {
-      this.name = null;
       this.email = null;
-      this.nameState = null;
       this.emailState = null;
-      this.msg.name = null;
       this.msg.email = null;
     },
-    
-    // Tên vùng chỉ gồm các ký tự chữ cái và số
-    checkValidName(val) {
-      if (!val) {
-        this.nameState = false;
-        this.msg.name = "Bạn phải nhập tên";
-      } else if (/[`~,.<>;':"/[\]|{}()=_+-]/.test(this.name)) {
-        this.nameState = false;
-        this.msg.name = "Trường này chỉ gồm các ký tự chữ cái và số";
-      } else {
-        this.nameState = true;
-        this.msg.name = "";
-      }
+
+    // Kiểm tra email
+    checkValidEmail(val) {
+      this.msg.email = validateEmail(val);
+      this.emailState = (this.msg.email.length == 0);
     },
 
-
-    // Kiểm tra tên vùng và mã vùng trước khi submit
+    // Kiểm tra form nhập
     checkFormValidity() {
-      this.checkValidName(this.name);
-      return this.nameState;
+      this.checkValidEmail(this.email);
+      return this.emailState;
     },
 
     handleOk(bvModalEvt) {
@@ -130,7 +98,11 @@ export default {
       }
       // Gửi thông tin đã được nhập đi
       this.addAccount({
-         id: this.accountId, email: this.email 
+        role: this.role,
+        account: {
+          id: this.accountId,
+          email: this.email,
+        },
       });
 
       // Khi ấn nút
@@ -141,15 +113,14 @@ export default {
 
     // Đóng modal
     hide() {
-      this.$bvModal.hide("account-add-modal");
       this.$emit("added", true);
     },
   },
 
   watch: {
-    name: function (val) {
-      this.name = val;
-      this.checkValidName(val);
+    email: function (val) {
+      this.email = val;
+      this.checkValidEmail(val);
     },
   },
 };

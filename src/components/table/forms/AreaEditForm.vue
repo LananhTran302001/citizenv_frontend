@@ -35,6 +35,8 @@
 </template>
 
 <script>
+
+import { validateName } from "../../../store/statics/validations"
 import { mapActions } from "vuex";
 
 export default {
@@ -56,11 +58,9 @@ export default {
   props: { role: Number, api: Object, oldData: Object },
 
   mounted() {
-    if (this.api) {
-      this.title = "Chỉnh sửa  " + this.api.type;
-      this.titleName = "Tên " + this.api.type;
-      this.titleId = "Mã " + this.api.type;
-    }
+    this.title = "Chỉnh sửa  " + this.api.type;
+    this.titleName = "Tên " + this.api.type;
+    this.titleId = "Mã " + this.api.type;
     this.$bvModal.show("area-edit-modal");
   },
 
@@ -74,16 +74,8 @@ export default {
 
     // Tên vùng chỉ gồm các ký tự chữ cái và số
     checkValidName(val) {
-      if (!val) {
-        this.nameState = false;
-        this.msg.name = "Bạn phải nhập tên";
-      } else if (/[`~,.<>;':"/[\]|{}()=_+-]/.test(this.name)) {
-        this.nameState = false;
-        this.msg.name = "Trường này chỉ gồm các ký tự chữ cái và số";
-      } else {
-        this.nameState = true;
-        this.msg.name = "";
-      }
+      this.msg.name = validateName(val);
+      this.nameState = (this.msg.name.length == 0);
     },
 
     handleOk(bvModalEvt) {

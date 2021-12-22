@@ -26,8 +26,8 @@
             :state="idState"
             required
           ></b-form-input>
-          </b-form-group>
-          <b-form-group
+        </b-form-group>
+        <b-form-group
           :label="titleName"
           label-for="area-name"
           :invalid-feedback="msg.name"
@@ -46,7 +46,10 @@
 </template>
 
 <script>
-
+import {
+  validateName,
+  validateIdWithLength,
+} from "../../../store/statics/validations";
 import { mapActions } from "vuex";
 
 export default {
@@ -69,15 +72,14 @@ export default {
   props: { role: Number, api: Object },
 
   mounted() {
-    if (this.api) {
-      this.title = "Cấp mã " + this.api.type;
-      this.titleName = "Tên " + this.api.type;
-      this.titleId = "Mã " + this.api.type;
-    }
+    this.title = "Cấp mã " + this.api.type;
+    this.titleName = "Tên " + this.api.type;
+    this.titleId = "Mã " + this.api.type;
   },
 
   methods: {
     ...mapActions({ addArea: "Area/addArea" }),
+
     resetModal() {
       this.name = null;
       this.nameState = null;
@@ -86,31 +88,17 @@ export default {
       this.msg.id = "";
       this.msg.name = "";
     },
-    // Tên vùng chỉ gồm các ký tự chữ cái và số
+
+    // Kiểm tra tên vùng
     checkValidName(val) {
-      if (!val) {
-        this.nameState = false;
-        this.msg.name = "Bạn phải nhập tên";
-      } else if (/[`~,.<>;':"/[\]|{}()=_+-]/.test(this.name)) {
-        this.nameState = false;
-        this.msg.name = "Trường này chỉ gồm các ký tự chữ cái và số";
-      } else {
-        this.nameState = true;
-        this.msg.name = "";
-      }
+      this.msg.name = validateName(val);
+      this.nameState = this.msg.name.length == 0;
     },
-    // Mã vùng chỉ gồm số
+
+    // Kiểm tra id
     checkValidId(val) {
-      if (!val) {
-        this.idState = false;
-        this.msg.id = "Bạn phải nhập mã (thêm 2 chữ số)";
-      } else if (/^[0-9]*$/.test(this.id)) {
-        this.idState = true;
-        this.msg.id = "";
-      } else {
-        this.idState = false;
-        this.msg.id = "Trường này chỉ gồm 2 ký tự số";
-      }
+      this.msg.id = validateIdWithLength(val, 2);
+      this.idState = this.msg.id.length == 0;
     },
 
     // Kiểm tra tên vùng và mã vùng trước khi submit
@@ -133,23 +121,22 @@ export default {
         return;
       }
       // Gửi thông tin đã được nhập đi
-        this.addArea({
+      this.addArea({
         role: this.role,
         area: { id: this.id, name: this.name },
-      })
-     
+      });
+
       // Khi ấn nút
       this.$nextTick(() => {
         this.hide();
-      });      
+      });
     },
 
     // Đóng modal
     hide() {
       this.$bvModal.hide("area-modal");
-      this.$emit('added', true)
-    }
-
+      this.$emit("added", true);
+    },
   },
 
   watch: {

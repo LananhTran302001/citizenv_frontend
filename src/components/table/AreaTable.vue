@@ -1,6 +1,6 @@
 <template>
   <b-container fluid class="container-style">
-    <!-- User interface control -->
+    <!-- Thông báo từ server -->
     <Message
       :id="serverMsg.id"
       :title="serverMsg.title"
@@ -61,14 +61,19 @@
 
     <b-row>
       <b-col xs="4" sm="4" md="4" lg="4">
-        <AreaAddForm :role="user.role" :api="api" @added="forceRefresh" />
+        <AreaAddForm
+          :role="user.role"
+          :api="api"
+          @added="forceRefresh"
+          v-if="api"
+        />
       </b-col>
       <b-col xs="4" sm="4" md="4" lg="4">
         <AreaEditForm
           :role="user.role"
           :api="api"
           :oldData="editingArea"
-          v-if="editingArea"
+          v-if="editingArea && api"
           @updated="forceRefresh"
         />
       </b-col>
@@ -76,7 +81,7 @@
         <AreaDetailsForm
           :api="api"
           :data="detailingArea"
-          v-if="detailingArea"
+          v-if="detailingArea && api"
           @detailed="forceRefresh"
         />
       </b-col>
