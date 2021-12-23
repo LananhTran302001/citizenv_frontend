@@ -51,6 +51,11 @@ const routes = [
         component:ManageCitizen
     },
     {
+        path:'/manager_citizen',
+        name:'manager_citizen',
+        component:ManageCitizen
+    },
+    {
         path:'/progress',
         name:'progress',
         component:Progress

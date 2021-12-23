@@ -202,7 +202,6 @@
     <div class="select-cols-style">
       <div class="menu-style" v-show="isOpenSelectCols">
         <h5>Chọn cột hiển thị</h5>
-        <CheckboxButton label="Tất cả" />
         <CheckboxButton
           v-for="(field, i) in api.fields"
           :key="i"
@@ -305,6 +304,7 @@ export default {
       fields: [],
       showFields: [],
       isOpenSelectCols: false,
+      multiAreas: [],
     };
   },
 

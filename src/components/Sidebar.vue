@@ -43,17 +43,9 @@
         </li>
         <li>
           <SidebarButton
-            address="/changepass"
+            address="/analytics"
             icon="chart-bar"
             text="Phân tích"
-            v-if="user.role > 0 && user.role < 5"
-          ></SidebarButton>
-        </li>
-        <li>
-          <SidebarButton
-            address="/search"
-            icon="search"
-            text="Tra cứu"
             v-if="user.role > 0 && user.role < 5"
           ></SidebarButton>
         </li>
