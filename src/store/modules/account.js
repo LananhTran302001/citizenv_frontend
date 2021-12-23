@@ -104,20 +104,14 @@ const Account = {
                 });
         },
 
-        updateAccount({ commit }, data) {
-            console.log("Đây là update data");
-            console.log(data);
+        updateIsLocked({ commit }, data) {
             const headers = {
                 Authorization: `Bearer ${localStorage.token}`,
             };
             const API = getAccountAPI(data.role);
             const url = `${API.urlId}/${data.account.id}`;
             const account = {
-                // Không gửi password
-                email: data.account.email,
-                isLocked: data.account.isLocked,
-                startDate: data.account.startDate,
-                endDate: data.account.endDate,
+                isLocked: data.account.isLocked
             }
             console.log("Đây là update account")
             console.log(account)
@@ -129,6 +123,55 @@ const Account = {
                 )
                 .then((res) => {
                     if (res.status == 200) {
+                        console.log(res);
+                    }
+                    commit("setServerMsg",
+                        {
+                            title: "Thông báo",
+                            content: res.data.message,
+                            status: res.status
+                        }
+                    )
+                    console.log("-------------------");
+                    console.log("-------------------");
+                })
+                .catch((err) => {
+                    commit("setServerMsg",
+                        {
+                            title: "Thông báo",
+                            content: err.response.data.message,
+                            status: err.response.status
+                        }
+                    )
+                    console.log(err.response.data.message);
+                });
+        },
+
+        updateAccount({ commit }, data) {
+            console.log("Đây là update data");
+            console.log(data);
+            const headers = {
+                Authorization: `Bearer ${localStorage.token}`,
+            };
+            const API = getAccountAPI(data.role);
+            const url = `${API.urlId}/${data.account.id}`;
+            const account = {
+                // Không gửi password
+                email: data.account.email,
+                StartDate: data.account.startDate,
+                EndDate: data.account.endDate,
+            }
+            console.log("Đây là update account không có khóa")
+            console.log(account)
+            axios
+                .put(
+                    url,
+                    account,
+                    { headers: headers }
+                )
+                .then((res) => {
+                    if (res.status == 200) {
+                        console.log("Đây là response")
                         console.log(res);
                     }
                     commit("setServerMsg",

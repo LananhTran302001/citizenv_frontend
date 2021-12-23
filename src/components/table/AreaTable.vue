@@ -65,7 +65,7 @@
           :role="user.role"
           :api="api"
           @added="forceRefresh"
-          v-if="api"
+          v-if="!user.is_locked && api"
         />
       </b-col>
       <b-col xs="4" sm="4" md="4" lg="4">
@@ -73,7 +73,7 @@
           :role="user.role"
           :api="api"
           :oldData="editingArea"
-          v-if="editingArea && api"
+          v-if="!user.is_locked && editingArea && api"
           @updated="forceRefresh"
         />
       </b-col>
@@ -108,6 +108,7 @@
         <b-button
           size="xs"
           class="mr-2 sm-button-style delete-button-style"
+          v-if="!user.is_locked"
           @click="deleteRow(row)"
         >
           <font-awesome-icon icon="trash" size="sm" />
@@ -117,6 +118,7 @@
         <b-button
           size="xs"
           class="mr-2 sm-button-style edit-button-style"
+          v-if="!user.is_locked"
           @click="editRow(row)"
         >
           <font-awesome-icon icon="edit" size="sm" />

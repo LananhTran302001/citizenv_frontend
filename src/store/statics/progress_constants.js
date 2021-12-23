@@ -1,13 +1,13 @@
 const PROGRESS_API = {
     B1: {
         urlAll: "progress",
-        urlId: "progress",
+        urlId: "wardCompleted",
         fields: [
             { key: "id", label: "Mã", sortable: true },
             { key: "name", label: "Tên", sortable: true },
             { key: "sumCitizen", label: "Đã nhập" },
             { key: "endTime", label: "Hạn cuối", sortable: true },
-        ]
+        ],
     },
 
     OTHER: {

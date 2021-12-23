@@ -69,10 +69,20 @@
     <!-- Nút confirm tiến độ -->
     <b-row class="my-2" v-if="user.role == 4">
       <b-form-group label="Trạng thái hoàn thành tiến độ">
-        <b-button variant="primary" v-show="!completed" @click="complete">
+        <b-button
+          variant="primary"
+          v-show="!completed"
+          :disabled="user.is_locked"
+          @click="complete"
+        >
           <font-awesome-icon icon="times" size="sm" /> Đang hoàn thiện
         </b-button>
-        <b-button variant="success" v-show="completed" @click="nonComplete">
+        <b-button
+          variant="success"
+          v-show="completed"
+          :disabled="user.is_locked"
+          @click="nonComplete"
+        >
           <font-awesome-icon icon="check" size="sm" /> Đã xong
         </b-button>
       </b-form-group>
@@ -89,7 +99,7 @@
       sort-icon-left
       stacked="md"
     >
-    <!-- Cột stt -->
+      <!-- Cột stt -->
       <template #cell(index)="row">
         {{ row.index + 1 }}
       </template>
@@ -135,7 +145,7 @@
 
 <script>
 import Message from "../Message.vue";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import { getProgressAPI } from "../../store/statics/progress_constants";
 import { BACKEND_URL } from "../../store/statics/backend_url";
 
@@ -178,17 +188,29 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      commitCompleted: "Progress/commitCompleted",
+    }),
+
     onFiltered(filteredItems) {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
 
-    complete () {
+    complete() {
       this.completed = true;
+      this.commitCompleted({
+        role: this.user.role,
+        progress: this.completed,
+      });
     },
 
     nonComplete() {
       this.completed = false;
+      this.commitCompleted({
+        role: this.user.role,
+        progress: this.completed,
+      });
     },
 
     fetchData() {
@@ -203,8 +225,12 @@ export default {
           .then((data) => {
             this.items = data.progress;
             this.totalRows = this.items.length;
-            this.totalAreas = data.total;
-            this.completedAreas = data.completed;
+            if (this.user.role == 4) {
+              this.completed = data.completed;
+            } else {
+              this.totalAreas = data.total;
+              this.completedAreas = data.completed;
+            }
             console.log(data);
           });
       }

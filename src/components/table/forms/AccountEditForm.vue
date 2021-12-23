@@ -36,16 +36,6 @@
           </b-col>
 
           <b-col lg="6">
-            <!-- Cấp quyền -->
-            <b-form-group label="Chức năng thêm/sửa/xóa">
-              <b-button variant="danger" v-show="isLocked" @click="unLock">
-                <font-awesome-icon icon="lock" size="sm" /> Đang khóa
-              </b-button>
-              <b-button variant="success" v-show="!isLocked" @click="lock">
-                <font-awesome-icon icon="lock-open" size="sm" /> Đang mở
-              </b-button>
-            </b-form-group>
-
             <!-- Đặt ngày bắt đầu -->
             <b-form-group label="Ngày bắt đầu">
               <b-form-datepicker
@@ -93,7 +83,6 @@ export default {
       titleId: "Mã ",
 
       email: null,
-      isLocked: true,
       startDate: null,
       endDate: null,
 
@@ -103,7 +92,6 @@ export default {
 
       msg: {
         email: null,
-        isLocked: null,
         startDate: null,
         endDate: null,
       },
@@ -118,7 +106,6 @@ export default {
     this.titleId = "Mã " + this.api.type;
 
     this.email = this.account.email;
-    this.isLocked = this.account.isLocked;
     this.startDate = this.account.startDate;
     this.endDate = this.account.endDate;
 
@@ -130,7 +117,6 @@ export default {
 
     resetModal() {
       this.email = null;
-      this.isLocked = true;
       this.startDate = null;
       this.endDate = null;
 
@@ -139,17 +125,8 @@ export default {
       this.endDateState = null;
 
       this.msg.email = null;
-      this.msg.isLocked = null;
       this.msg.startDate = null;
       this.msg.endDate = null;
-    },
-
-    lock() {
-      this.isLocked = true;
-    },
-
-    unLock() {
-      this.isLocked = false;
     },
 
     // Kiểm tra tên vùng và mã vùng trước khi submit
@@ -176,7 +153,6 @@ export default {
         account: {
           id: this.account.id,
           email: this.email,
-          isLocked: this.isLocked,
           startDate: this.startDate,
           endDate: this.endDate,
         },

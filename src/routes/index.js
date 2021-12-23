@@ -6,12 +6,11 @@ import ChangePassword from '../views/ChangePassword.vue'
 import Contact from '../views/Contact.vue';
 import ManageArea from "../views/ManageArea.vue";
 import ManageAccount from "../views/ManageAccount.vue";
-import ManageCencus from "../views/ManageCencus.vue";
+import ManageCitizen from "../views/ManageCitizen.vue";
 import Progress from "../views/Progress.vue";
 import Analytics from "../views/Analytics.vue";
 import CencusForm from "../views/CencusForm.vue";
 
-import CencusTable from "../components/table/CencusTable.vue";
 
 Vue.use(VueRouter);
 
@@ -47,14 +46,9 @@ const routes = [
         component:ManageAccount
     },
     {
-        path:'/manager_cencus',
-        name:'manager_cencus',
-        component:ManageCencus
-    },
-    {
-        path:'/view',
-        name:'view',
-        component:ManageCencus
+        path:'/manager_citizen',
+        name:'manager_citizen',
+        component:ManageCitizen
     },
     {
         path:'/progress',
@@ -70,11 +64,6 @@ const routes = [
         path:'/form',
         name:'form',
         component:CencusForm
-    },
-    {
-        path: '/cencus_table',
-        name: 'cencus table',
-        component: CencusTable
     },
 ];
 

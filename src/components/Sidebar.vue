@@ -35,7 +35,7 @@
         </li>
         <li>
           <SidebarButton
-            address="/view"
+            address="/manager_citizen"
             icon="list-alt"
             text="Danh sách"
             v-if="user.role > 0 && user.role < 5"

@@ -68,7 +68,7 @@
           :accountId="addingAccountId"
           :role="user.role"
           :api="api"
-          v-if="addingAccountId && api"
+          v-if="!user.is_locked && addingAccountId && api"
           @added="forceRefresh"
         />
       </b-col>
@@ -77,7 +77,7 @@
           :account="editingAccount"
           :role="user.role"
           :api="api"
-          v-if="editingAccount && api"
+          v-if="!user.is_locked && editingAccount && api"
           @updated="forceRefresh"
         />
       </b-col>
@@ -108,7 +108,7 @@
           variant="danger"
           v-if="row.item.isLocked != null"
           v-show="row.item.isLocked"
-          disabled
+          @click="lockAccountAtRow(row, false)"
         >
           <font-awesome-icon icon="lock" size="sm" /> Đang khóa
         </b-button>
@@ -117,7 +117,7 @@
           variant="success"
           v-if="row.item.isLocked != null"
           v-show="!row.item.isLocked"
-          disabled
+          @click="lockAccountAtRow(row, true)"
         >
           <font-awesome-icon icon="lock-open" size="sm" /> Đang mở
         </b-button>
@@ -128,16 +128,17 @@
         <b-button
           size="xs"
           class="mr-2 sm-button-style delete-button-style"
-          v-if="row.item.isLocked == null"
+          v-if="!user.is_locked && row.item.isLocked == null"
           @click="addToRow(row)"
         >
           <font-awesome-icon icon="plus" size="sm" />
           Thêm
         </b-button>
+        <!-- Nút sửa hiện khi đã có account tại hàng này -->
         <b-button
           size="xs"
           class="mr-2 sm-button-style edit-button-style"
-          v-if="row.item.isLocked != null"
+          v-if="!user.is_locked && row.item.isLocked != null"
           @click="editRow(row)"
         >
           <font-awesome-icon icon="edit" size="sm" />
@@ -146,6 +147,7 @@
         <b-button
           size="xs"
           class="mr-2 sm-button-style delete-button-style"
+          v-if="!user.is_locked"
           @click="deleteRow(row)"
         >
           <font-awesome-icon icon="trash" size="sm" />
@@ -234,12 +236,24 @@ export default {
       getAllAccount: "Account/getAllAccounts",
       deleteAccount: "Account/deleteAccount",
       addAccount: "Account/addAccount",
+      updateIsLocked: "Account/updateIsLocked",
     }),
 
     // khi tìm kiếm thì tính lại số dòng kết quả
     onFiltered(filteredItems) {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
+    },
+
+    lockAccountAtRow(row, isLocked) {
+      this.updateIsLocked({
+        role: this.user.role,
+        account: {
+          id: decodeJson(row.item).id,
+          isLocked: isLocked,
+        },
+      });
+      this.forceRefresh();
     },
 
     addToRow(row) {
