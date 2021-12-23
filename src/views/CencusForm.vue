@@ -1,6 +1,23 @@
 <template>
   <b-container class="container-style">
-    <form>
+    <form class="form-style">
+
+      <!-- Chọn thôn nhập -->
+      <b-row class="first-row-style">
+        <b-col cols="10">
+          <b-form-group
+          label="Thôn nhập liệu:"
+          label-cols-xs="6"
+          label-cols-sm="5"
+          label-cols-md="4"
+          label-cols-lg="3"
+          label-align-sm="right" 
+          >
+            <b-form-select :options="groupOptions"></b-form-select>
+          </b-form-group>
+        </b-col>
+      </b-row>
+
       <!-- Hàng đầu tiên: Họ và tên, giới tính, ngày sinh -->
       <b-row>
         <b-col cols="4">
@@ -107,7 +124,79 @@
         </b-col>
       </b-row>
 
-      <b-row></b-row>
+      <!-- Dòng thứ 5 và 6: Địa chỉ thường trú -->
+      <b-row>
+        <b-col cols="12">
+          <h5>Địa chỉ thường trú</h5>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col cols="4">
+          <b-form-group label="Số nhà, phố">
+            <b-form-input> </b-form-input>
+          </b-form-group>
+        </b-col>
+        <b-col cols="4">
+          <b-form-group label="Thôn/bản/tổ dân phố">
+            <b-form-input> </b-form-input>
+          </b-form-group>
+        </b-col>
+        <b-col cols="4">
+          <b-form-group label="Xã/phường">
+            <b-form-input> </b-form-input>
+          </b-form-group>
+        </b-col>
+      </b-row>
+
+      <b-row>
+        <b-col cols="4">
+          <b-form-group label="Quận/huyện">
+            <b-form-input> </b-form-input>
+          </b-form-group>
+        </b-col>
+        <b-col cols="4">
+          <b-form-group label="Tỉnh/thành phố">
+            <b-form-input> </b-form-input>
+          </b-form-group>
+        </b-col>
+      </b-row>
+
+      <!-- Dòng thứ 6: Địa chỉ tạm trú -->
+      <b-row>
+        <b-col cols="12">
+          <h5>Địa chỉ tạm trú</h5>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col cols="4">
+          <b-form-group label="Số nhà, phố">
+            <b-form-input> </b-form-input>
+          </b-form-group>
+        </b-col>
+        <b-col cols="4">
+          <b-form-group label="Thôn/bản/tổ dân phố">
+            <b-form-input> </b-form-input>
+          </b-form-group>
+        </b-col>
+        <b-col cols="4">
+          <b-form-group label="Xã/phường">
+            <b-form-input> </b-form-input>
+          </b-form-group>
+        </b-col>
+      </b-row>
+
+      <b-row>
+        <b-col cols="4">
+          <b-form-group label="Quận/huyện">
+            <b-form-input> </b-form-input>
+          </b-form-group>
+        </b-col>
+        <b-col cols="4">
+          <b-form-group label="Tỉnh/thành phố">
+            <b-form-input> </b-form-input>
+          </b-form-group>
+        </b-col>
+      </b-row>
     </form>
   </b-container>
 </template>
@@ -118,6 +207,7 @@ export default {
 
   data() {
     return {
+      groupOptions: ["Thôn 1", "Thôn 2", "Thôn 3", "Thôn 4", "Thôn 5"],
       genderOptions: ["Nam", "Nữ"],
       marriageOptions: ["Đã kết hôn", "Chưa kết hôn", "Ly hôn"],
       educationLevels: [
@@ -152,8 +242,12 @@ export default {
 </script>
 
 <style scoped>
+.form-style {
+  margin: 0px;
+  padding: 30px;
+}
+
 .container-style {
   margin: 100px;
-  padding: 30px;
 }
 </style>

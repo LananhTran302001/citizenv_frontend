@@ -56,53 +56,89 @@
     <b-row>
       <b-col xs="12" sm="12" md="6" lg="3" class="my-1">
         <!-- Chọn tỉnh thành: A1: role = 1 -->
-        <DropdownButton
-          title="Tỉnh/thành"
-          :xs="12"
-          :sm="4"
-          :md="5"
-          :lg="4"
-          :options="cities"
+        <b-form-group
           v-if="user.role == 1"
-        />
+          label="Tỉnh thành"
+          label-cols-xs="12"
+          label-cols-sm="4"
+          label-cols-md="5"
+          label-cols-lg="4"
+          label-align-sm="right"
+          label-size="sm"
+          class="mb-0"
+        >
+          <b-form-select
+            :options="citiesName"
+            v-model="currentCity"
+            size="sm"
+          ></b-form-select>
+        </b-form-group>
       </b-col>
 
       <b-col xs="12" sm="12" md="6" lg="3" class="my-1">
         <!-- Chọn quận/huyện/thị xã: A1, A2: role = 1,2 -->
-        <DropdownButton
-          title="Quận/huyện/thị xã"
-          :xs="12"
-          :sm="4"
-          :md="5"
-          :lg="5"
-          :options="districts"
+        <b-form-group
           v-if="user.role > 0 && user.role < 3"
-        />
+          label="Quận/huyện/thị xã"
+          label-cols-xs="12"
+          label-cols-sm="4"
+          label-cols-md="5"
+          label-cols-lg="5"
+          label-align-sm="right"
+          label-size="sm"
+          class="mb-0"
+        >
+          <b-form-select
+            :options="districtsName"
+            v-model="currentDistrict"
+            size="sm"
+          ></b-form-select>
+        </b-form-group>
       </b-col>
+
       <b-col xs="12" sm="12" md="6" lg="3" class="my-1">
         <!-- Chọn xã/phường/thị trấn: A1, A2, A3: role = 1,2,3 -->
-        <DropdownButton
-          title="Xã/phường/thị trấn"
-          :xs="12"
-          :sm="4"
-          :md="5"
-          :lg="6"
-          :options="wards"
+        <b-form-group
           v-if="user.role > 0 && user.role < 4"
-      /></b-col>
+          label="Xã/phường/thị trấn"
+          label-cols-xs="12"
+          label-cols-sm="4"
+          label-cols-md="5"
+          label-cols-lg="6"
+          label-align-sm="right"
+          label-size="sm"
+          class="mb-0"
+        >
+          <b-form-select
+            :options="wardsName"
+            v-model="currentWard"
+            size="sm"
+          ></b-form-select>
+        </b-form-group>
+      </b-col>
+
       <b-col xs="12" sm="12" md="6" lg="3" class="my-1">
         <!-- Chọn thôn/xóm/bản/tổ dân phố: A1, A2, A3, B1=A4: role = 1,2,3,4 -->
-        <DropdownButton
-          title="Thôn/bản/tổ dân phố"
-          :xs="12"
-          :sm="4"
-          :md="5"
-          :lg="6"
-          :options="residentalGroups"
+        <b-form-group
           v-if="user.role > 0 && user.role < 5"
-        />
+          label="Thôn/bản/tổ dân phố"
+          label-cols-xs="12"
+          label-cols-sm="4"
+          label-cols-md="5"
+          label-cols-lg="5"
+          label-align-sm="right"
+          label-size="sm"
+          class="mb-0"
+        >
+          <b-form-select
+            :options="residentalGroupsName"
+            v-model="currentResidentalGroup"
+            size="sm"
+          ></b-form-select>
+        </b-form-group>
       </b-col>
     </b-row>
+
     <!-- Main table -->
     <b-table
       :items="items"
@@ -174,9 +210,29 @@
           @isChecked="selectColIsChecked(api.fields[i])"
           @isNonChecked="selectColIsNonChecked(api.fields[i])"
         />
-        <button type="button" id="close-selcolumn-btn" @click="applySelectCols">
-          Áp dụng
-        </button>
+        <b-row class="justify-content-start">
+          <b-col cols="8">
+            <b-button
+              type="button"
+              variant="primary"
+              class="close-selcolumn-btn"
+              :disabled="showFields.length == 0"
+              @click="applySelectCols"
+            >
+              Áp dụng
+            </b-button>
+          </b-col>
+          <b-col cols="4">
+            <b-button
+              type="button"
+              variant="secondary"
+              class="close-selcolumn-btn"
+              @click="hideSelectCols"
+            >
+              Hủy
+            </b-button>
+          </b-col>
+        </b-row>
       </div>
       <font-awesome-icon
         icon="table"
@@ -190,16 +246,20 @@
 </template>
 
 <script>
-import DropdownButton from "./buttons/DropdownButton.vue";
 import CheckboxButton from "./buttons/CheckboxButton.vue";
 import { mapGetters } from "vuex";
 import { BACKEND_URL } from "../../store/statics/backend_url";
-import { getCitizenAPI } from "../../store/statics/citizen_constants";
+import {
+  getCitizenAPI,
+  getCitiesAPI,
+  getDistrictsAPI,
+  getWardsAPI,
+  getGroupsAPI,
+} from "../../store/statics/citizen_constants";
 
 export default {
   name: "CitizenTable",
   components: {
-    DropdownButton,
     CheckboxButton,
   },
 
@@ -211,14 +271,33 @@ export default {
       rowsPerPage: 10, // Số dòng/trang đang chọn
       filter: null, // Phần text tìm kiếm trong bảng
 
+      // AREA FILTER
       // Các tỉnh/thành phố cho phép chọn: chỉ được xem trong option này
-      cities: ["Ha Noi", "Ha Giang", "Can Tho"],
+      cities: [],
       // Các quận/huyện/thị xã cho phép chọn: chỉ được xem trong option này
-      districts: ["Quận 1", "Quận 2", "Quận 3"],
+      districts: [],
       // Các xã/phường/thị trấn cho phép chọn: chỉ được xem trong option này
-      wards: ["Xã 1", "Xã 12", "Xã 15"],
+      wards: [],
       // Các thôn/xóm/tổ dân phố cho phép chọn: chỉ được xem trong option này
-      residentalGroups: ["Thôn 1", "Thôn 2", "Thôn 3"],
+      residentalGroups: [],
+
+
+      // AREA NAME
+      // 
+      citiesName: ["Ha Noi", "Ha Giang", "Can Tho"],
+      // Các quận/huyện/thị xã cho phép chọn: chỉ được xem trong option này
+      districtsName: ["Quận 1", "Quận 2", "Quận 3"],
+      // Các xã/phường/thị trấn cho phép chọn: chỉ được xem trong option này
+      wardsName: ["Xã 1", "Xã 12", "Xã 15"],
+      // Các thôn/xóm/tổ dân phố cho phép chọn: chỉ được xem trong option này
+      residentalGroupsName: ["Thôn 1", "Thôn 2", "Thôn 3"],
+
+
+      // CHOICE FILTER
+      currentCity: null,
+      currentDistrict: null,
+      currentWard: null,
+      currentResidentalGroup: null,
 
       // DATA:
       api: null,
@@ -237,7 +316,9 @@ export default {
 
   created() {
     this.api = getCitizenAPI(this.user.role);
-    this.fields = this.api.fields.slice(1, this.api.fields.length);
+    console.log(this.fields);
+    this.fields = this.api.fields.slice(0, this.api.fields.length);
+    console.log(this.fields);
     this.fields.push({ key: "authorization", label: "Chỉnh sửa" });
     this.fields.unshift({ key: "index", label: "STT" });
     this.fetchData();
@@ -259,8 +340,22 @@ export default {
       console.log(val);
     },
 
-    fetchData() {
+    getAreaNames(areas) {
+      let list = [];
+      for (let area of areas) {
+        list.push(area.Name);
+      }
+      return list;
+    },
+
+    fetchData(areaId) {
+      this.fetchAreas();
       let url = BACKEND_URL + this.api.urlAll;
+      if (areaId) {
+        url = `${url}/${areaId}`;
+      }
+      console.log("----------url-----------")
+      console.log(url)
       fetch(url, {
         headers: { Authorization: `Bearer ${localStorage.token}` },
       })
@@ -275,41 +370,189 @@ export default {
         });
     },
 
+    fetchAreas() {
+      switch (this.user.role) {
+        case 1:
+          this.fetchCities();
+          break;
+        case 2:
+          this.fetchDistrictsInCity(null);
+          break;
+        case 3:
+          this.fetchWardsInDistrict(null);
+          break;
+        case 4:
+          this.fetchGroupsInWard(null);
+          break;
+        default:
+          console.log("Làm j có quyền");
+      }
+    },
+
+    fetchCities() {
+      let url = BACKEND_URL + getCitiesAPI().url;
+      url = `${url}/${this.user.user_id}`;
+      fetch(
+        url,
+        {
+          headers: { Authorization: `Bearer ${localStorage.token}` },
+        }
+      )
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          // this accounts for api urls in which the data is not the first result
+          this.cities = data.Areas;
+          this.citiesName = this.getAreaNames(data.Areas);
+          console.log("Đây là các tỉnh");
+          console.log(data);
+        });
+    },
+
+    fetchDistrictsInCity(cityId) {
+      if (!cityId) {
+        cityId = this.user.user_id;
+      }
+      let url = BACKEND_URL + getDistrictsAPI().url;
+      url = `${url}/${cityId}`;
+      fetch(url, {
+        headers: { Authorization: `Bearer ${localStorage.token}` },
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          // this accounts for api urls in which the data is not the first result
+          this.districts = data.Areas;
+          this.districtsName = this.getAreaNames(data.Areas);
+          console.log("Đây là các huyện");
+          console.log(data);
+        });
+    },
+
+    fetchWardsInDistrict(districtId) {
+      if (!districtId) {
+        districtId = this.user.user_id;
+      }
+      let url = BACKEND_URL + getWardsAPI().url;
+      url = `${url}/${districtId}`;
+      fetch(url, {
+        headers: { Authorization: `Bearer ${localStorage.token}` },
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          // this accounts for api urls in which the data is not the first result
+          this.wards = data.Areas;
+          this.wardsName = this.getAreaNames(data.Areas);
+          console.log("Đây là các xã");
+          console.log(data);
+        });
+    },
+
+    fetchGroupsInWard(wardId) {
+      if (!wardId) {
+        wardId = this.user.user_id;
+      }
+      let url = BACKEND_URL + getGroupsAPI().url;
+      url = `${url}/${wardId}`;
+      fetch(url, {
+        headers: { Authorization: `Bearer ${localStorage.token}` },
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          // this accounts for api urls in which the data is not the first result
+          this.residentalGroups = data.Areas;
+          this.residentalGroupsName = this.getAreaNames(data.Areas);
+          console.log("Đây là các thôn");
+          console.log(data);
+        });
+    },
+
     openSelectCols() {
       this.isOpenSelectCols = true;
     },
 
-    applySelectCols() {
+    hideSelectCols() {
       this.isOpenSelectCols = false;
-      let list = Array.of(...this.fields)
-      console.log(list)
-      console.log(this.showFields)
-      let listnew = []
+    },
+
+    // Áp dụng danh sách các cột sẽ hiện vào bảng
+    applySelectCols() {
+      this.hideSelectCols();
+      let list = Array.of(...this.api.fields);
+      let listnew = [];
       this.reset();
       for (let field of list) {
-        console.log(field)
-        if (this.showFields.indexOf(field) != -1){
-          listnew.push(field)
+        if (this.showFields.indexOf(field) != -1) {
+          listnew.push(field);
         }
       }
-      this.fields = listnew
+      this.fields = listnew;
     },
 
+    // Thêm 1 cột trong danh sách hiện
     selectColIsChecked(row) {
-      console.log("Column được chọn")
-      console.log(row)
-      this.showFields.push(row)
-      console.log(this.showFields)
+      this.showFields.push(row);
     },
 
+    // Xóa 1 cột trong danh sách hiện
     selectColIsNonChecked(row) {
-      console.log("Column được bỏ chọn")
-      console.log(row)
-      console.log("các fields hiện sau khi bỏ chọn")
-      this.showFields.splice(this.showFields.indexOf(row), 1)
-      console.log(this.showFields)
-    }
+      this.showFields.splice(this.showFields.indexOf(row), 1);
+    },
+
   },
+
+  
+
+  watch: {
+    currentCity: function (val) {
+      this.currentCity = val;
+      if (val) {
+        let city = this.cities.find(obj =>  obj.Name === val );
+        console.log("Đây là city bạn chọn")
+        console.log(city);
+        this.fetchDistrictsInCity(city.Id)
+        this.fetchData(city.Id)
+      }
+    },
+
+    currentDistrict: function (val) {
+      this.currentDistrict = val;
+      if (val) {
+        let district = this.districts.find(obj =>  obj.Name === val );
+        console.log("Đây là district bạn chọn")
+        console.log(district);
+        this.fetchWardsInDistrict(district.Id)
+        this.fetchData(district.Id)
+      }
+    },
+
+    currentWard: function (val) {
+      this.currentWard = val;
+      if (val) {
+        let ward = this.wards.find(obj =>  obj.Name === val );
+        console.log("Đây là ward bạn chọn")
+        console.log(ward);
+        this.fetchGroupsInWard(ward.Id)
+        this.fetchData(ward.Id)
+      }
+    },
+
+    currentResidentalGroup: function (val) {
+      this.currentResidentalGroup = val;
+      if (val) {
+        let group = this.residentalGroups.find(obj =>  obj.Name === val );
+        console.log("Đây là group bạn chọn")
+        console.log(group);
+        this.fetchData(group.Id)
+      }
+    }
+  }
 };
 </script>
 
@@ -336,21 +579,15 @@ export default {
 }
 
 .select-cols-style .menu-style {
-  position: absolute;
+  position: fixed;
   right: 10px;
   bottom: 10px;
   display: flex;
   flex-direction: column;
-  background-color: rgb(230, 179, 245);
+  background-color: rgb(190, 231, 248);
   border: solid 1px #888;
   border-radius: 20px;
   padding: 30px;
-}
-
-.select-cols-style #close-selcolumn-btn {
-  padding: 7px 10px 7px 10px;
-  border: solid 1px gainsboro;
-  border-radius: 10px;
 }
 
 .select-cols-style #open-selcolumn-btn {
@@ -360,7 +597,7 @@ export default {
   color: rgb(230, 179, 245);
   font-size: 50px;
   padding: 10px;
-  background-color: white;
+  background-color: rgb(245, 250, 170);
   border-radius: 50%;
 }
 
