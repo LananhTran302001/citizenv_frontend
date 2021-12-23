@@ -33,7 +33,7 @@
 
           <b-col lg="6">
             <!-- Cấp quyền -->
-            <b-form-group label="Chức năng thêm/sửa/xóa">
+            <b-form-group label="Chức năng thêm/sửa/xóa" v-if="data.isLocked != null">
               <b-button variant="danger" v-show="data.isLocked" disabled>
                 <font-awesome-icon icon="lock" size="sm" /> Đang khóa
               </b-button>

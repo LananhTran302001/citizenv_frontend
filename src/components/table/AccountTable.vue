@@ -1,5 +1,4 @@
-// Ẩn nút thêm nếu đã có
-// Ẩn nút chỉnh sửa nếu chưa có
+// Ẩn nút thêm nếu đã có // Ẩn nút chỉnh sửa nếu chưa có
 
 <template>
   <b-container fluid class="container-style">
@@ -75,10 +74,10 @@
       </b-col>
       <b-col xs="10" sm="10" md="10" lg="10">
         <AccountEditForm
-          :accountId="editingAccountId"
+          :account="editingAccount"
           :role="user.role"
           :api="api"
-          v-if="editingAccountId && api"
+          v-if="editingAccount && api"
           @updated="forceRefresh"
         />
       </b-col>
@@ -103,18 +102,47 @@
       sort-icon-left
       stacked="md"
     >
+      <!-- Nút hiển thị bị khóa hay không -->
+      <template #cell(isLocked)="row">
+        <b-button
+          variant="danger"
+          v-if="row.item.isLocked != null"
+          v-show="row.item.isLocked"
+          disabled
+        >
+          <font-awesome-icon icon="lock" size="sm" /> Đang khóa
+        </b-button>
+
+        <b-button
+          variant="success"
+          v-if="row.item.isLocked != null"
+          v-show="!row.item.isLocked"
+          disabled
+        >
+          <font-awesome-icon icon="lock-open" size="sm" /> Đang mở
+        </b-button>
+      </template>
+
       <!-- Các nút xóa/sửa/chi tiết -->
       <template #cell(authorization)="row">
         <b-button
           size="xs"
           class="mr-2 sm-button-style delete-button-style"
-          v-if="!row.item.email"
+          v-if="row.item.isLocked == null"
           @click="addToRow(row)"
         >
           <font-awesome-icon icon="plus" size="sm" />
           Thêm
         </b-button>
-
+        <b-button
+          size="xs"
+          class="mr-2 sm-button-style edit-button-style"
+          v-if="row.item.isLocked != null"
+          @click="editRow(row)"
+        >
+          <font-awesome-icon icon="edit" size="sm" />
+          Sửa
+        </b-button>
         <b-button
           size="xs"
           class="mr-2 sm-button-style delete-button-style"
@@ -122,15 +150,6 @@
         >
           <font-awesome-icon icon="trash" size="sm" />
           Xóa
-        </b-button>
-        <b-button
-          size="xs"
-          class="mr-2 sm-button-style edit-button-style"
-          v-if="row.item.email"
-          @click="editRow(row)"
-        >
-          <font-awesome-icon icon="edit" size="sm" />
-          Sửa
         </b-button>
         <b-button
           size="xs"
@@ -191,7 +210,7 @@ export default {
       filter: null, // Phần text tìm kiếm trong bảng
 
       addingAccountId: null,
-      editingAccountId: null,
+      editingAccount: null,
       detailingAccount: null,
     };
   },
@@ -228,7 +247,7 @@ export default {
     },
 
     editRow(row) {
-      this.editingAccountId = row.item.areaId;
+      this.editingAccount = decodeJson(row.item);
     },
 
     deleteRow(row) {
@@ -262,9 +281,10 @@ export default {
 
     forceRefresh() {
       this.addingAccountId = null;
-      this.editingAccountId = null;
+      this.editingAccount = null;
       this.detailingAccount = null;
       setTimeout(() => this.fetchData(), 2000);
+      setTimeout(() => this.fetchData(), 5000);
     },
   },
 };

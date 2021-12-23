@@ -113,12 +113,13 @@ const Account = {
             const API = getAccountAPI(data.role);
             const url = `${API.urlId}/${data.account.id}`;
             const account = {
-                password: data.account.password,
+                // Không gửi password
                 email: data.account.email,
                 isLocked: data.account.isLocked,
                 startDate: data.account.startDate,
                 endDate: data.account.endDate,
             }
+            console.log("Đây là update account")
             console.log(account)
             axios
                 .put(

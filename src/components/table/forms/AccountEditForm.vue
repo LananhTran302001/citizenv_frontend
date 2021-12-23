@@ -7,7 +7,6 @@
       :title="title"
       ok-title="Cập nhật"
       cancel-title="Hủy"
-      @show="resetModal"
       @hidden="resetModal"
       @ok="handleOk"
       @hide="hide"
@@ -17,27 +16,22 @@
           <b-col lg="6">
             <!-- ID không được chỉnh sửa -->
             <b-form-group :label="titleId">
-              <label> {{ accountId }} </label>
-            </b-form-group>
-
-            <!-- Password edit -->
-            <b-form-group
-              :label="titlePassword"
-              label-for="account-password"
-              :invalid-feedback="msg.password"
-              :state="passwordState"
-            >
-              <b-form-input
-                id="account-password"
-                v-model="password"
-                :state="passwordState"
-                required
-              ></b-form-input>
+              <label> {{ account.id }} </label>
             </b-form-group>
 
             <!-- Email edit -->
-            <b-form-group label="Email" label-for="email">
-              <b-form-input id="email" v-model="email" required></b-form-input>
+            <b-form-group
+              label="Email"
+              label-for="email"
+              :invalid-feedback="msg.email"
+              :state="emailState"
+            >
+              <b-form-input
+                id="email"
+                v-model="email"
+                :state="emailState"
+                required
+              ></b-form-input>
             </b-form-group>
           </b-col>
 
@@ -86,7 +80,6 @@
 
 <script>
 import {
-  validatePassword,
   validateEmail,
 } from "../../../store/statics/validations";
 import { mapActions } from "vuex";
@@ -98,34 +91,37 @@ export default {
     return {
       title: "Cấp tài khoản ",
       titleId: "Mã ",
-      titlePassword: "Mật khẩu ",
 
-      password: null,
       email: null,
       isLocked: true,
       startDate: null,
       endDate: null,
 
-      passwordState: null,
       emailState: null,
       startDateState: null,
       endDateState: null,
+
       msg: {
-        password: String,
-        email: String,
-        isLocked: String,
-        startDate: String,
-        endDate: String,
+        email: null,
+        isLocked: null,
+        startDate: null,
+        endDate: null,
       },
     };
   },
 
-  props: { role: Number, api: Object, accountId: String },
+  props: { role: Number, api: Object, account: Object },
 
   mounted() {
     this.title = "Cấp tài khoản các " + this.api.type;
     this.titleName = "Tên " + this.api.type;
     this.titleId = "Mã " + this.api.type;
+
+    this.email = this.account.email;
+    this.isLocked = this.account.isLocked;
+    this.startDate = this.account.startDate;
+    this.endDate = this.account.endDate;
+
     this.$bvModal.show("account-edit-modal");
   },
 
@@ -133,23 +129,19 @@ export default {
     ...mapActions({ updateAccount: "Account/updateAccount" }),
 
     resetModal() {
-      this.password = null;
       this.email = null;
       this.isLocked = true;
       this.startDate = null;
       this.endDate = null;
 
-      this.passwordState = null;
       this.emailState = null;
       this.startDateState = null;
       this.endDateState = null;
-      this.msg = {
-        password: null,
-        email: null,
-        isLocked: null,
-        startDate: null,
-        endDate: null,
-      };
+
+      this.msg.email = null;
+      this.msg.isLocked = null;
+      this.msg.startDate = null;
+      this.msg.endDate = null;
     },
 
     lock() {
@@ -162,7 +154,7 @@ export default {
 
     // Kiểm tra tên vùng và mã vùng trước khi submit
     checkFormValidity() {
-      return this.passwordState && this.emailState;
+      return this.emailState;
     },
 
     handleOk(bvModalEvt) {
@@ -175,14 +167,14 @@ export default {
     handleSubmit() {
       // Không cho phép submit nếu chưa nhập thông tin hợp lệ
       if (!this.checkFormValidity()) {
+        console.log("Các thông tin điền chưa hợp lệ");
         return;
       }
       // Gửi thông tin đã được nhập đi
       this.updateAccount({
         role: this.role,
         account: {
-          id: this.accountId,
-          password: this.password,
+          id: this.account.id,
           email: this.email,
           isLocked: this.isLocked,
           startDate: this.startDate,
@@ -204,13 +196,9 @@ export default {
 
   watch: {
     email: function (val) {
+      this.email = val;
       this.msg.email = validateEmail(val);
-      this.emailState = this.msg.email.length == 0;
-    },
-
-    password: function (val) {
-      this.msg.password = validatePassword(val);
-      this.passwordState = this.msg.password.length == 0;
+      this.emailState = (this.msg.email.length == 0);
     },
   },
 };

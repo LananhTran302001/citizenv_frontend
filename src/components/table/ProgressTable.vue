@@ -60,10 +60,22 @@
     </b-row>
 
     <!-- Total progress -->
-    <b-row class="my-2">
+    <b-row class="my-2" v-if="user.role > 0 && user.role < 4">
       <span class="ml-5"
         >Tổng kết tiến độ: {{ completedAreas }} / {{ totalAreas }}
       </span>
+    </b-row>
+
+    <!-- Nút confirm tiến độ -->
+    <b-row class="my-2" v-if="user.role == 4">
+      <b-form-group label="Trạng thái hoàn thành tiến độ">
+        <b-button variant="primary" v-show="!completed" @click="complete">
+          <font-awesome-icon icon="times" size="sm" /> Đang hoàn thiện
+        </b-button>
+        <b-button variant="success" v-show="completed" @click="nonComplete">
+          <font-awesome-icon icon="check" size="sm" /> Đã xong
+        </b-button>
+      </b-form-group>
     </b-row>
 
     <b-table
@@ -77,9 +89,12 @@
       sort-icon-left
       stacked="md"
     >
+    <!-- Cột stt -->
       <template #cell(index)="row">
         {{ row.index + 1 }}
       </template>
+
+      <!-- cột tiến độ cho A1, A2, A3 -->
       <template #cell(completed)="row">
         <b-form-checkbox
           size="lg"
@@ -90,6 +105,7 @@
         </b-form-checkbox>
       </template>
 
+      <!-- Cột gửi nhắc nhở -->
       <template #cell(sendEmail)="row">
         <button
           v-if="user.role > 0 && user.role < 5"
@@ -133,6 +149,7 @@ export default {
       // Dữ liệu backend trả về, có thể thay đổi các trường
       items: [],
       fields: [],
+      completed: false,
 
       totalAreas: 0,
       completedAreas: 0,
@@ -164,6 +181,14 @@ export default {
     onFiltered(filteredItems) {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
+    },
+
+    complete () {
+      this.completed = true;
+    },
+
+    nonComplete() {
+      this.completed = false;
     },
 
     fetchData() {
