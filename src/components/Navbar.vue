@@ -4,20 +4,12 @@
     class="navbar flex-row navbar-style justify-content-between navbar-expand-md"
   >
     <a href="" class="logo nav">
-      <img src="../assets/img/logo.png" alt="logo" class="logo-img" />
-      <label class="logo-text">CitizenV</label>
+      <router-link to="/">
+        <img src="../assets/img/logo.png" alt="logo" class="logo-img" />
+        <label class="logo-text">CitizenV</label>
+      </router-link>
     </a>
-    <ul class="nav flex-row nav-pills justify-content-around">
-      <li class="nav-item">
-        <router-link to="/">Trang chủ</router-link>
-      </li>
-      <li class="nav-item">
-        <router-link to="/about">Giới thiệu</router-link>
-      </li>
-      <li class="nav-item">
-        <router-link to="/contact">Liên hệ</router-link>
-      </li>
-    </ul>
+
     <div class="nav flex-row justify-content-around" id="user-nav">
       <NavbarUserInfo
         message="Xin chào "
@@ -68,7 +60,7 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
-  box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
 }
 .navbar-style {
   justify-content: space-around;
@@ -96,18 +88,6 @@ export default {
   text-decoration: none;
 }
 
-#navbar .nav-item {
-  font-size: 18px;
-  color: #413e66;
-  font-weight: 500;
-  padding: 0px 15px 0px 15px;
-}
-
-#navbar .nav-item:hover {
-  color: rgb(0, 0, 194);
-  cursor: pointer;
-}
-
 #navbar .user-dropdown {
   height: 80%;
   background-image: url("../assets/img/general_user.jpg");
@@ -126,12 +106,6 @@ export default {
     font-weight: 700;
     letter-spacing: 1px;
   }
-
-  #navbar .nav-item {
-    font-size: 12px;
-    color: #413e66;
-    font-weight: 500;
-  }
 }
 
 @media (max-width: 400px) {
@@ -141,14 +115,10 @@ export default {
     margin: 5px;
   }
 
-  #navbar .logo {
-    display: none;
-  }
-
-  #navbar .nav-item {
-    font-size: 11px;
-    color: #413e66;
-    font-weight: 500;
+  #navbar .logo-text {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 1px;
   }
 }
 </style>

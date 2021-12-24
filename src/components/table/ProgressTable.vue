@@ -118,7 +118,7 @@
       <!-- Cột gửi nhắc nhở -->
       <template #cell(sendEmail)="row">
         <button
-          v-if="user.role > 0 && user.role < 5"
+          v-if="(user.role > 0 && user.role < 5) && !row.item.completed"
           class="mr-2 sm-button-style row-btn-style"
           @click="handleSendEmail(row)"
         >

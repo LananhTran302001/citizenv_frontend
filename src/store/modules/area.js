@@ -88,13 +88,13 @@ const Area = {
                         commit("setServerMsg",
                             {
                                 title: "Thông báo",
-                                content: res.data.Message,
+                                content: res.data.message,
                                 status: res.status
                             }
                         )
 
                     }
-                    console.log(res.data.Message);
+                    console.log(res.data.message);
                     console.log("-------------------");
                 })
                 .catch((err) => {

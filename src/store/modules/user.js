@@ -15,6 +15,7 @@ const User = {
             expired_time: null,
             is_locked: null,
         },
+        
         loginData: {
             user_id: "",
             password: "",
@@ -42,6 +43,19 @@ const User = {
         setUser(state, payload) {
             state.user = payload;
         },
+        setUserFromToken(state, token) {
+            const data = VueJwtDecode.decode(token)
+            const user = {
+                user_name: data.name,
+                user_id: data.sub,
+                user_email: null,
+                role: data.role,
+                start_time: null,
+                expired_time: null,
+                is_locked: data.isLocked
+            }
+            state.user = user;
+        },
         setLoginData(state, payload) {
             state.loginData = payload
         },
@@ -63,7 +77,7 @@ const User = {
                 start_time: null,
                 expired_time: null,
                 is_locked: null,
-            }
+            };
         },
         resetLoginData(state) {
             state.loginData = {
@@ -102,7 +116,7 @@ const User = {
                 .post("login", login_data)
                 .then((res) => {
                     if (res.status == 200) {
-                        commit('setToken', res.data.access_token, {root: true})
+                        commit('setToken', res.data.access_token, { root: true })
                         const token = VueJwtDecode.decode(res.data.access_token)
                         const user = {
                             user_name: token.name,
@@ -114,6 +128,7 @@ const User = {
                             is_locked: token.isLocked
                         }
                         commit('setUser', user)
+                        console.log(user)
                         router.push('/')
                     }
 
@@ -175,6 +190,7 @@ const User = {
         },
 
         logout({ commit }) {
+            console.log("loging out...")
             const headers = {
                 Authorization: `Bearer ${localStorage.token}`
             }
@@ -183,9 +199,10 @@ const User = {
                 .then((res) => {
                     if (res.status == 200) {
                         console.log(res.data)
+                        localStorage.clear();
                     }
                     router.push('/login')
-                    // commit("resetToken", { root: true })
+                    commit("resetToken", "", { root: true })
                     commit("resetUser")
 
                 }).catch(err => {

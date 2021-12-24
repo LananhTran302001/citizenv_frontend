@@ -1,5 +1,12 @@
 <template>
   <b-container fluid class="container-style">
+    <!-- Thông báo từ server -->
+    <Message
+      :id="serverMsg.id"
+      :title="serverMsg.title"
+      :content="serverMsg.content"
+      :variant="serverMsg.variant"
+    />
     <!-- User interface control -->
     <b-row>
       <!-- Search bar -->
@@ -139,6 +146,8 @@
       </b-col>
     </b-row>
 
+    <SelectForm :options="cities"/>
+
     <!-- Main table -->
     <b-table
       :items="items"
@@ -248,6 +257,8 @@
 import CheckboxButton from "./buttons/CheckboxButton.vue";
 import { mapGetters } from "vuex";
 import { BACKEND_URL } from "../../store/statics/backend_url";
+import Message from "../../components/Message.vue";
+import SelectForm from "../../components/table/forms/SelectForm.vue"
 import {
   getCitizenAPI,
   getCitiesAPI,
@@ -259,6 +270,8 @@ import {
 export default {
   name: "CitizenTable",
   components: {
+    Message,
+    SelectForm,
     CheckboxButton,
   },
 
@@ -311,6 +324,7 @@ export default {
   computed: {
     ...mapGetters({
       user: "User/getUser",
+      serverMsg: "Citizen/getServerMsg"
     }),
   },
 

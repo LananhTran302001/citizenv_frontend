@@ -1,9 +1,9 @@
+
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
 import Login from '../views/Login.vue';
 import ChangePassword from '../views/ChangePassword.vue'
-import Contact from '../views/Contact.vue';
 import ManageArea from "../views/ManageArea.vue";
 import ManageAccount from "../views/ManageAccount.vue";
 import ManageCitizen from "../views/ManageCitizen.vue";
@@ -18,52 +18,71 @@ const routes = [
     {
         path:'/login', 
         name:'login', 
-        component:Login
+        component:Login,
     },
     {
         path:'/changepass', 
         name:'changepass', 
-        component:ChangePassword
+        component:ChangePassword,
+        meta: {
+            requiresAuth: true
+        }
     },
     {
         path: '/',
         name:'home',
-        component:Home
-    },
-    {
-        path:'/contact',
-        name:'contact',
-        component:Contact
+        component:Home,
+        meta: {
+            requiresAuth: false
+        }
     },
     {
         path:'/manager_area',
         name:'manager_area',
-        component:ManageArea
+        component:ManageArea,
+        meta: {
+            requiresAuth: true
+        }
     },
     {
         path:'/manager_account',
         name:'manager_account',
-        component:ManageAccount
+        component:ManageAccount,
+        meta: {
+            requiresAuth: true
+        }
     },
     {
         path:'/manager_citizen',
         name:'manager_citizen',
-        component:ManageCitizen
+        component:ManageCitizen,
+        meta: {
+            requiresAuth: true
+        }
     },
     {
         path:'/progress',
         name:'progress',
-        component:Progress
+        component:Progress,
+        meta: {
+            requiresAuth: true
+        }
     },
     {
         path:'/analytics',
         name:'analytics',
-        component: Analytics
+        component: Analytics,
+        meta: {
+            requiresAuth: true
+        }
     },
     {
         path:'/form',
         name:'form',
-        component:CencusForm
+        component:CencusForm,
+        meta: {
+            requiresAuth: true
+        }
     },
 ];
 

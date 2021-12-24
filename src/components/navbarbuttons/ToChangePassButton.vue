@@ -19,4 +19,16 @@ export default {
 .button-style {
   padding: 5px;
 }
+
+@media (max-width: 700px) {
+  span {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 400px) {
+  span {
+    font-size: 14px;
+  }
+}
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="dropdown">
-    <button class="dropbtn">{{ text }}</button>
+    <button class="dropbtn"> <span>{{ text }}</span></button>
     <div class="dropdown-content">
       <ToChangePassButton class="dropdown-item-style" />
       <LogoutButton class="dropdown-item-style" />
@@ -76,21 +76,10 @@ export default {
   display: block;
 }
 
-@media (max-width: 900px) {
-  .dropdown {
-    font: 14px;
-  }
-}
-
 @media (max-width: 700px) {
-  .dropbtn {
-    font: 12px;
+  .dropdown-item-style {
+    padding: 8px;
   }
 }
 
-@media (max-width: 400px) {
-  .dropbtn {
-    font: 11px;
-  }
-}
 </style>

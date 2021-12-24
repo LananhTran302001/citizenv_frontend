@@ -1,5 +1,3 @@
-// Ẩn nút thêm nếu đã có // Ẩn nút chỉnh sửa nếu chưa có
-
 <template>
   <b-container fluid class="container-style">
     <!-- Thông báo từ server -->

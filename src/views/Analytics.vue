@@ -1,5 +1,12 @@
 <template>
   <b-container fluid class="container-style">
+    <!-- Thông báo từ server -->
+    <Message
+      :id="serverMsg.id"
+      :title="serverMsg.title"
+      :content="serverMsg.content"
+      :variant="serverMsg.variant"
+    />
     <!-- Dòng đầu tiên: chọn phân tích theo đặc tính nào -->
     <b-row>
       <!-- Chọn thuộc tính phân tích -->
@@ -71,13 +78,14 @@ import {
   getAnalyticsEducationalLevel,
   getAnalyticsMarriage,
 } from "../store/statics/analytics_constants";
+import Message from "../components/Message.vue"
 import PieChart from "../components/chart/PieChart.vue";
 import LineChart from "../components/chart/LineChart.vue";
 import BarChart from "../components/chart/BarChart.vue";
 
 export default {
   name: "Analytics",
-  components: { PieChart, LineChart, BarChart },
+  components: { Message, PieChart, LineChart, BarChart },
 
   data() {
     return {
@@ -108,6 +116,7 @@ export default {
   computed: {
     ...mapGetters({
       user: "User/getUser",
+      serverMsg: "Analytics/getServerMsg"
     }),
   },
 
