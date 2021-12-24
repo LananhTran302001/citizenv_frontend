@@ -54,7 +54,7 @@
             address="/form"
             icon="file-alt"
             text="Nhập liệu"
-            v-if="user.role == 4 || user.role == 5"
+            v-if="(user.role == 4 || user.role == 5) && !user.is_locked"
           ></SidebarButton>
         </li>
       </ul>

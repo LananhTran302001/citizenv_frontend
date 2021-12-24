@@ -1,4 +1,6 @@
 import { messageFormat } from "../statics/messages"
+import { getCitizenAPI } from "../statics/citizen_constants"
+import axios from "axios"
 
 const Citizen = {
     namespaced: true,
@@ -28,7 +30,48 @@ const Citizen = {
         }
     },
 
-    
+    actions: {
+        submitForm({ commit }, data) {
+            const API = getCitizenAPI();
+            const headers = {
+                Authorization: `Bearer ${localStorage.token}`,
+            };
+            // Chỉ in ra để xem
+            console.log(data.citizen)
+            let url = `${API.urlId}/${data.id}`
+            console.log(url)
+            axios
+                .post(
+                    url,
+                    data.citizen,
+                    { headers: headers }
+                )
+                .then((res) => {
+                    if (res.status == 200) {
+                        console.log(res);
+                        commit("setServerMsg",
+                            {
+                                title: "Thông báo",
+                                content: res.data.Message,
+                                status: res.status
+                            }
+                        )
+
+                    }
+                    console.log(res.data.Message);
+                    console.log("-------------------");
+                })
+                .catch((err) => {
+                    commit("setServerMsg",
+                        {
+                            title: "Thông báo",
+                            content: err.response.data.message,
+                            status: err.response.status
+                        }
+                    )
+                });
+        }
+    }
 }
 
 export default Citizen;

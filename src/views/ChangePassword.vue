@@ -56,6 +56,7 @@
 </template>
 
 <script>
+import { validatePassword } from "../store/statics/validations"
 import { mapActions } from "vuex";
 
 export default {
@@ -80,13 +81,8 @@ export default {
   watch: {
     oldPass: function (val) {
       this.oldpass = val;
-      if (this.isValidPassword(val)) {
-        this.msg.old = "";
-        this.state.old = true;
-      } else {
-        this.msg.old = "Mật khẩu không hợp lệ";
-        this.state.old = false;
-      }
+      this.msg.old = validatePassword(val);
+      this.state.old = (this.msg.old.length == 0)
     },
     newPass: function (val) {
       this.newPass = val;

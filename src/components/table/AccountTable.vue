@@ -108,6 +108,7 @@
           variant="danger"
           v-if="row.item.isLocked != null"
           v-show="row.item.isLocked"
+          :disabled="user.is_locked"
           @click="lockAccountAtRow(row, false)"
         >
           <font-awesome-icon icon="lock" size="sm" /> Đang khóa
@@ -117,6 +118,7 @@
           variant="success"
           v-if="row.item.isLocked != null"
           v-show="!row.item.isLocked"
+          :disabled="user.is_locked"
           @click="lockAccountAtRow(row, true)"
         >
           <font-awesome-icon icon="lock-open" size="sm" /> Đang mở
@@ -175,11 +177,6 @@
       aria-controls="area-table"
       class="justify-content-center"
     ></b-pagination>
-
-    <!--  Button để hiện -->
-    <div>
-      <button @click="fetchData()">Hiện</button>
-    </div>
   </b-container>
 </template>
 

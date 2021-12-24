@@ -6,6 +6,7 @@ Vue.use(Vuex)
 import User from "./modules/user";
 import Area from "./modules/area";
 import Account from "./modules/account";
+import Citizen from "./modules/citizen"
 import Progress from "./modules/progress";
 import Analytics from "./modules/analytics";
 
@@ -32,6 +33,7 @@ const store = new Vuex.Store ({
         User,
         Area,
         Account,
+        Citizen,
         Progress,
         Analytics
     },

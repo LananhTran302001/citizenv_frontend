@@ -32,11 +32,11 @@ export const validateId = function (id) {
 export const validateIdWithLength = function (id, length) {
     if (!id) {
         return "Bạn phải nhập mã (thêm 2 chữ số)";
-      } else if (idFormat(id) && id.length == length) {
+    } else if (idFormat(id) && id.length == length) {
         return "";
-      } else {
-        return "Trường này chỉ gồm 2 ký tự số";
-      }
+    } else {
+        return "Trường này chỉ gồm " + length.toString() +" ký tự số";
+    }
 }
 
 export const validatePassword = function (password) {
@@ -57,11 +57,11 @@ export const validatePassword = function (password) {
 export const validateName = function (name) {
     if (!name) {
         return "Bạn phải nhập tên";
-      } else if (/[`~,.<>;':"/[\]|{}()=_+-]/.test(name)) {
+    } else if (/[`~,.<>;':"/[\]|{}()=_+-]/.test(name)) {
         return "Trường này chỉ gồm các ký tự chữ cái và số";
-      } else {
+    } else {
         return "";
-      }
+    }
 }
 
 export const validateEmail = function (email) {
@@ -69,6 +69,14 @@ export const validateEmail = function (email) {
         return "";
     } else {
         return "Email phải có độ dài từ 5-35 ký tự ";
+    }
+}
+
+export const validateCitizenid = function (citizenId) {
+    if (isEmpty(citizenId)) {
+        return "Bạn phải nhập trường này"
+    } else {
+        return ""
     }
 }
 

@@ -315,7 +315,7 @@ export default {
   },
 
   created() {
-    this.api = getCitizenAPI(this.user.role);
+    this.api = getCitizenAPI();
     console.log(this.fields);
     this.fields = this.api.fields.slice(0, this.api.fields.length);
     console.log(this.fields);

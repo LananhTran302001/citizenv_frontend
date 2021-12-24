@@ -2,6 +2,7 @@ const PROGRESS_API = {
     B1: {
         urlAll: "progress",
         urlId: "wardCompleted",
+        urlSendEmail: "progress",
         fields: [
             { key: "id", label: "Mã", sortable: true },
             { key: "name", label: "Tên", sortable: true },
@@ -13,6 +14,7 @@ const PROGRESS_API = {
     OTHER: {
         urlAll: "progress",
         urlId: "progress",
+        urlSendEmail: "progress",
         fields: [
             { key: "id", label: "Mã", sortable: true },
             { key: "name", label: "Tên", sortable: true },

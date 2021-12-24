@@ -72,6 +72,45 @@ const Progress = {
                     )
                     console.log(err.response.data.message);
                 });
+        },
+
+        sendEmail({ commit }, data) {
+            const headers = {
+                Authorization: `Bearer ${localStorage.token}`,
+            };
+            const API = getProgressAPI(data.role);
+            console.log(headers)
+            let url = API.urlSendEmail;
+            url = `${url}/${data.account.id}`
+            axios
+                .post(
+                    url, {},
+                    { headers: headers }
+                )
+                .then((res) => {
+                    if (res.status == 200) {
+                        console.log(res);
+                    }
+                    commit("setServerMsg",
+                        {
+                            title: "Thông báo",
+                            content: res.data.message,
+                            status: res.status
+                        }
+                    )
+                    console.log("-------------------");
+                    console.log("-------------------");
+                })
+                .catch((err) => {
+                    commit("setServerMsg",
+                        {
+                            title: "Thông báo",
+                            content: err.response.data.message,
+                            status: err.response.status
+                        }
+                    )
+                    console.log(err.response.data.message);
+                });
         }
     }
 

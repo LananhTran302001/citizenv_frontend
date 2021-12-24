@@ -120,7 +120,7 @@
         <button
           v-if="user.role > 0 && user.role < 5"
           class="mr-2 sm-button-style row-btn-style"
-          @click="sendEmail(row)"
+          @click="handleSendEmail(row)"
         >
           <font-awesome-icon icon="paper-plane" size="sm" />
           Nhắc nhở
@@ -190,6 +190,7 @@ export default {
   methods: {
     ...mapActions({
       commitCompleted: "Progress/commitCompleted",
+      sendEmail: "Progress/sendEmail"
     }),
 
     onFiltered(filteredItems) {
@@ -235,6 +236,14 @@ export default {
           });
       }
     },
+
+    handleSendEmail(row) {
+      const accountId = row.item.id;
+      this.sendEmail({
+        role: this.user.role,
+        account: {id: accountId}
+      });
+    }
   },
 };
 </script>

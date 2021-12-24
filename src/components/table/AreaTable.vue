@@ -224,7 +224,6 @@ export default {
             return response.json();
           })
           .then((data) => {
-            // this accounts for api urls in which the data is not the first result
             this.items = data.Areas;
             this.totalRows = this.items.length;
           });

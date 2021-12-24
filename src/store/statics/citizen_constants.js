@@ -1,6 +1,6 @@
 const CITIZEN_API = {
     urlAll: "citizens",
-    urlId: "citizens",
+    urlId: "citizen",
     fields: [
         {key: "name", label: "Họ và tên", sortable: true},
         {key: "CCCD", label: "CCCD", sortable: true},
@@ -51,9 +51,7 @@ const AREA_API = {
     },
 }
 
-export const getCitizenAPI = function (role) {
-    console.log(role)
-    console.log("in ra cho đỡ vo dụng")
+export const getCitizenAPI = function () {
     return CITIZEN_API
 };
 
