@@ -1,45 +1,48 @@
 <template>
   <div class="container-style">
-    <b-button v-b-modal.area-modal size="sm"> Cấp mã </b-button>
-
+    <b-button v-b-modal.account-add-modal size="sm" variant="secondary"> Cấp tài khoản </b-button>
     <b-modal
-      id="area-modal"
+      id="account-add-modal"
       ref="modal"
-      :title="title"
+      title="Cấp tài khoản A1"
       ok-title="Thêm"
       cancel-title="Hủy"
       @show="resetModal"
       @hidden="resetModal"
       @ok="handleOk"
-      :ok-disabled="!(idState && nameState)"
+      :ok-disabled="!(idState && emailState)"
       @hide="hide"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
+        <!-- ID k= id area lấy sẵn -->
         <b-form-group
           :label="titleId"
-          label-for="area-id"
+          label-for="account-id"
           :invalid-feedback="msg.id"
           :state="idState"
         >
           <b-form-input
-            id="area-id"
+            id="account-id"
             v-model="id"
             :state="idState"
             required
           ></b-form-input>
         </b-form-group>
+
+        <!-- Email -->
         <b-form-group
-          :label="titleName"
-          label-for="area-name"
-          :invalid-feedback="msg.name"
-          :state="nameState"
+          :label="titleEmail"
+          label-for="account-email"
+          :invalid-feedback="msg.email"
+          :state="emailState"
         >
           <b-form-input
-            id="area-name"
-            v-model="name"
-            :state="nameState"
+            id="account-email"
+            v-model="email"
+            :state="emailState"
             required
-          ></b-form-input>
+          >
+          </b-form-input>
         </b-form-group>
       </form>
     </b-modal>
@@ -47,25 +50,25 @@
 </template>
 
 <script>
-import {
-  validateName,
-  validateIdWithLength,
-} from "../../../store/statics/validations";
+import { validateEmail, validateIdWithLength } from "../../../store/statics/validations";
 import { mapActions } from "vuex";
 
 export default {
+  name: "AccountAddForm",
+
   data() {
     return {
-      title: "Cấp mã ",
-      titleName: "Tên ",
+      title: "Cấp tài khoản ",
       titleId: "Mã ",
-      name: null,
-      nameState: null,
+      titleEmail: "Địa chỉ email của ",
+
       id: null,
       idState: null,
+      email: null,
+      emailState: null,
       msg: {
-        name: String,
         id: String,
+        email: String,
       },
     };
   },
@@ -73,40 +76,40 @@ export default {
   props: { role: Number, api: Object },
 
   mounted() {
-    this.title = "Cấp mã " + this.api.type;
-    this.titleName = "Tên " + this.api.type;
+    this.title = "Cấp tài khoản các " + this.api.type;
+    this.titleEmail = "Địa chỉ email của " + this.api.type;
     this.titleId = "Mã " + this.api.type;
   },
 
   methods: {
-    ...mapActions({ addArea: "Area/addArea" }),
+    ...mapActions({ addAccount: "Account/addAccount" }),
 
     resetModal() {
-      this.name = null;
-      this.nameState = null;
       this.id = null;
       this.idState = null;
-      this.msg.id = "";
-      this.msg.name = "";
-    },
-
-    // Kiểm tra tên vùng
-    checkValidName(val) {
-      this.msg.name = validateName(val);
-      this.nameState = this.msg.name.length == 0;
+      this.email = null;
+      this.emailState = null;
+      this.msg.id = null;
+      this.msg.email = null;
     },
 
     // Kiểm tra id
-    checkValidId(val) {
-      this.msg.id = validateIdWithLength(val, 2);
+    checkValidateId(val) {
+      this.msg.id = validateIdWithLength(val, 1);
       this.idState = this.msg.id.length == 0;
     },
 
-    // Kiểm tra tên vùng và mã vùng trước khi submit
+    // Kiểm tra email
+    checkValidEmail(val) {
+      this.msg.email = validateEmail(val);
+      this.emailState = this.msg.email.length == 0;
+    },
+
+    // Kiểm tra form nhập
     checkFormValidity() {
-      this.checkValidName(this.name);
-      this.checkValidId(this.id);
-      return this.nameState && this.idState;
+      this.checkValidateId(this.id);
+      this.checkValidEmail(this.email);
+      return this.idState && this.emailState;
     },
 
     handleOk(bvModalEvt) {
@@ -122,9 +125,12 @@ export default {
         return;
       }
       // Gửi thông tin đã được nhập đi
-      this.addArea({
+      this.addAccount({
         role: this.role,
-        area: { id: this.id, name: this.name },
+        account: {
+          id: this.id,
+          email: this.email,
+        },
       });
 
       // Khi ấn nút
@@ -135,19 +141,20 @@ export default {
 
     // Đóng modal
     hide() {
-      this.$bvModal.hide("area-modal");
+      this.$bvModal.hide("account-add-modal");
       this.$emit("added", true);
     },
   },
 
   watch: {
-    name: function (val) {
-      this.name = val;
-      this.checkValidName(val);
-    },
     id: function (val) {
       this.id = val;
-      this.checkValidId(val);
+      this.checkValidateId(val);
+    },
+
+    email: function (val) {
+      this.email = val;
+      this.checkValidEmail(val);
     },
   },
 };

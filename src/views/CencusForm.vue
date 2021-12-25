@@ -1,5 +1,12 @@
 <template>
   <b-container class="container-style">
+    <!-- Thông báo từ server -->
+    <Message
+      :id="serverMsg.id"
+      :title="serverMsg.title"
+      :content="serverMsg.content"
+      :variant="serverMsg.variant"
+    />
     <form class="form-style">
       <b-row class="mb-1" v-if="user.role == 4">
         <b-col cols="12">
@@ -151,7 +158,7 @@
       </b-row>
       <b-row align-h="center" class="mt-5 mb-5">
         <b-button class="button-style" variant="primary" @click="handleSubmit"> Nộp </b-button>
-        <b-button class="button-style" variant="primary"> Mới </b-button>
+        <b-button class="button-style" variant="primary" @click="resetForm"> Mới </b-button>
       </b-row>
     </form>
   </b-container>
@@ -161,6 +168,7 @@
 import { mapGetters, mapActions } from "vuex";
 import { BACKEND_URL } from "../store/statics/backend_url";
 import { getGroupsAPI } from "../store/statics/citizen_constants"
+import Message from "../components/Message.vue"
 import {
   getGenderOptions,
   getMarriageOptions,
@@ -170,6 +178,7 @@ import {
 
 export default {
   name: "CencusForm",
+  components: { Message },
 
   data() {
     return {
@@ -204,6 +213,7 @@ export default {
   computed: {
     ...mapGetters({
       user: "User/getUser",
+      serverMsg: "Citizen/getServerMsg"
     }),
   },
 
@@ -220,6 +230,24 @@ export default {
     ...mapActions({
       submitForm: "Citizen/submitForm"
     }),
+
+    resetForm() {
+      this.fullName = null;
+      this.dateOfBirth = null;
+      this.cccd = null;
+      this.gender = null;
+      this.maritalStatus = null;
+      this.nation = null;
+      this.religion = null;
+      this.permanentResidence = null;
+      this.temporaryResidence = null;
+      this.tempGroup = null;
+      this.tempWard = null;
+      this.tempDistrict = null;
+      this.tempCity = null;
+      this.educationalLevel = null;
+      this.job = null;
+    },
 
     getAreaNames(areas) {
       let list = [];

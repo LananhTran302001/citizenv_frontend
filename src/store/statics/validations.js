@@ -31,7 +31,7 @@ export const validateId = function (id) {
 
 export const validateIdWithLength = function (id, length) {
     if (!id) {
-        return "Bạn phải nhập mã (thêm 2 chữ số)";
+        return "Bạn phải nhập mã (thêm " + length.toString() + " chữ số)";
     } else if (idFormat(id) && id.length == length) {
         return "";
     } else {
@@ -79,5 +79,6 @@ export const validateCitizenid = function (citizenId) {
         return ""
     }
 }
+
 
 

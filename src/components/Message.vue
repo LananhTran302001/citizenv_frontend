@@ -19,7 +19,6 @@ export default {
 
   methods: {
     makeToast() {
-      console.log("make toast");
       this.$bvToast.toast(this.content, {
         title: this.title,
         variant: this.variant,
@@ -33,9 +32,6 @@ export default {
       if (this.oldId != val && this.content) {
         this.id = val;
         this.oldId = val;
-        console.log(this.id)
-        console.log(this.oldId)
-        console.log(this.content)
         this.makeToast();
       }
     },

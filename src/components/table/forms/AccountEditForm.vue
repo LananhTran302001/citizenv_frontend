@@ -9,6 +9,7 @@
       cancel-title="Hủy"
       @hidden="resetModal"
       @ok="handleOk"
+      :ok-disabled="!(emailState)"
       @hide="hide"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">

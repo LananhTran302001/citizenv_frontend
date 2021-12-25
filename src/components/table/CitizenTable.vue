@@ -7,6 +7,15 @@
       :content="serverMsg.content"
       :variant="serverMsg.variant"
     />
+
+    <!-- Popup chọn nhóm vùng -->
+    <SelectForm
+      :options="groupAreas"
+      :type="groupAreasType"
+      v-if="selectingGroupAreas"
+      @selected="fetchGroupAreas"
+    />
+
     <!-- User interface control -->
     <b-row>
       <!-- Search bar -->
@@ -75,6 +84,7 @@
           class="mb-0"
         >
           <b-form-select
+            :disabled="selectingGroupAreas"
             :options="citiesName"
             v-model="currentCity"
             size="sm"
@@ -96,6 +106,7 @@
           class="mb-0"
         >
           <b-form-select
+            :disabled="selectingGroupAreas"
             :options="districtsName"
             v-model="currentDistrict"
             size="sm"
@@ -117,6 +128,7 @@
           class="mb-0"
         >
           <b-form-select
+            :disabled="selectingGroupAreas"
             :options="wardsName"
             v-model="currentWard"
             size="sm"
@@ -138,6 +150,7 @@
           class="mb-0"
         >
           <b-form-select
+            :disabled="selectingGroupAreas"
             :options="residentalGroupsName"
             v-model="currentResidentalGroup"
             size="sm"
@@ -146,7 +159,19 @@
       </b-col>
     </b-row>
 
-    <SelectForm :options="cities"/>
+    <b-row v-if="selectedGroupAreasName.length > 0">
+      <b-col cols="1">
+        <a @click="resetGroupAreas" class="reset-button-style">
+          <font-awesome-icon icon="times-circle" size="lg" />
+        </a>
+      </b-col>
+      <b-col cols="11">
+        <h5>
+          Bạn đang lọc các {{ groupAreasType }}: {{ selectedGroupAreasName }}
+        </h5>
+      </b-col>
+      
+    </b-row>
 
     <!-- Main table -->
     <b-table
@@ -258,7 +283,7 @@ import CheckboxButton from "./buttons/CheckboxButton.vue";
 import { mapGetters } from "vuex";
 import { BACKEND_URL } from "../../store/statics/backend_url";
 import Message from "../../components/Message.vue";
-import SelectForm from "../../components/table/forms/SelectForm.vue"
+import SelectForm from "../../components/table/forms/SelectForm.vue";
 import {
   getCitizenAPI,
   getCitiesAPI,
@@ -266,6 +291,7 @@ import {
   getWardsAPI,
   getGroupsAPI,
 } from "../../store/statics/citizen_constants";
+import axios from "axios";
 
 export default {
   name: "CitizenTable",
@@ -293,17 +319,15 @@ export default {
       // Các thôn/xóm/tổ dân phố cho phép chọn: chỉ được xem trong option này
       residentalGroups: [],
 
-
       // AREA NAME
-      // 
-      citiesName: ["Ha Noi", "Ha Giang", "Can Tho"],
+      //
+      citiesName: [],
       // Các quận/huyện/thị xã cho phép chọn: chỉ được xem trong option này
-      districtsName: ["Quận 1", "Quận 2", "Quận 3"],
+      districtsName: [],
       // Các xã/phường/thị trấn cho phép chọn: chỉ được xem trong option này
-      wardsName: ["Xã 1", "Xã 12", "Xã 15"],
+      wardsName: [],
       // Các thôn/xóm/tổ dân phố cho phép chọn: chỉ được xem trong option này
-      residentalGroupsName: ["Thôn 1", "Thôn 2", "Thôn 3"],
-
+      residentalGroupsName: [],
 
       // CHOICE FILTER
       currentCity: null,
@@ -311,20 +335,27 @@ export default {
       currentWard: null,
       currentResidentalGroup: null,
 
+      // CHỌN NHÓM VÙNG
+      groupAreas: [],
+      selectedGroupAreasName: [],
+      showGroupAreasName: false,
+      selectingGroupAreas: false,
+      groupAreasType: null,
+      groupAreasParentId: null,
+
       // DATA:
       api: null,
       items: [],
       fields: [],
       showFields: [],
       isOpenSelectCols: false,
-      multiAreas: [],
     };
   },
 
   computed: {
     ...mapGetters({
       user: "User/getUser",
-      serverMsg: "Citizen/getServerMsg"
+      serverMsg: "Citizen/getServerMsg",
     }),
   },
 
@@ -342,6 +373,32 @@ export default {
     reset() {
       this.fields = null;
       this.isOpenSelectCols = false;
+    },
+
+    resetGroupAreas() {
+      this.groupAreas = [];
+      this.selectingGroupAreas = false;
+      this.groupAreasType = null;
+      this.selectedGroupAreasName = [];
+    },
+
+    resetCurrent() {
+      this.currentResidentalGroup = null;
+      this.currentWard = null;
+      this.currentDistrict = null;
+      this.currentCity = null;
+    },
+
+    resetWards() {
+      this.wards = [];
+      this.wardsName = [];
+      this.currentWard = null;
+    },
+
+    resetResidentalGroups() {
+      this.residentalGroupsName = [];
+      this.residentalGroups = [];
+      this.currentResidentalGroup = null;
     },
 
     deleteRow(val) {
@@ -362,14 +419,29 @@ export default {
       return list;
     },
 
+    getAreaIds(areas) {
+      let list = [];
+      for (let area of areas) {
+        list.push(area.Id);
+      }
+      return list;
+    },
+
+    findAreaId(areas, areaName) {
+      if (!areas || areas.length == 0) {
+        return this.user.user_id;
+      }
+      return areas.find((obj) => obj.Name === areaName).Id;
+    },
+
     fetchData(areaId) {
       this.fetchAreas();
       let url = BACKEND_URL + this.api.urlAll;
       if (areaId) {
         url = `${url}/${areaId}`;
       }
-      console.log("----------url-----------")
-      console.log(url)
+      console.log("----------url-----------");
+      console.log(url);
       fetch(url, {
         headers: { Authorization: `Bearer ${localStorage.token}` },
       })
@@ -377,10 +449,35 @@ export default {
           return response.json();
         })
         .then((data) => {
-          // this accounts for api urls in which the data is not the first result
           this.items = data.Citizens;
           console.log(data);
           this.totalRows = this.items.length;
+        });
+    },
+
+    fetchGroupAreas(areas) {
+      let url = BACKEND_URL + this.api.urlGroup;
+      url = `${url}/${this.groupAreasParentId}`;
+      const headers = {
+        Authorization: `Bearer ${localStorage.token}`,
+      };
+      this.selectedGroupAreasName = this.getAreaNames(areas);
+      const areaIds = this.getAreaIds(areas);
+      axios
+        .post(
+          url,
+          {
+            areas: areaIds,
+          },
+          { headers: headers }
+        )
+        .then((res) => {
+          if (res.status == 200) {
+            this.items = res.data.Citizens;
+            console.log(res.data);
+            this.totalRows = this.items.length;
+            this.resetCurrent();
+          }
         });
     },
 
@@ -406,21 +503,16 @@ export default {
     fetchCities() {
       let url = BACKEND_URL + getCitiesAPI().url;
       url = `${url}/${this.user.user_id}`;
-      fetch(
-        url,
-        {
-          headers: { Authorization: `Bearer ${localStorage.token}` },
-        }
-      )
+      fetch(url, {
+        headers: { Authorization: `Bearer ${localStorage.token}` },
+      })
         .then((response) => {
           return response.json();
         })
         .then((data) => {
-          // this accounts for api urls in which the data is not the first result
           this.cities = data.Areas;
           this.citiesName = this.getAreaNames(data.Areas);
-          console.log("Đây là các tỉnh");
-          console.log(data);
+          this.citiesName.push("Nhóm tỉnh thành");
         });
     },
 
@@ -437,11 +529,9 @@ export default {
           return response.json();
         })
         .then((data) => {
-          // this accounts for api urls in which the data is not the first result
           this.districts = data.Areas;
           this.districtsName = this.getAreaNames(data.Areas);
-          console.log("Đây là các huyện");
-          console.log(data);
+          this.districtsName.push("Nhóm quận huyện");
         });
     },
 
@@ -458,11 +548,9 @@ export default {
           return response.json();
         })
         .then((data) => {
-          // this accounts for api urls in which the data is not the first result
           this.wards = data.Areas;
           this.wardsName = this.getAreaNames(data.Areas);
-          console.log("Đây là các xã");
-          console.log(data);
+          this.wardsName.push("Nhóm xã phường");
         });
     },
 
@@ -479,11 +567,9 @@ export default {
           return response.json();
         })
         .then((data) => {
-          // this accounts for api urls in which the data is not the first result
           this.residentalGroups = data.Areas;
           this.residentalGroupsName = this.getAreaNames(data.Areas);
-          console.log("Đây là các thôn");
-          console.log(data);
+          this.residentalGroupsName.push("Nhóm thôn bản");
         });
     },
 
@@ -518,55 +604,97 @@ export default {
     selectColIsNonChecked(row) {
       this.showFields.splice(this.showFields.indexOf(row), 1);
     },
-
   },
-
-  
 
   watch: {
     currentCity: function (val) {
       this.currentCity = val;
       if (val) {
-        let city = this.cities.find(obj =>  obj.Name === val );
-        console.log("Đây là city bạn chọn")
-        console.log(city);
-        this.fetchDistrictsInCity(city.Id)
-        this.fetchData(city.Id)
+        // reset danh sách nhóm vùng đã chọn
+        this.resetGroupAreas();
+        this.resetWards();
+        this.resetResidentalGroups();
+      }
+      if (val == "Nhóm tỉnh thành") {
+        this.groupAreasParentId = this.user.user_id;
+        this.groupAreas = this.cities;
+        this.selectingGroupAreas = true;
+        this.groupAreasType = "tỉnh thành";
+        console.log("Chọn nhóm tỉnh thành")
+      } else if (val) {
+        let id = this.findAreaId(this.cities, this.currentCity);
+        this.fetchDistrictsInCity(id);
+        this.fetchData(id);
       }
     },
 
     currentDistrict: function (val) {
       this.currentDistrict = val;
       if (val) {
-        let district = this.districts.find(obj =>  obj.Name === val );
-        console.log("Đây là district bạn chọn")
-        console.log(district);
-        this.fetchWardsInDistrict(district.Id)
-        this.fetchData(district.Id)
+        // reset danh sách nhóm vùng đã chọn
+        this.resetGroupAreas();
+        this.resetResidentalGroups();
+      }
+      if (val == "Nhóm quận huyện") {
+        this.groupAreasParentId = this.findAreaId(
+          this.cities,
+          this.currentCity
+        );
+        this.groupAreas = this.districts;
+        this.selectingGroupAreas = true;
+        this.groupAreasType = "quận huyện";
+      } else if (val) {
+        let id = this.findAreaId(this.districts, this.currentDistrict);
+        this.fetchWardsInDistrict(id);
+        this.fetchData(id);
       }
     },
 
     currentWard: function (val) {
       this.currentWard = val;
       if (val) {
-        let ward = this.wards.find(obj =>  obj.Name === val );
-        console.log("Đây là ward bạn chọn")
-        console.log(ward);
-        this.fetchGroupsInWard(ward.Id)
-        this.fetchData(ward.Id)
+        // reset danh sách nhóm vùng đã chọn
+        this.resetGroupAreas();
+      }
+      if (val == "Nhóm xã phường") {
+        this.groupAreasParentId = this.findAreaId(
+          this.districts,
+          this.currentDistrict
+        );
+        this.groupAreas = this.wards;
+        this.selectingGroupAreas = true;
+        this.groupAreasType = "xã phường";
+      } else if (val) {
+        let id = this.findAreaId(this.wards, this.currentWard);
+        this.fetchGroupsInWard(id);
+        this.fetchData(id);
       }
     },
 
     currentResidentalGroup: function (val) {
       this.currentResidentalGroup = val;
       if (val) {
-        let group = this.residentalGroups.find(obj =>  obj.Name === val );
-        console.log("Đây là group bạn chọn")
-        console.log(group);
-        this.fetchData(group.Id)
+        // reset danh sách nhóm vùng đã chọn
+        this.resetGroupAreas();
       }
-    }
-  }
+      // Nếu chọn nhóm thôn bản
+      if (val == "Nhóm thôn bản") {
+        // Cập nhật giá trị các biến danh sách nhóm vùng
+        this.groupAreasParentId = this.findAreaId(this.wards, this.currentWard);
+        this.groupAreas = this.residentalGroups;
+        this.selectingGroupAreas = true;
+        this.groupAreasType = "thôn/bản/tổ dân phố";
+
+        // Nếu chỉ chọn 1 vùng
+      } else if (val) {
+        let id = this.findAreaId(
+          this.residentalGroups,
+          this.currentResidentalGroup
+        );
+        this.fetchData(id);
+      }
+    },
+  },
 };
 </script>
 
@@ -590,6 +718,13 @@ export default {
 .sm-button-style:hover {
   color: #32b890;
   background-color: white;
+}
+
+.reset-button-style {
+  margin: 0;
+  padding: 0;
+  color: gray;
+  cursor: pointer;
 }
 
 .select-cols-style .menu-style {

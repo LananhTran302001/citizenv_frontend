@@ -9,6 +9,7 @@
       @show="resetModal"
       @hidden="resetModal"
       @ok="handleOk"
+      :ok-disabled="!nameState"
       @hide="hide"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">

@@ -89,6 +89,9 @@
       </b-col>
     </b-row>
 
+    <!-- Form thêm A1 cho Admin -->
+    <A1AddForm v-if="user.role == 0" :role="user.role" :api="api" @added="forceRefresh()"/>
+
     <!-- Main table element -->
     <b-table
       id="area-table"
@@ -179,6 +182,7 @@
 </template>
 
 <script>
+import A1AddForm from "./forms/A1AddForm.vue";
 import AccountAddForm from "./forms/AccountAddForm.vue";
 import AccountEditForm from "./forms/AccountEditForm.vue";
 import AccountDetailsForm from "./forms/AccountDetailsForm.vue";
@@ -192,7 +196,13 @@ import { BACKEND_URL } from "../../store/statics/backend_url.js";
 
 export default {
   name: "AccountTable",
-  components: { AccountAddForm, AccountEditForm, AccountDetailsForm, Message },
+  components: {
+    A1AddForm,
+    AccountAddForm,
+    AccountEditForm,
+    AccountDetailsForm,
+    Message,
+  },
   data() {
     return {
       api: null,
@@ -240,12 +250,12 @@ export default {
       this.currentPage = 1;
     },
 
-    lockAccountAtRow(row, isLocked) {
+    lockAccountAtRow(row, locked) {
       this.updateIsLocked({
         role: this.user.role,
         account: {
           id: decodeJson(row.item).id,
-          isLocked: isLocked,
+          isLocked: locked,
         },
       });
       this.forceRefresh();
@@ -292,6 +302,7 @@ export default {
       this.addingAccountId = null;
       this.editingAccount = null;
       this.detailingAccount = null;
+      setTimeout(() => this.fetchData(), 1000);
       setTimeout(() => this.fetchData(), 2000);
       setTimeout(() => this.fetchData(), 5000);
     },

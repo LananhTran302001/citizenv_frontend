@@ -39,7 +39,6 @@ const Account = {
                 .delete(url, { headers: headers })
                 .then((res) => {
                     if (res.status == 200) {
-                        console.log(res.data.message);
                         // Hiện thông báo success
                         commit("setServerMsg",
                             {
@@ -78,7 +77,6 @@ const Account = {
                 )
                 .then((res) => {
                     if (res.status == 200) {
-                        console.log(res.data.message);
                         // Hiện thông báo success
                         commit("setServerMsg",
                             {
@@ -113,7 +111,7 @@ const Account = {
             const account = {
                 isLocked: data.account.isLocked
             }
-            console.log("Đây là update account")
+            console.log("Đây là update account sau khi sửa khóa")
             console.log(account)
             axios
                 .put(
@@ -132,8 +130,6 @@ const Account = {
                             status: res.status
                         }
                     )
-                    console.log("-------------------");
-                    console.log("-------------------");
                 })
                 .catch((err) => {
                     commit("setServerMsg",
@@ -143,7 +139,6 @@ const Account = {
                             status: err.response.status
                         }
                     )
-                    console.log(err.response.data.message);
                 });
         },
 

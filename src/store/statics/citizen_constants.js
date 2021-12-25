@@ -1,5 +1,6 @@
 const CITIZEN_API = {
     urlAll: "citizens",
+    urlGroup: "citizens_areas",
     urlId: "citizen",
     fields: [
         {key: "name", label: "Họ và tên", sortable: true},
