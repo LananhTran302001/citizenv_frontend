@@ -471,8 +471,6 @@ export default {
       if (areaId) {
         url = `${url}/${areaId}`;
       }
-      console.log("----------url-----------");
-      console.log(url);
       fetch(url, {
         headers: { Authorization: `Bearer ${localStorage.token}` },
       })
@@ -481,7 +479,6 @@ export default {
         })
         .then((data) => {
           this.items = data.Citizens;
-          console.log(data);
           this.totalRows = this.items.length;
         });
     },
@@ -505,7 +502,6 @@ export default {
         .then((res) => {
           if (res.status == 200) {
             this.items = res.data.Citizens;
-            console.log(res.data);
             this.totalRows = this.items.length;
             this.resetCurrent();
           }
@@ -527,7 +523,7 @@ export default {
           this.fetchGroupsInWard(null);
           break;
         default:
-          console.log("Làm j có quyền");
+          break;
       }
     },
 
@@ -653,7 +649,6 @@ export default {
         this.groupAreas = this.cities;
         this.selectingGroupAreas = true;
         this.groupAreasType = "tỉnh thành";
-        console.log("Chọn nhóm tỉnh thành");
       } else if (val) {
         let id = this.findAreaId(this.cities, this.currentCity);
         this.fetchDistrictsInCity(id);

@@ -56,7 +56,7 @@ export const validatePassword = function (password) {
 
 export const validateName = function (name) {
     if (!name) {
-        return "Bạn phải nhập tên";
+        return "Bạn phải nhập trường này";
     } else if (/[`~,.<>;':"/[\]|{}()=_+-]/.test(name)) {
         return "Trường này chỉ gồm các ký tự chữ cái và số";
     } else {
@@ -72,13 +72,19 @@ export const validateEmail = function (email) {
     }
 }
 
-export const validateCitizenid = function (citizenId) {
+export const validateCitizenId = function (citizenId) {
     if (isEmpty(citizenId)) {
         return "Bạn phải nhập trường này"
     } else {
-        return ""
+        return validateIdWithLength(citizenId, 12)
     }
 }
 
+export const validateEmpty = function (val) {
+    if (isEmpty(val)) {
+        return "Bạn phải nhập trường này"
+    }
+    return ""
+}
 
 

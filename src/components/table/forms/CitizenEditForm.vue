@@ -15,13 +15,21 @@
       <!-- Hàng đầu tiên: Họ và tên, giới tính, ngày sinh -->
       <b-row>
         <b-col cols="4">
-          <b-form-group label="Họ và tên">
+          <b-form-group
+            label="Họ và tên"
+            :invalid-feedback="msg.fullName"
+            :state="state.fullName"
+          >
             <b-form-input placeholder="Nhập họ và tên" v-model="fullName">
             </b-form-input>
           </b-form-group>
         </b-col>
         <b-col cols="4">
-          <b-form-group label="Giới tính">
+          <b-form-group
+            label="Giới tính"
+            :invalid-feedback="msg.gender"
+            :state="state.gender"
+          >
             <b-form-select
               :options="genderOptions"
               v-model="gender"
@@ -29,7 +37,11 @@
           </b-form-group>
         </b-col>
         <b-col cols="4">
-          <b-form-group label="Ngày sinh">
+          <b-form-group
+            label="Ngày sinh"
+            :invalid-feedback="msg.dateOfBirth"
+            :state="state.dateOfBirth"
+          >
             <b-form-datepicker
               :date-format-options="{
                 year: 'numeric',
@@ -51,13 +63,21 @@
           </b-form-group>
         </b-col>
         <b-col cols="4">
-          <b-form-group label="Dân tộc">
+          <b-form-group
+            label="Dân tộc"
+            :invalid-feedback="msg.nation"
+            :state="state.nation"
+          >
             <b-form-input placeholder="Nhập dân tộc" v-model="nation">
             </b-form-input>
           </b-form-group>
         </b-col>
         <b-col cols="4">
-          <b-form-group label="Tôn giáo">
+          <b-form-group
+            label="Tôn giáo"
+            :invalid-feedback="msg.religion"
+            :state="state.religion"
+          >
             <b-form-input placeholder="Nhập tôn giáo" v-model="religion">
             </b-form-input>
           </b-form-group>
@@ -67,7 +87,11 @@
       <!-- Hàng 3: Học vấn, nghề nghiệp, tình trạng hôn nhân -->
       <b-row>
         <b-col cols="4">
-          <b-form-group label="Tình trạng học vấn">
+          <b-form-group
+            label="Trình độ học vấn"
+            :invalid-feedback="msg.educationalLevel"
+            :state="state.educationalLevel"
+          >
             <b-form-select
               :options="educationOptions"
               v-model="educationalLevel"
@@ -75,13 +99,21 @@
           </b-form-group>
         </b-col>
         <b-col cols="4">
-          <b-form-group label="Nghề nghiệp hiện tại">
+          <b-form-group
+            label="Nghề nghiệp hiện tại"
+            :invalid-feedback="msg.job"
+            :state="state.job"
+          >
             <b-form-input placeholder="Nhập nghề nghiệp hiện tại" v-model="job">
             </b-form-input>
           </b-form-group>
         </b-col>
         <b-col cols="4">
-          <b-form-group label="Tình trạng hôn nhân">
+          <b-form-group
+            label="Tình trạng hôn nhân"
+            :invalid-feedback="msg.maritalStatus"
+            :state="state.maritalStatus"
+          >
             <b-form-select
               :options="marriageOptions"
               v-model="maritalStatus"
@@ -98,7 +130,11 @@
       </b-row>
       <b-row>
         <b-col cols="10">
-          <b-form-group label="Ví dụ: số nhà 120, ngõ 2, thôn A, xã B, huyện C, tỉnh D">
+          <b-form-group
+            label="Ví dụ: số nhà 120, ngõ 2, thôn A, xã B, huyện C, tỉnh D"
+            :invalid-feedback="msg.permanentResidence"
+            :state="state.permanentResidence"
+          >
             <b-form-input v-model="permanentResidence"> </b-form-input>
           </b-form-group>
         </b-col>
@@ -112,7 +148,11 @@
       </b-row>
       <b-row>
         <b-col cols="10">
-          <b-form-group label="Ví dụ: số nhà 120, ngõ 2, thôn A, xã B, huyện C, tỉnh D">
+          <b-form-group
+            label="Ví dụ: số nhà 120, ngõ 2, thôn A, xã B, huyện C, tỉnh D"
+            :invalid-feedback="msg.temporaryResidence"
+            :state="state.temporaryResidence"
+          >
             <b-form-input v-model="temporaryResidence"> </b-form-input>
           </b-form-group>
         </b-col>
@@ -128,6 +168,10 @@ import {
   getMarriageOptions,
   getEducationOption,
 } from "../../../store/statics/form_constants";
+import {
+  validateName,
+  validateEmpty,
+} from "../../../store/statics/validations";
 
 export default {
   name: "CitizenEditForm",
@@ -149,6 +193,34 @@ export default {
       temporaryResidence: this.citizen.temporaryResidence,
       educationalLevel: this.citizen.educationalLevel,
       job: this.citizen.job,
+
+      msg: {
+        fullName: null,
+        gender: null,
+        dateOfBirth: null,
+        cccd: null,
+        nation: null,
+        religion: null,
+        educationalLevel: null,
+        job: null,
+        maritalStatus: null,
+        permanentResidence: null,
+        temporaryResidence: null,
+      },
+
+      state: {
+        fullName: null,
+        gender: null,
+        dateOfBirth: null,
+        cccd: null,
+        nation: null,
+        religion: null,
+        educationalLevel: null,
+        job: null,
+        maritalStatus: null,
+        permanentResidence: null,
+        temporaryResidence: null,
+      },
     };
   },
 
@@ -195,6 +267,21 @@ export default {
       this.job = this.citizen.job;
     },
 
+    check() {
+      this.isValidAll =
+        this.state.fullName &&
+        this.state.gender &&
+        this.state.dateOfBirth &&
+        this.state.cccd &&
+        this.state.nation &&
+        this.state.religion &&
+        this.state.educationalLevel &&
+        this.state.job &&
+        this.state.maritalStatus &&
+        this.state.permanentResidence &&
+        this.state.temporaryResidence;
+    },
+
     getCitizen() {
       return {
         name: this.fullName,
@@ -228,6 +315,69 @@ export default {
 
     hide() {
       this.$emit("updated", true);
+    },
+  },
+
+  watch: {
+    fullName: function (val) {
+      this.fullName = val;
+      this.msg.fullName = validateName(val);
+      this.state.fullName = this.msg.fullName.length == 0;
+      this.check();
+    },
+    gender: function (val) {
+      this.gender = val;
+      this.msg.gender = validateEmpty(val);
+      this.state.gender = this.msg.gender.length == 0;
+      this.check();
+    },
+    dateOfBirth: function (val) {
+      this.dateOfBirth = val;
+      this.msg.dateOfBirth = validateEmpty(val);
+      this.state.dateOfBirth = this.msg.dateOfBirth.length == 0;
+      this.check();
+    },
+    nation: function (val) {
+      this.nation = val;
+      this.msg.nation = validateName(val);
+      this.state.nation = this.msg.nation.length == 0;
+      this.check();
+    },
+    religion: function (val) {
+      this.religion = val;
+      this.msg.religion = validateName(val);
+      this.state.religion = this.msg.religion.length == 0;
+      this.check();
+    },
+    educationalLevel: function (val) {
+      this.educationalLevel = val;
+      this.msg.educationalLevel = validateEmpty(val);
+      this.state.educationalLevel = this.msg.educationalLevel.length == 0;
+      this.check();
+    },
+    job: function (val) {
+      this.job = val;
+      this.msg.job = validateEmpty(val);
+      this.state.job = this.msg.job.length == 0;
+      this.check();
+    },
+    maritalStatus: function (val) {
+      this.maritalStatus = val;
+      this.msg.maritalStatus = validateEmpty(val);
+      this.state.maritalStatus = this.msg.maritalStatus.length == 0;
+      this.check();
+    },
+    permanentResidence: function (val) {
+      this.permanentResidence = val;
+      this.msg.permanentResidence = validateEmpty(val);
+      this.state.permanentResidence = this.msg.permanentResidence.length == 0;
+      this.check();
+    },
+    temporaryResidence: function (val) {
+      this.temporaryResidence = val;
+      this.msg.temporaryResidence = validateEmpty(val);
+      this.state.temporaryResidence = this.msg.temporaryResidence.length == 0;
+      this.check();
     },
   },
 };
