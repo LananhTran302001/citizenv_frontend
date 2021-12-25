@@ -21,6 +21,12 @@
       v-if="editingCitizen"
       @updated="forceRefresh"
     />
+
+    <CitizenDetailsForm :citizen="detailingCitizen"
+    v-if="detailingCitizen"
+    @detailed="forceRefresh"
+    />
+    
     <!-- User interface control -->
     <b-row>
       <!-- Search bar -->
@@ -283,6 +289,7 @@ import { BACKEND_URL } from "../../store/statics/backend_url";
 import Message from "../../components/Message.vue";
 import SelectForm from "../../components/table/forms/SelectForm.vue";
 import CitizenEditForm from "../../components/table/forms/CitizenEditForm.vue";
+import CitizenDetailsForm from "../../components/table/forms/CitizenDetailsForm.vue";
 import {
   getCitizenAPI,
   getCitiesAPI,
@@ -298,6 +305,7 @@ export default {
     Message,
     SelectForm,
     CitizenEditForm,
+    CitizenDetailsForm,
     CheckboxButton,
   },
 
@@ -430,8 +438,8 @@ export default {
       this.editingCitizen = row.item;
     },
 
-    detailsRow(val) {
-      console.log(val);
+    detailsRow(row) {
+      this.detailingCitizen = row.item;
     },
 
     getAreaNames(areas) {

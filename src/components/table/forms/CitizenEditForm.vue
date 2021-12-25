@@ -4,7 +4,7 @@
     ref="modal"
     size="xl"
     scrollable
-    title="title"
+    title="Chỉnh sửa thông tin người dân"
     ok-title="Cập nhật"
     cancel-title="Hủy"
     @hidden="resetModal"
