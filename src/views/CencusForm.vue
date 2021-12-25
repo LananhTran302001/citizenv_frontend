@@ -10,7 +10,7 @@
     <form class="form-style">
       <b-row class="mb-1" v-if="user.role == 4">
         <b-col cols="12">
-          <b-button variant="primary">
+          <b-button variant="primary" @click="handleDownload">
             <font-awesome-icon icon="download" size="lg" />
             Tải phiếu
           </b-button>
@@ -44,12 +44,16 @@
       <b-row>
         <b-col cols="4">
           <b-form-group label="Họ và tên">
-            <b-form-input placeholder="Nhập họ và tên" v-model="fullName"> </b-form-input>
+            <b-form-input placeholder="Nhập họ và tên" v-model="fullName">
+            </b-form-input>
           </b-form-group>
         </b-col>
         <b-col cols="4">
           <b-form-group label="Giới tính">
-            <b-form-select :options="genderOptions" v-model="gender"></b-form-select>
+            <b-form-select
+              :options="genderOptions"
+              v-model="gender"
+            ></b-form-select>
           </b-form-group>
         </b-col>
         <b-col cols="4">
@@ -71,18 +75,23 @@
       <b-row>
         <b-col cols="4">
           <b-form-group label="Số căn cước công dân">
-            <b-form-input placeholder="Nhập số căn cước công dân" v-model="cccd">
+            <b-form-input
+              placeholder="Nhập số căn cước công dân"
+              v-model="cccd"
+            >
             </b-form-input>
           </b-form-group>
         </b-col>
         <b-col cols="4">
           <b-form-group label="Dân tộc">
-            <b-form-input placeholder="Nhập dân tộc" v-model="nation"> </b-form-input>
+            <b-form-input placeholder="Nhập dân tộc" v-model="nation">
+            </b-form-input>
           </b-form-group>
         </b-col>
         <b-col cols="4">
           <b-form-group label="Tôn giáo">
-            <b-form-input placeholder="Nhập tôn giáo" v-model="religion"> </b-form-input>
+            <b-form-input placeholder="Nhập tôn giáo" v-model="religion">
+            </b-form-input>
           </b-form-group>
         </b-col>
       </b-row>
@@ -91,7 +100,10 @@
       <b-row>
         <b-col cols="4">
           <b-form-group label="Tình trạng học vấn">
-            <b-form-select :options="educationOptions" v-model="educationalLevel"></b-form-select>
+            <b-form-select
+              :options="educationOptions"
+              v-model="educationalLevel"
+            ></b-form-select>
           </b-form-group>
         </b-col>
         <b-col cols="4">
@@ -102,7 +114,10 @@
         </b-col>
         <b-col cols="4">
           <b-form-group label="Tình trạng hôn nhân">
-            <b-form-select :options="marriageOptions" v-model="maritalStatus"></b-form-select>
+            <b-form-select
+              :options="marriageOptions"
+              v-model="maritalStatus"
+            ></b-form-select>
           </b-form-group>
         </b-col>
       </b-row>
@@ -114,8 +129,8 @@
         </b-col>
       </b-row>
       <b-row>
-        <b-col cols="8">
-          <b-form-group label="Số nhà, phố">
+        <b-col cols="10">
+          <b-form-group label="Ví dụ: số nhà 120, ngõ 2, thôn A, xã B, huyện C, tỉnh D">
             <b-form-input v-model="permanentResidence"> </b-form-input>
           </b-form-group>
         </b-col>
@@ -128,37 +143,19 @@
         </b-col>
       </b-row>
       <b-row>
-        <b-col cols="8">
-          <b-form-group label="Số nhà, phố">
+        <b-col cols="10">
+          <b-form-group label="Ví dụ: số nhà 120, ngõ 2, thôn A, xã B, huyện C, tỉnh D">
             <b-form-input v-model="temporaryResidence"> </b-form-input>
-          </b-form-group>
-        </b-col>
-        <b-col cols="4">
-          <b-form-group label="Thôn/bản/tổ dân phố">
-            <b-form-input> </b-form-input>
-          </b-form-group>
-        </b-col>
-      </b-row>
-      <b-row>
-        <b-col cols="4">
-          <b-form-group label="Xã/phường/thị trấn">
-            <b-form-input> </b-form-input>
-          </b-form-group>
-        </b-col>
-        <b-col cols="4">
-          <b-form-group label="Quận/huyện/thị xã">
-            <b-form-input> </b-form-input>
-          </b-form-group>
-        </b-col>
-        <b-col cols="4">
-          <b-form-group label="Tỉnh/thành phố">
-            <b-form-input> </b-form-input>
           </b-form-group>
         </b-col>
       </b-row>
       <b-row align-h="center" class="mt-5 mb-5">
-        <b-button class="button-style" variant="primary" @click="handleSubmit"> Nộp </b-button>
-        <b-button class="button-style" variant="primary" @click="resetForm"> Mới </b-button>
+        <b-button class="button-style" variant="primary" @click="handleSubmit">
+          Nộp
+        </b-button>
+        <b-button class="button-style" variant="primary" @click="resetForm">
+          Mới
+        </b-button>
       </b-row>
     </form>
   </b-container>
@@ -167,14 +164,13 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import { BACKEND_URL } from "../store/statics/backend_url";
-import { getGroupsAPI } from "../store/statics/citizen_constants"
-import Message from "../components/Message.vue"
+import { getGroupsAPI } from "../store/statics/citizen_constants";
+import Message from "../components/Message.vue";
 import {
   getGenderOptions,
   getMarriageOptions,
   getEducationOption,
 } from "../store/statics/form_constants";
-
 
 export default {
   name: "CencusForm",
@@ -182,6 +178,8 @@ export default {
 
   data() {
     return {
+      form_url: 'file',
+
       currentGroupName: null,
       groupOptions: [],
       groupOptionsName: [],
@@ -203,17 +201,13 @@ export default {
 
       permanentResidence: null,
       temporaryResidence: null,
-      tempGroup: null,
-      tempWard: null,
-      tempDistrict: null,
-      tempCity: null,
     };
   },
 
   computed: {
     ...mapGetters({
       user: "User/getUser",
-      serverMsg: "Citizen/getServerMsg"
+      serverMsg: "Form/getServerMsg",
     }),
   },
 
@@ -228,7 +222,8 @@ export default {
 
   methods: {
     ...mapActions({
-      submitForm: "Citizen/submitForm"
+      submitForm: "Form/submitForm",
+      downloadForm: "Form/downloadForm"
     }),
 
     resetForm() {
@@ -241,10 +236,6 @@ export default {
       this.religion = null;
       this.permanentResidence = null;
       this.temporaryResidence = null;
-      this.tempGroup = null;
-      this.tempWard = null;
-      this.tempDistrict = null;
-      this.tempCity = null;
       this.educationalLevel = null;
       this.job = null;
     },
@@ -288,7 +279,7 @@ export default {
         temporaryResidence: this.temporaryResidence,
         educationalLevel: this.educationalLevel,
         job: this.job,
-      }
+      };
       let groupId = null;
       // Nếu người nhập liệu là B2
       if (this.user.role == 5) {
@@ -296,13 +287,19 @@ export default {
 
         // Nếu người nhập liệu là B1
       } else if (this.user.role == 4) {
-        groupId = this.groupOptions.find(obj =>  obj.Name === this.currentGroupName).Id;
+        groupId = this.groupOptions.find(
+          (obj) => obj.Name === this.currentGroupName
+        ).Id;
       }
       this.submitForm({
         id: groupId,
-        citizen: citizen
-      })
-    }
+        citizen: citizen,
+      });
+    },
+
+    handleDownload() {
+      this.downloadForm();
+    },
   },
 };
 </script>

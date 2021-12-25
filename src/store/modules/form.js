@@ -2,7 +2,7 @@ import { messageFormat } from "../statics/messages"
 import { getCitizenAPI } from "../statics/citizen_constants"
 import axios from "axios"
 
-const Citizen = {
+const Form = {
     namespaced: true,
     state: () => ({
         serverMsg: {
@@ -31,59 +31,17 @@ const Citizen = {
     },
 
     actions: {
-        deleteCitizen({ commit }, data) {
+        submitForm({ commit }, data) {
             const API = getCitizenAPI();
             const headers = {
                 Authorization: `Bearer ${localStorage.token}`,
             };
             // Chỉ in ra để xem
-            console.log("Đây là data người dân bị xóa")
             console.log(data.citizen)
-            let url = `${API.urlId}/${data.citizen.CCCD}`
+            let url = `${API.urlId}/${data.id}`
             console.log(url)
             axios
-                .delete(
-                    url,
-                    { headers: headers }
-                )
-                .then((res) => {
-                    if (res.status == 200) {
-                        console.log(res);
-                        commit("setServerMsg",
-                            {
-                                title: "Thông báo",
-                                content: res.data.message,
-                                status: res.status
-                            }
-                        )
-
-                    }
-                    console.log(res.data.message);
-                    console.log("-------------------");
-                })
-                .catch((err) => {
-                    commit("setServerMsg",
-                        {
-                            title: "Thông báo",
-                            content: err.response.data.message,
-                            status: err.response.status
-                        }
-                    )
-                });
-        },
-
-        updateCitizen({ commit }, data) {
-            const API = getCitizenAPI();
-            const headers = {
-                Authorization: `Bearer ${localStorage.token}`,
-            };
-            // Chỉ in ra để xem
-            console.log("Đây là data người dân cập nhật")
-            console.log(data.citizen)
-            let url = `${API.urlId}/${data.citizen.CCCD}`
-            console.log(url)
-            axios
-                .put(
+                .post(
                     url,
                     data.citizen,
                     { headers: headers }
@@ -112,9 +70,19 @@ const Citizen = {
                         }
                     )
                 });
+        },
+
+        downloadForm() {
+            axios
+                .get('file', { responseType: "arraybuffer" })
+                .then((response) => {
+                    let blob = new Blob([response.data], { type: "application/pdf" }),
+                        url = window.URL.createObjectURL(blob);
+                    window.open(url);
+                });
+
         }
     }
-
 }
 
-export default Citizen;
+export default Form;

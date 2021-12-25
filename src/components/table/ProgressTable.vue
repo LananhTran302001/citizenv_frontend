@@ -65,6 +65,13 @@
         >Tổng kết tiến độ: {{ completedAreas }} / {{ totalAreas }}
       </span>
     </b-row>
+    
+    <!-- những vùng đã có cán bộ -->
+    <b-row class="my-2" v-if="user.role > 0 && user.role < 4">
+      <span class="ml-5"
+        >Số vùng có tài khoản của cán bộ: {{ accountAreas }} / {{ totalAreas }}
+      </span>
+    </b-row>
 
     <!-- Nút confirm tiến độ -->
     <b-row class="my-2" v-if="user.role == 4">
@@ -163,6 +170,7 @@ export default {
 
       totalAreas: 0,
       completedAreas: 0,
+      accountAreas: 0,
 
       totalRows: 0, // Tổng số dòng
       currentPage: 1, // Trang bảng hiện tại
@@ -231,6 +239,7 @@ export default {
             } else {
               this.totalAreas = data.total;
               this.completedAreas = data.completed;
+              this.accountAreas = data.allocated;
             }
             console.log(data);
           });

@@ -11,7 +11,7 @@ import Account from "./modules/account";
 import Citizen from "./modules/citizen"
 import Progress from "./modules/progress";
 import Analytics from "./modules/analytics";
-
+import Form from "./modules/form"
 
 const store = new Vuex.Store({
     namespaced: false,
@@ -37,7 +37,8 @@ const store = new Vuex.Store({
         Account,
         Citizen,
         Progress,
-        Analytics
+        Analytics,
+        Form
     },
 })
 

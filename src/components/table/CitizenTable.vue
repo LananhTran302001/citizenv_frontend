@@ -16,6 +16,11 @@
       @selected="fetchGroupAreas"
     />
 
+    <CitizenEditForm
+      :citizen="editingCitizen"
+      v-if="editingCitizen"
+      @updated="forceRefresh"
+    />
     <!-- User interface control -->
     <b-row>
       <!-- Search bar -->
@@ -161,7 +166,7 @@
 
     <b-row v-if="selectedGroupAreasName.length > 0">
       <b-col cols="1">
-        <a @click="resetGroupAreas" class="reset-button-style">
+        <a @click="resetAll" class="reset-button-style">
           <font-awesome-icon icon="times-circle" size="lg" />
         </a>
       </b-col>
@@ -170,7 +175,6 @@
           Bạn đang lọc các {{ groupAreasType }}: {{ selectedGroupAreasName }}
         </h5>
       </b-col>
-      
     </b-row>
 
     <!-- Main table -->
@@ -187,35 +191,29 @@
       <template #cell(index)="row">
         {{ row.index + 1 }}
       </template>
-      <template #cell(authorization)="data">
+      <template #cell(authorization)="row">
         <b-button
           size="xs"
           class="mr-2 sm-button-style sm-button-style"
           v-if="user.role == 4 && !user.is_locked"
+          @click="deleteRow(row)"
         >
-          <font-awesome-icon
-            icon="trash"
-            size="sm"
-            @click="deleteRow(data.name)"
-          />
+          <font-awesome-icon icon="trash" size="sm" />
         </b-button>
         <b-button
           size="xs"
           class="mr-2 sm-button-style sm-button-style"
           v-if="user.role == 4 && !user.is_locked"
+          @click="editRow(row)"
         >
-          <font-awesome-icon
-            icon="edit"
-            size="sm"
-            @click="editRow(data.name)"
-          />
+          <font-awesome-icon icon="edit" size="sm" />
         </b-button>
-        <b-button size="xs" class="mr-2 sm-button-style sm-button-style">
-          <font-awesome-icon
-            icon="eye"
-            size="sm"
-            @click="detailsRow(data.name)"
-          />
+        <b-button
+          size="xs"
+          class="mr-2 sm-button-style sm-button-style"
+          @click="detailsRow(row)"
+        >
+          <font-awesome-icon icon="eye" size="sm" />
         </b-button>
       </template>
     </b-table>
@@ -280,10 +278,11 @@
 
 <script>
 import CheckboxButton from "./buttons/CheckboxButton.vue";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import { BACKEND_URL } from "../../store/statics/backend_url";
 import Message from "../../components/Message.vue";
 import SelectForm from "../../components/table/forms/SelectForm.vue";
+import CitizenEditForm from "../../components/table/forms/CitizenEditForm.vue";
 import {
   getCitizenAPI,
   getCitiesAPI,
@@ -298,6 +297,7 @@ export default {
   components: {
     Message,
     SelectForm,
+    CitizenEditForm,
     CheckboxButton,
   },
 
@@ -349,6 +349,10 @@ export default {
       fields: [],
       showFields: [],
       isOpenSelectCols: false,
+
+      // CONTROL
+      editingCitizen: null,
+      detailingCitizen: null,
     };
   },
 
@@ -361,18 +365,32 @@ export default {
 
   created() {
     this.api = getCitizenAPI();
-    console.log(this.fields);
     this.fields = this.api.fields.slice(0, this.api.fields.length);
-    console.log(this.fields);
     this.fields.push({ key: "authorization", label: "Chỉnh sửa" });
     this.fields.unshift({ key: "index", label: "STT" });
     this.fetchData();
   },
 
   methods: {
-    reset() {
+    ...mapActions({
+      deleteCitizen: "Citizen/deleteCitizen"
+    }),
+
+    resetFields() {
       this.fields = null;
       this.isOpenSelectCols = false;
+    },
+
+    forceRefresh() {
+      this.editingCitizen = null;
+      this.detailingCitizen = null;
+      this.resetCurrent();
+      setTimeout(() => this.fetchData(), 2000);
+    },
+
+    resetAll() {
+      this.resetCurrent();
+      this.resetGroupAreas();
     },
 
     resetGroupAreas() {
@@ -401,12 +419,17 @@ export default {
       this.currentResidentalGroup = null;
     },
 
-    deleteRow(val) {
-      console.log(val);
+    // Xóa thông tin 1 người dân
+    deleteRow(row) {
+      this.deleteCitizen({citizen: {CCCD: row.item.CCCD}});
+      this.forceRefresh();
     },
-    editRow(val) {
-      console.log(val);
+
+    // Sửa thông tin 1 người dan
+    editRow(row) {
+      this.editingCitizen = row.item;
     },
+
     detailsRow(val) {
       console.log(val);
     },
@@ -586,12 +609,14 @@ export default {
       this.hideSelectCols();
       let list = Array.of(...this.api.fields);
       let listnew = [];
-      this.reset();
+      this.resetFields();
       for (let field of list) {
         if (this.showFields.indexOf(field) != -1) {
           listnew.push(field);
         }
       }
+      listnew.push({ key: "authorization", label: "Chỉnh sửa" });
+      listnew.unshift({ key: "index", label: "STT" });
       this.fields = listnew;
     },
 
@@ -620,7 +645,7 @@ export default {
         this.groupAreas = this.cities;
         this.selectingGroupAreas = true;
         this.groupAreasType = "tỉnh thành";
-        console.log("Chọn nhóm tỉnh thành")
+        console.log("Chọn nhóm tỉnh thành");
       } else if (val) {
         let id = this.findAreaId(this.cities, this.currentCity);
         this.fetchDistrictsInCity(id);
