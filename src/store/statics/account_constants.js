@@ -6,8 +6,6 @@ const ACCOUNT_API = {
         fields: [
             { key: "areaId", label: "Mã số", sortable: true },
             { key: "email", label: "Email", sortable: true },
-            { key: "startDate", label: "Thời gian bắt đầu", sortable: true },
-            { key: "endDate", label: "Thời gian kết thúc", sortable: true },
         ]
     },
     OTHER: {

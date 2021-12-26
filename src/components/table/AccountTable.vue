@@ -150,7 +150,7 @@
         <b-button
           size="xs"
           class="mr-2 sm-button-style delete-button-style"
-          v-if="!user.is_locked"
+          v-if="!user.is_locked && user.role != 0"
           @click="deleteRow(row)"
         >
           <font-awesome-icon icon="trash" size="sm" />
@@ -305,6 +305,7 @@ export default {
       setTimeout(() => this.fetchData(), 1000);
       setTimeout(() => this.fetchData(), 2000);
       setTimeout(() => this.fetchData(), 5000);
+      setTimeout(() => this.fetchData(), 10000);
     },
   },
 };

@@ -107,9 +107,17 @@ export default {
     this.titleId = "Mã " + this.api.type;
 
     this.email = this.account.email;
+    if (this.account.email == '') {
+      this.email = null;
+    }
     this.startDate = this.account.startDate;
+    if (this.account.startDate == '') {
+      this.startDate = null;
+    }
     this.endDate = this.account.endDate;
-
+    if (this.account.endDate == '') {
+      this.endDate = null;
+    }
     this.$bvModal.show("account-edit-modal");
   },
 
