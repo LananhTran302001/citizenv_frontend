@@ -43,16 +43,28 @@ const store = new Vuex.Store({
 })
 
 router.beforeEach((to, from, next) => {
+    // Đối với các trang cần có tài khoản để truy cập
     if (to.matched.some(record => record.meta.requiresAuth)) {
         // Nếu như token rỗng -> redirect về đăng nhập
         if (!store.getters.getToken) {
             next({ name: 'login' })
         } else {
             store.commit('User/setUserFromToken', store.getters.getToken);
-            next() // go to wherever I'm going
+            next()            
         }
+    // Những trang không cần tài khoản để access
     } else {
-        next() // does not require auth, make sure to always call next()!
+        next();
+        // if (to.name == 'login') { // Nếu muốn đến trang đăng nhập
+        //     if (store.getters.getToken) { // Khi đã đăng nhập
+        //         store.commit('User/setUserFromToken', store.getters.getToken);
+        //         next({ name: 'home' }) // Redirect về home
+        //     } else {
+        //         next({ name: 'login' })
+        //     }
+        // } else {
+        //     next()
+        // }
     }
 })
 

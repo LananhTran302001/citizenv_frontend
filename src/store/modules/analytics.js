@@ -42,23 +42,20 @@ const Analytics = {
                 .delete(url, { headers: headers })
                 .then((res) => {
                     if (res.status == 200) {
-                        console.log(res.data.message);
                         commit("setServerMsg",
                             {
                                 title: "Thông báo",
-                                content: res.data.message,
+                                content: res.data.msg,
                                 status: res.status
                             }
                         )
                     }
-                    console.log("-------------------");
                 })
                 .catch((err) => {
-                    console.log("-------------------");
                     commit("setServerMsg",
                         {
                             title: "Thông báo",
-                            content: err.response.data.message,
+                            content: err.response.data.msg,
                             status: err.response.status
                         }
                     )

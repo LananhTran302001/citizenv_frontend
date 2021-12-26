@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <!-- <b-img src="../assets/img/minion.gif" fluid alt="Responsive image"></b-img> -->
+  <div class="container-style">
+    <h2> WELCOME TO CITIZENV </h2>
+    <!-- <img src="../assets/img/minion.gif" alt="welcome-gif" /> -->
   </div>
 </template>
 
@@ -9,3 +10,10 @@ export default {
   name: "Home"
 }
 </script>
+
+<style scoped>
+.container-style {
+  margin: 200px;
+  color: blue;
+}
+</style>

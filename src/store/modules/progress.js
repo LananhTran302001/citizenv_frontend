@@ -55,7 +55,7 @@ const Progress = {
                     commit("setServerMsg",
                         {
                             title: "Thông báo",
-                            content: res.data.message,
+                            content: res.data.msg,
                             status: res.status
                         }
                     )
@@ -66,11 +66,11 @@ const Progress = {
                     commit("setServerMsg",
                         {
                             title: "Thông báo",
-                            content: err.response.data.message,
+                            content: err.response.data.msg,
                             status: err.response.status
                         }
                     )
-                    console.log(err.response.data.message);
+                    console.log(err.response.data.msg);
                 });
         },
 
@@ -94,7 +94,7 @@ const Progress = {
                     commit("setServerMsg",
                         {
                             title: "Thông báo",
-                            content: res.data.message,
+                            content: res.data.msg,
                             status: res.status
                         }
                     )
@@ -105,11 +105,11 @@ const Progress = {
                     commit("setServerMsg",
                         {
                             title: "Thông báo",
-                            content: err.response.data.message,
+                            content: err.response.data.msg,
                             status: err.response.status
                         }
                     )
-                    console.log(err.response.data.message);
+                    console.log(err.response.data.msg);
                 });
         }
     }

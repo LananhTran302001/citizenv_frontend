@@ -43,7 +43,7 @@ const Area = {
                         commit("setServerMsg",
                             {
                                 title: "Thông báo",
-                                content: res.data.message,
+                                content: res.data.msg,
                                 status: res.status
                             }
                         )
@@ -53,7 +53,7 @@ const Area = {
                     commit("setServerMsg",
                         {
                             title: "Thông báo",
-                            content: err.response.data.message,
+                            content: err.response.data.msg,
                             status: err.response.status
                         }
                     )
@@ -78,7 +78,7 @@ const Area = {
                         commit("setServerMsg",
                             {
                                 title: "Thông báo",
-                                content: res.data.message,
+                                content: res.data.msg,
                                 status: res.status
                             }
                         )
@@ -89,7 +89,7 @@ const Area = {
                     commit("setServerMsg",
                         {
                             title: "Thông báo",
-                            content: err.response.data.message,
+                            content: err.response.data.msg,
                             status: err.response.status
                         }
                     )
@@ -115,7 +115,7 @@ const Area = {
                         commit("setServerMsg",
                             {
                                 title: "Thông báo",
-                                content: res.data.message,
+                                content: res.data.msg,
                                 status: res.status
                             }
                         )
@@ -125,7 +125,7 @@ const Area = {
                     commit("setServerMsg",
                         {
                             title: "Thông báo",
-                            content: err.response.data.message,
+                            content: err.response.data.msg,
                             status: err.response.status
                         }
                     )

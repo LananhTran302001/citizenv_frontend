@@ -173,6 +173,16 @@
       </b-col>
     </b-row>
 
+    <b-row v-if="user.role == 3 || user.role == 4">
+      <b-col cols="12">
+        Xuất tất cả người dân trên địa bàn:
+          <b-button variant="primary" @click="downloadExcel">
+            <font-awesome-icon icon="download" size="lg" />
+            Xuất
+          </b-button>
+        </b-col>
+    </b-row>
+
     <b-row v-if="selectedGroupAreasName.length > 0">
       <b-col cols="1">
         <a @click="resetAll" class="reset-button-style">
@@ -382,6 +392,7 @@ export default {
   methods: {
     ...mapActions({
       deleteCitizen: "Citizen/deleteCitizen",
+      downloadExcel: "Citizen/downloadExcel"
     }),
 
     resetFields() {

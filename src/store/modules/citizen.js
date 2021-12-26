@@ -1,5 +1,6 @@
 import { messageFormat } from "../statics/messages"
 import { getCitizenAPI } from "../statics/citizen_constants"
+import FileSaver from "file-saver"
 import axios from "axios"
 
 const Citizen = {
@@ -52,20 +53,18 @@ const Citizen = {
                         commit("setServerMsg",
                             {
                                 title: "Thông báo",
-                                content: res.data.message,
+                                content: res.data.msg,
                                 status: res.status
                             }
                         )
 
                     }
-                    console.log(res.data.message);
-                    console.log("-------------------");
                 })
                 .catch((err) => {
                     commit("setServerMsg",
                         {
                             title: "Thông báo",
-                            content: err.response.data.message,
+                            content: err.response.data.msg,
                             status: err.response.status
                         }
                     )
@@ -94,24 +93,43 @@ const Citizen = {
                         commit("setServerMsg",
                             {
                                 title: "Thông báo",
-                                content: res.data.message,
+                                content: res.data.msg,
                                 status: res.status
                             }
                         )
 
                     }
-                    console.log(res.data.message);
+                    console.log(res.data.msg);
                     console.log("-------------------");
                 })
                 .catch((err) => {
                     commit("setServerMsg",
                         {
                             title: "Thông báo",
-                            content: err.response.data.message,
+                            content: err.response.data.msg,
                             status: err.response.status
                         }
                     )
                 });
+        },
+
+
+        downloadExcel() {
+            const headers = {
+                Authorization: `Bearer ${localStorage.token}`,
+            };
+            axios
+                .get('excel', {
+                    responseType: 'blob',
+                    headers: headers ,
+                })
+                .then((response) => {
+                //     let blob = new Blob([response.data], { type: "application/vnd.ms-excel" }),
+                //         url = window.URL.createObjectURL(blob);
+                //     window.open(url);
+                        FileSaver.saveAs(response.data, "dan so.xls")
+                });
+
         }
     }
 

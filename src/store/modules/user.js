@@ -30,12 +30,19 @@ const User = {
             confirm_password: ""
         },
         serverLoginMsg: "",
+        serverLogoutMsg: {
+            id: 0,
+            title: "",
+            content: "",
+            varient: "info"
+        },
         serverMsg: {
             id: 0,
             title: "",
             content: "",
             varient: "info"
-        }
+        },
+
     }),
     getters: {
         getUser: (state) => state.user,
@@ -43,6 +50,7 @@ const User = {
         getForgotPwData: (state) => state.forgotPasswordData,
         getChangePwData: (state) => state.changePasswordData,
         getServerLoginMsg: (state) => state.serverLoginMsg,
+        getServerLogoutMsg: (state) => state.serverLogoutMsg,
         getServerMsg: (state) => state.serverMsg
     },
 
@@ -74,6 +82,14 @@ const User = {
         },
         setServerLoginMsg(state, payload) {
             state.serverLoginMsg = payload
+        },
+        setServerLogoutMsg(state, payload) {
+            state.serverLogoutMsg = messageFormat(
+                state.serverLogoutMsg.id + 1,
+                payload.title,
+                payload.content,
+                payload.status
+            )
         },
         setServerMsg(state, payload) {
             state.serverMsg = messageFormat(
@@ -149,7 +165,7 @@ const User = {
                 })
 
                 .catch(err => {
-                    commit('setServerLoginMsg', err.response.data.message)
+                    commit('setServerLoginMsg', err.response.data.msg)
                 })
 
 
@@ -168,7 +184,7 @@ const User = {
                         router.push('/')
                     }
                 }).catch(err => {
-                    commit('setServerLoginMsg', err.response.data.message)
+                    commit('setServerLoginMsg', err.response.data.msg)
                 })
 
         },
@@ -190,7 +206,7 @@ const User = {
                         commit("setServerMsg",
                             {
                                 title: "Thông báo",
-                                content: res.data.message,
+                                content: res.data.msg,
                                 status: res.status
                             }
                         )
@@ -199,7 +215,7 @@ const User = {
                     commit("setServerMsg",
                         {
                             title: "Thông báo",
-                            content: err.response.data.message,
+                            content: err.response.data.msg,
                             status: err.response.status
                         }
                     )
@@ -222,13 +238,15 @@ const User = {
                     commit("resetUser")
 
                 }).catch(err => {
-                    commit("setServerMsg",
+                    commit("setServerLogoutMsg",
                         {
                             title: "Thông báo",
-                            content: err.response.data.message,
+                            content: err.response.data.msg,
                             status: err.response.status
                         }
                     )
+                    console.log("Đây là server logout message");
+                    console.log(err.response.data.msg)
                 })
         }
     }

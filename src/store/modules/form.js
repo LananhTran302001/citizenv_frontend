@@ -52,20 +52,20 @@ const Form = {
                         commit("setServerMsg",
                             {
                                 title: "Thông báo",
-                                content: res.data.message,
+                                content: res.data.msg,
                                 status: res.status
                             }
                         )
 
                     }
-                    console.log(res.data.message);
+                    console.log(res.data.msg);
                     console.log("-------------------");
                 })
                 .catch((err) => {
                     commit("setServerMsg",
                         {
                             title: "Thông báo",
-                            content: err.response.data.message,
+                            content: err.response.data.msg,
                             status: err.response.status
                         }
                     )
@@ -73,8 +73,11 @@ const Form = {
         },
 
         downloadForm() {
+            const headers = {
+                Authorization: `Bearer ${localStorage.token}`,
+            };
             axios
-                .get('file', { responseType: "arraybuffer" })
+                .get('file', { responseType: "arraybuffer" , headers: headers})
                 .then((response) => {
                     let blob = new Blob([response.data], { type: "application/pdf" }),
                         url = window.URL.createObjectURL(blob);
