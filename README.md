@@ -1,8 +1,8 @@
 # citizenv
 
 ## Project setup
-```
 install nodejs
+```
 npm install
 npm install -g @vue/cli
 npm install vue-router
