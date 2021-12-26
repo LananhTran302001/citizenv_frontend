@@ -11,6 +11,7 @@ Thay đổi vùn nhưng vẫn có analyticsBy & analyticsChart --> cập nhật 
       :type="groupAreasType"
       v-if="selectingGroupAreas"
       @selected="handleSelectGroupAreas"
+      @canceled="resetAll"
     />
 
     <!-- Selection -->
@@ -86,7 +87,7 @@ Thay đổi vùn nhưng vẫn có analyticsBy & analyticsChart --> cập nhật 
     </b-row>
 
     <b-row class="my-2">
-      <b-col xs="12" sm="12" md="6" lg="4" v-if="user.role == 5">
+      <b-col xs="12" sm="12" md="6" lg="4" v-if="user.role == 4">
         <!-- Chọn thôn/xóm/bản/tổ dân phố: B1=A4: role = 4 -->
         <b-form-group
           label="Thôn/bản/tổ dân phố"
@@ -330,26 +331,20 @@ export default {
       this.load = false;
       if (this.analyticsBy == this.analyticsByOptions[0]) {
         // Theo giới tính
-        console.log("Setup theo giới tính");
         this.analyticsConfig = getAnalyticsGender();
 
         // Theo độ tuổi
       } else if (this.analyticsBy == this.analyticsByOptions[1]) {
-        console.log("Setup theo tuổi");
         this.analyticsConfig = getAnalyticsAge();
 
         // Theo trình độ học vấn
       } else if (this.analyticsBy == this.analyticsByOptions[2]) {
-        console.log("Setup theo học vấn");
         this.analyticsConfig = getAnalyticsEducationalLevel();
 
         // Theo tình trạng hôn nhân
       } else if (this.analyticsBy == this.analyticsByOptions[3]) {
-        console.log("Setup theo hôn nhân");
         this.analyticsConfig = getAnalyticsMarriage();
-      } else {
-        console.log("Chọn nhầm rồi");
-      }
+      } 
     },
 
     getChartData(allData, config) {
@@ -515,7 +510,6 @@ export default {
         })
         .then((data) => {
           this.cities = data.Areas;
-          console.log(this.cities);
           this.citiesName = this.getAreaNames(data.Areas);
           this.citiesName.push("Nhóm tỉnh thành");
         });
@@ -583,8 +577,6 @@ export default {
     analyticsBy: function (val) {
       this.analyticsBy = val;
       if (val && this.analyticsChart && this.selectedGroupAreas) {
-        console.log("Biểu đồ theo nhóm vùng");
-        console.log(this.selectedGroupAreas)
         this.setupConfig();
         this.fetchGroupAreas(this.getAreaIds(this.selectedGroupAreas));
       } else if (val && this.analyticsChart) {
@@ -600,12 +592,9 @@ export default {
       this.load = false;
       this.analyticsChart = val;
       if (val && this.analyticsBy && this.selectedGroupAreas) {
-        console.log("Biểu đồ theo nhóm vùng");
-        console.log(this.selectedGroupAreas)
         this.setupConfig();
         this.fetchGroupAreas(this.getAreaIds(this.selectedGroupAreas));
       } else if (val && this.analyticsBy) {
-        console.log("biểu đồ theo vùng");
         this.setupConfig();
         this.fetchData(this.currentAreaId);
       }
@@ -636,7 +625,7 @@ export default {
         if (this.analyticsConfig) {
           this.fetchData(id);
         }
-      }
+      } 
     },
 
     currentDistrict: function (val) {
@@ -664,11 +653,9 @@ export default {
         this.fetchWardsInDistrict(id);
         this.currentAreaId = id;
         if (this.analyticsConfig) {
-          console.log("Huyện cần phân tích");
-          console.log(id);
           this.fetchData(id);
         }
-      }
+      } 
     },
 
     currentWard: function (val) {
@@ -733,14 +720,12 @@ export default {
     selectedGroupAreas: function (areas) {
       this.load = false;
       this.selectedGroupAreas = areas;
-      console.log("Nhóm vùng được chọn");
-      console.log(areas);
       if (areas) {
         this.currentAreaId = null;
         if (this.analyticsConfig) {
           this.fetchGroupAreas(this.getAreaIds(areas));
         }
-      }
+      } 
     },
   },
 };

@@ -25,8 +25,6 @@ const Progress = {
                 payload.content,
                 payload.status
             )
-            console.log("đây là server message")
-            console.log(state.serverMsg)
         }
     },
 
@@ -40,8 +38,6 @@ const Progress = {
             const progress = {
                 completed: data.progress
             }
-            console.log("Đây là progress")
-            console.log(progress)
             axios
                 .put(
                     API.urlId,
@@ -59,8 +55,6 @@ const Progress = {
                             status: res.status
                         }
                     )
-                    console.log("-------------------");
-                    console.log("-------------------");
                 })
                 .catch((err) => {
                     commit("setServerMsg",
@@ -70,7 +64,9 @@ const Progress = {
                             status: err.response.status
                         }
                     )
-                    console.log(err.response.data.msg);
+                    if (err.response.status == 401) {
+                        commit("resetToken", "", { root: true })
+                    }
                 });
         },
 
@@ -109,6 +105,9 @@ const Progress = {
                             status: err.response.status
                         }
                     )
+                    if (err.response.status == 401) {
+                        commit("resetToken", "", { root: true })
+                    }
                     console.log(err.response.data.msg);
                 });
         }

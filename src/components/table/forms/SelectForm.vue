@@ -73,11 +73,12 @@ export default {
     handleSubmit() {
       this.$emit("selected", this.selectAreas);
       this.$nextTick(() => {
-        this.hide();
+        this.$bvModal.hide("select-form-modal");
       });
     },
 
     hide() {
+      this.$emit("canceled", true)
       this.$bvModal.hide("select-form-modal");
     },
   },

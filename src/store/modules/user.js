@@ -15,7 +15,7 @@ const User = {
             expired_time: null,
             is_locked: null,
         },
-        
+
         loginData: {
             user_id: "",
             password: "",
@@ -186,8 +186,8 @@ const User = {
                 }).catch(err => {
                     commit('setServerLoginMsg', err.response.data.msg)
                 })
-
         },
+
 
         changePassword({ commit }, changePwData) {
             commit('setChangePwData', changePwData)
@@ -219,6 +219,10 @@ const User = {
                             status: err.response.status
                         }
                     )
+                    if (err.response.status == 401) {
+                        commit("resetToken", "", { root: true })
+                        commit("resetUser")
+                    }
                 })
 
         },
@@ -245,8 +249,14 @@ const User = {
                             status: err.response.status
                         }
                     )
-                    console.log("Đây là server logout message");
-                    console.log(err.response.data.msg)
+                    if (err.response.status == 401) {
+                        router.push('/login')
+                        commit("resetToken", "", { root: true })
+                        commit("resetUser")
+                        commit("setServerLoginMsg",
+                            err.response.data.msg
+                        )
+                    }
                 })
         }
     }

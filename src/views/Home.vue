@@ -1,6 +1,6 @@
 <template>
   <div class="container-style">
-    <h2> WELCOME TO CITIZENV </h2>
+    <!-- <h2> WELCOME TO CITIZENV </h2> -->
     <!-- <img src="../assets/img/minion.gif" alt="welcome-gif" /> -->
   </div>
 </template>

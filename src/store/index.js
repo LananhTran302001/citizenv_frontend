@@ -27,8 +27,8 @@ const store = new Vuex.Store({
             localStorage.token = payload
         },
         resetToken(state) {
-            state.token = ""
-            localStorage.token = ""
+            state.token = null
+            localStorage.token = null
         }
     },
     modules: {
@@ -47,6 +47,7 @@ router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
         // Nếu như token rỗng -> redirect về đăng nhập
         if (!store.getters.getToken) {
+            store.commit('User/resetUser')
             next({ name: 'login' })
         } else {
             store.commit('User/setUserFromToken', store.getters.getToken);

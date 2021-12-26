@@ -57,6 +57,7 @@ const Area = {
                             status: err.response.status
                         }
                     )
+
                 });
         },
 
@@ -93,6 +94,9 @@ const Area = {
                             status: err.response.status
                         }
                     )
+                    if (err.response.status == 401) {
+                        commit("resetToken", "", { root: true })
+                    }
                 });
 
         },
@@ -129,6 +133,9 @@ const Area = {
                             status: err.response.status
                         }
                     )
+                    if (err.response.status == 401) {
+                        commit("resetToken", "", { root: true })
+                    }
                 });
         }
 

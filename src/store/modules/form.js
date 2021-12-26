@@ -69,19 +69,27 @@ const Form = {
                             status: err.response.status
                         }
                     )
+                    if (err.response.status == 401) {
+                        commit("resetToken", "", { root: true })
+                    }
                 });
         },
 
-        downloadForm() {
+        downloadForm({ commit }) {
             const headers = {
                 Authorization: `Bearer ${localStorage.token}`,
             };
             axios
-                .get('file', { responseType: "arraybuffer" , headers: headers})
+                .get('file', { responseType: "arraybuffer", headers: headers })
                 .then((response) => {
                     let blob = new Blob([response.data], { type: "application/pdf" }),
                         url = window.URL.createObjectURL(blob);
                     window.open(url);
+                })
+                .catch((err) => {
+                    if (err.response.status == 401) {
+                        commit("resetToken", "", { root: true })
+                    }
                 });
 
         }

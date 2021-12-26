@@ -26,8 +26,6 @@ const Citizen = {
                 payload.content,
                 payload.status
             )
-            console.log("đây là server message")
-            console.log(state.serverMsg)
         }
     },
 
@@ -68,6 +66,9 @@ const Citizen = {
                             status: err.response.status
                         }
                     )
+                    if (err.response.status == 401) {
+                        commit("resetToken", "", { root: true })
+                    }
                 });
         },
 
@@ -89,7 +90,6 @@ const Citizen = {
                 )
                 .then((res) => {
                     if (res.status == 200) {
-                        console.log(res);
                         commit("setServerMsg",
                             {
                                 title: "Thông báo",
@@ -99,8 +99,6 @@ const Citizen = {
                         )
 
                     }
-                    console.log(res.data.msg);
-                    console.log("-------------------");
                 })
                 .catch((err) => {
                     commit("setServerMsg",
@@ -110,11 +108,14 @@ const Citizen = {
                             status: err.response.status
                         }
                     )
+                    if (err.response.status == 401) {
+                        commit("resetToken", "", { root: true })
+                    }
                 });
         },
 
 
-        downloadExcel() {
+        downloadExcel({ commit }) {
             const headers = {
                 Authorization: `Bearer ${localStorage.token}`,
             };
@@ -128,6 +129,10 @@ const Citizen = {
                 //         url = window.URL.createObjectURL(blob);
                 //     window.open(url);
                         FileSaver.saveAs(response.data, "dan so.xls")
+                }).catch((err) => {
+                    if (err.response.status == 401) {
+                        commit("resetToken", "", { root: true })
+                    }
                 });
 
         }

@@ -14,6 +14,7 @@
       :type="groupAreasType"
       v-if="selectingGroupAreas"
       @selected="fetchGroupAreas"
+      @canceled="resetAll"
     />
 
     <!-- Popup sửa thông tin người dân -->

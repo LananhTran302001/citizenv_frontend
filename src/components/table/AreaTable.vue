@@ -155,7 +155,7 @@ import AreaAddForm from "./forms/AreaAddForm.vue";
 import AreaEditForm from "./forms/AreaEditForm.vue";
 import AreaDetailsForm from "./forms/AreaDetailsForm.vue";
 import Message from "../Message.vue";
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 import { getAreaAPI, decodeJson } from "../../store/statics/area_constants";
 import { BACKEND_URL } from "../../store/statics/backend_url";
 
@@ -196,6 +196,10 @@ export default {
   },
 
   methods: {
+    ...mapMutations({
+      setServerMsg: "Area/setServerMsg"
+    }),
+
     ...mapActions({
       getAllArea: "Area/getAllArea",
       deleteArea: "Area/deleteArea",
@@ -226,6 +230,15 @@ export default {
           .then((data) => {
             this.items = data.Areas;
             this.totalRows = this.items.length;
+          })
+          .catch((err) => {
+              this.setServerMsg( {
+                            title: "Thông báo",
+                            content: err.response.data.msg,
+                            status: err.response.status
+                        } );
+                
+            
           });
       }
     },

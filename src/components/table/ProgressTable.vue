@@ -241,7 +241,6 @@ export default {
               this.completedAreas = data.completed;
               this.accountAreas = data.allocated;
             }
-            console.log(data);
           });
       }
     },

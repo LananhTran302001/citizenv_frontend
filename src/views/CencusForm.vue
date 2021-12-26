@@ -25,12 +25,14 @@
       <b-row class="first-row-style" v-if="user.role == 4">
         <b-col cols="10">
           <b-form-group
-            label="Thôn/bản/tổ dân phố:"
+            label="Thôn/bản/tổ dân phố * :"
             label-cols-xs="6"
             label-cols-sm="5"
             label-cols-md="4"
             label-cols-lg="3"
             label-align-sm="right"
+            :invalid-feedback="msgArea"
+            :state="stateArea"
           >
             <b-form-select
               :options="groupOptionsName"
@@ -259,6 +261,9 @@ export default {
       permanentResidence: null,
       temporaryResidence: null,
 
+      msgArea: null,
+      stateArea: null,
+
       msg: {
         fullName: null,
         gender: null,
@@ -361,12 +366,12 @@ export default {
         .then((data) => {
           this.groupOptions = data.Areas;
           this.groupOptionsName = this.getAreaNames(data.Areas);
-          console.log("Đây là các thôn");
-          console.log(data);
         });
     },
 
     handleSubmit() {
+      this.msgArea = validateName(this.currentGroupName);
+      this.stateArea = this.msgArea.length == 0;
       const citizen = {
         name: this.fullName,
         DOB: this.dateOfBirth,

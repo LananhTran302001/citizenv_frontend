@@ -25,8 +25,6 @@ const Analytics = {
                 payload.content,
                 payload.status
             )
-            console.log("đây là server message")
-            console.log(state.serverMsg)
         }
     },
 
@@ -59,6 +57,9 @@ const Analytics = {
                             status: err.response.status
                         }
                     )
+                    if (err.response.status == 401) {
+                        commit("resetToken", "", { root: true })
+                    }
                 });
         },
 
