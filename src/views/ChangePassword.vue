@@ -2,6 +2,13 @@
   <div
     class="flex-column d-flex justify-content-center align-items-center container-style"
   >
+    <!-- Thông báo từ server -->
+    <Message
+      :id="serverMsg.id"
+      :title="serverMsg.title"
+      :content="serverMsg.content"
+      :variant="serverMsg.variant"
+    />
     <b-col lg="4" md="6" sm="8" xs="9" class="box-style">
       <h2>Đổi mật khẩu</h2>
       <b-form-group>
@@ -56,11 +63,14 @@
 </template>
 
 <script>
-import { validatePassword } from "../store/statics/validations"
-import { mapActions } from "vuex";
+
+import Message from "../components/Message.vue";
+import { validatePassword } from "../store/statics/validations";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   name: "ChangePassword",
+  components: { Message },
   data: function () {
     return {
       oldPass: null,
@@ -78,11 +88,33 @@ export default {
       },
     };
   },
+
+  computed: {
+    ...mapGetters({
+      serverMsg: "User/getServerMsg",
+    })
+  },
+  
+  methods: {
+    ...mapActions({
+      changePassword: "User/changePassword"
+    }),
+
+    // Cần điều chỉnh đúng format
+    isValidPassword: function (val) {
+      return val.length > 2 ? true : false;
+    },
+
+    equal: function (val1, val2) {
+      return val1 == val2;
+    },
+  },
+
   watch: {
     oldPass: function (val) {
       this.oldpass = val;
       this.msg.old = validatePassword(val);
-      this.state.old = (this.msg.old.length == 0)
+      this.state.old = this.msg.old.length == 0;
     },
     newPass: function (val) {
       this.newPass = val;
@@ -108,21 +140,6 @@ export default {
         this.msg.confirm = "Mật khẩu không hợp lệ";
         this.state.confirm = false;
       }
-    },
-  },
-
-  computed: {},
-
-  methods: {
-    ...mapActions(["changePassword"]),
-
-    // Cần điều chỉnh đúng format
-    isValidPassword: function (val) {
-      return val.length > 2 ? true : false;
-    },
-
-    equal: function (val1, val2) {
-      return val1 == val2;
     },
   },
 };

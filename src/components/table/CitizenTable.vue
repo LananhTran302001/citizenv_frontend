@@ -16,17 +16,20 @@
       @selected="fetchGroupAreas"
     />
 
+    <!-- Popup sửa thông tin người dân -->
     <CitizenEditForm
       :citizen="editingCitizen"
       v-if="editingCitizen"
       @updated="forceRefresh"
     />
 
-    <CitizenDetailsForm :citizen="detailingCitizen"
-    v-if="detailingCitizen"
-    @detailed="forceRefresh"
+    <!-- Popup xem thông tin chi tiết 1 người dân -->
+    <CitizenDetailsForm
+      :citizen="detailingCitizen"
+      v-if="detailingCitizen"
+      @detailed="forceRefresh"
     />
-    
+
     <!-- User interface control -->
     <b-row>
       <!-- Search bar -->
@@ -239,7 +242,7 @@
     <!-- Chọn các cột hiển thị -->
     <div class="select-cols-style">
       <div class="menu-style" v-show="isOpenSelectCols">
-        <h5>Chọn cột hiển thị</h5>
+        <p>Chọn cột hiển thị</p>
         <CheckboxButton
           v-for="(field, i) in api.fields"
           :key="i"
@@ -247,28 +250,26 @@
           @isChecked="selectColIsChecked(api.fields[i])"
           @isNonChecked="selectColIsNonChecked(api.fields[i])"
         />
-        <b-row class="justify-content-start">
-          <b-col cols="8">
-            <b-button
-              type="button"
-              variant="primary"
-              class="close-selcolumn-btn"
-              :disabled="showFields.length == 0"
-              @click="applySelectCols"
-            >
-              Áp dụng
-            </b-button>
-          </b-col>
-          <b-col cols="4">
-            <b-button
-              type="button"
-              variant="secondary"
-              class="close-selcolumn-btn"
-              @click="hideSelectCols"
-            >
-              Hủy
-            </b-button>
-          </b-col>
+        <b-row align-h="center">
+          <b-button
+            type="button"
+            variant="primary"
+            class="close-selcolumn-btn mr-2"
+            size="sm"
+            :disabled="showFields.length == 0"
+            @click="applySelectCols"
+          >
+            Áp dụng
+          </b-button>
+          <b-button
+            type="button"
+            variant="secondary"
+            class="close-selcolumn-btn ml-2"
+            size="sm"
+            @click="hideSelectCols"
+          >
+            Hủy
+          </b-button>
         </b-row>
       </div>
       <font-awesome-icon
@@ -346,7 +347,6 @@ export default {
       // CHỌN NHÓM VÙNG
       groupAreas: [],
       selectedGroupAreasName: [],
-      showGroupAreasName: false,
       selectingGroupAreas: false,
       groupAreasType: null,
       groupAreasParentId: null,
@@ -381,7 +381,7 @@ export default {
 
   methods: {
     ...mapActions({
-      deleteCitizen: "Citizen/deleteCitizen"
+      deleteCitizen: "Citizen/deleteCitizen",
     }),
 
     resetFields() {
@@ -429,7 +429,7 @@ export default {
 
     // Xóa thông tin 1 người dân
     deleteRow(row) {
-      this.deleteCitizen({citizen: {CCCD: row.item.CCCD}});
+      this.deleteCitizen({ citizen: { CCCD: row.item.CCCD } });
       this.forceRefresh();
     },
 
@@ -755,6 +755,10 @@ export default {
   cursor: pointer;
 }
 
+.select-cols-style {
+  z-index: 5000;
+}
+
 .select-cols-style .menu-style {
   position: fixed;
   right: 10px;
@@ -763,8 +767,8 @@ export default {
   flex-direction: column;
   background-color: rgb(190, 231, 248);
   border: solid 1px #888;
-  border-radius: 20px;
-  padding: 30px;
+  border-radius: 15px;
+  padding: 20px;
 }
 
 .select-cols-style #open-selcolumn-btn {

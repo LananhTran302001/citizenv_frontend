@@ -1,7 +1,7 @@
 import axios from "axios";
 import router from "../../routes"
 import VueJwtDecode from 'vue-jwt-decode'
-
+import { messageFormat } from "../statics/messages"
 
 const User = {
     namespaced: true,
@@ -29,13 +29,20 @@ const User = {
             new_password: "",
             confirm_password: ""
         },
-        serverMsg: ""
+        serverLoginMsg: "",
+        serverMsg: {
+            id: 0,
+            title: "",
+            content: "",
+            varient: "info"
+        }
     }),
     getters: {
         getUser: (state) => state.user,
         getLoginData: (state) => state.loginData,
         getForgotPwData: (state) => state.forgotPasswordData,
         getChangePwData: (state) => state.changePasswordData,
+        getServerLoginMsg: (state) => state.serverLoginMsg,
         getServerMsg: (state) => state.serverMsg
     },
 
@@ -65,8 +72,16 @@ const User = {
         setChangePwData(state, payload) {
             state.changePasswordData = payload
         },
+        setServerLoginMsg(state, payload) {
+            state.serverLoginMsg = payload
+        },
         setServerMsg(state, payload) {
-            state.serverMsg = payload
+            state.serverMsg = messageFormat(
+                state.serverMsg.id + 1,
+                payload.title,
+                payload.content,
+                payload.status
+            )
         },
         resetUser(state) {
             state.user = {
@@ -98,8 +113,8 @@ const User = {
                 confirm_password: ""
             }
         },
-        resetServerMsg(state) {
-            state.serverMsg = null;
+        resetServerLoginMsg(state) {
+            state.serverLoginMsg = null;
         }
     },
 
@@ -128,17 +143,13 @@ const User = {
                             is_locked: token.isLocked
                         }
                         commit('setUser', user)
-                        console.log(user)
                         router.push('/')
                     }
 
                 })
 
                 .catch(err => {
-                    commit('setServerMsg', err.response.data.message)
-                    console.log("day la dataa:")
-                    console.log(err.response.data.message)
-                    console.log(err)
+                    commit('setServerLoginMsg', err.response.data.message)
                 })
 
 
@@ -157,9 +168,7 @@ const User = {
                         router.push('/')
                     }
                 }).catch(err => {
-                    commit('setServerMsg', err.response.data.message)
-                    console.log("Day la loi")
-                    console.log(err.response)
+                    commit('setServerLoginMsg', err.response.data.message)
                 })
 
         },
@@ -178,19 +187,27 @@ const User = {
                 .post("changepass", change_pw_data, { headers: headers })
                 .then((res) => {
                     if (res.status == 200) {
-                        console.log(res.data)
-                        console.log("---------changed pass success----------")
+                        commit("setServerMsg",
+                            {
+                                title: "Thông báo",
+                                content: res.data.message,
+                                status: res.status
+                            }
+                        )
                     }
                 }).catch(err => {
-                    console.log("Day la loi")
-                    console.log(err)
-                    console.log("-------------------")
+                    commit("setServerMsg",
+                        {
+                            title: "Thông báo",
+                            content: err.response.data.message,
+                            status: err.response.status
+                        }
+                    )
                 })
 
         },
 
         logout({ commit }) {
-            console.log("loging out...")
             const headers = {
                 Authorization: `Bearer ${localStorage.token}`
             }
@@ -198,7 +215,6 @@ const User = {
                 .post("logout", null, { headers: headers })
                 .then((res) => {
                     if (res.status == 200) {
-                        console.log(res.data)
                         localStorage.clear();
                     }
                     router.push('/login')
@@ -206,9 +222,13 @@ const User = {
                     commit("resetUser")
 
                 }).catch(err => {
-                    console.log("Day la loi")
-                    console.log("-------------------")
-                    console.log(err.response)
+                    commit("setServerMsg",
+                        {
+                            title: "Thông báo",
+                            content: err.response.data.message,
+                            status: err.response.status
+                        }
+                    )
                 })
         }
     }

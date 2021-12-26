@@ -167,7 +167,7 @@ export default {
 
   computed: {
     ...mapGetters({
-      server_msg: "User/getServerMsg"
+      server_msg: "User/getServerLoginMsg"
     })
   },
 
@@ -176,7 +176,7 @@ export default {
     ...mapMutations({
       resetLoginData: "User/resetLoginData",
       resetForgotPwData: "User/resetForgotPwData",
-      resetServerMsg: "User/resetServerMsg"
+      resetServerLoginMsg: "User/resetServerLoginMsg"
       }),
 
     ...mapActions({
@@ -187,7 +187,7 @@ export default {
     // Chuyển giữa section đăng nhập và section quên mật khẩu
     clickLink: function () {
       this.toLogin = !this.toLogin;
-      this.resetServerMsg();
+      this.resetServerLoginMsg();
     },
 
     // Xem mật khẩu
