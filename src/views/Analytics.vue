@@ -11,7 +11,7 @@ Thay đổi vùn nhưng vẫn có analyticsBy & analyticsChart --> cập nhật 
       :type="groupAreasType"
       v-if="selectingGroupAreas"
       @selected="handleSelectGroupAreas"
-      @canceled="resetAll"
+      @canceled="resetAllButName"
     />
 
     <!-- Selection -->
@@ -292,6 +292,15 @@ export default {
       this.resetConfig();
       this.resetCurrent();
       this.resetGroupAreas();
+    },
+
+    resetAllButName() {
+      this.resetCurrent()
+      //this.resetConfig(); 
+      this.groupAreas = [];
+      this.selectingGroupAreas = false;
+      this.groupAreasType = null;
+      this.groupAreasParentId = null;
     },
 
     resetConfig() {
