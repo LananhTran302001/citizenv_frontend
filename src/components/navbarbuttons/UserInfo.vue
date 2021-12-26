@@ -28,7 +28,7 @@ label {
 
 @media (max-width: 800px) {
     label {
-        font-size: 12px;
+        font-size: 14px;
     }
 }
 </style>

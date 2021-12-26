@@ -77,8 +77,16 @@ export default {
 }
 
 @media (max-width: 700px) {
+  .dropbtn {
+    padding: 5px
+  }
+
   .dropdown-item-style {
     padding: 8px;
+  }
+
+  span {
+    font-size: 14px;
   }
 }
 

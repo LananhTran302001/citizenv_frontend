@@ -116,7 +116,7 @@ export default {
   }
 
   #navbar .logo-text {
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 700;
     letter-spacing: 1px;
   }

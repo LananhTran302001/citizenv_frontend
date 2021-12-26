@@ -241,6 +241,7 @@ export default {
 <style scoped>
 .container-style {
   height: 100%;
+  width: 100vw;
   background-image: url("../assets/img/vietnam.jpg");
   background-repeat: no-repeat;
 }
