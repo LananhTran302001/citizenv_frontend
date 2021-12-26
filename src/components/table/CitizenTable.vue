@@ -14,7 +14,7 @@
       :type="groupAreasType"
       v-if="selectingGroupAreas"
       @selected="fetchGroupAreas"
-      @canceled="resetAll"
+      @canceled="resetAllButName"
     />
 
     <!-- Popup sửa thông tin người dân -->
@@ -411,6 +411,13 @@ export default {
     resetAll() {
       this.resetCurrent();
       this.resetGroupAreas();
+    },
+
+    resetAllButName() {
+      this.resetCurrent();
+      this.groupAreas = [];
+      this.selectingGroupAreas = false;
+      this.groupAreasType = null;
     },
 
     resetGroupAreas() {
